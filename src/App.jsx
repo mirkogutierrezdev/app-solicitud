@@ -4,106 +4,120 @@ import PersonaView from './components/PersonaView';
 import { Spinner, Alert } from 'react-bootstrap';
 import ContratoView from './components/ContratoView';
 import AusenciasView from './components/AusenciasView';
+import DeptoView from './components/DeptoView';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Importa BrowserRouter como Router
+import { getAll, getAusencias } from './services/services';
 
 function App() {
     const [data, setData] = useState(null);
-    const [ausencias, setAusencias] = useState([]);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loadingData, setLoadingData] = useState(true);
+    const [loadingAusencias, setLoadingAusencias] = useState(true);
+    const [ausencias, setAusencias] = useState(null);
 
-    const getData = async () => {
+    const loadData = async () => {
         setError(null);
-        setLoading(true);
-
-        const inputText = '18740165';
-        const url = `http://localhost:8080/api/buscar/${inputText}`;
-
         try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const result = await response.json();
-            setData(result);
+            const fetchedData = await getAll();
+            setData(fetchedData);
         } catch (error) {
-            setError(error.message);
+            setError('Error al traer la información');
         } finally {
-            setLoading(false);
+            setLoadingData(false); // Set loading to false regardless of success or failure
         }
     };
 
-    const getAusencias = async () => {
+    const loadAusencias = async () => {
         setError(null);
-        setLoading(true);
-
-        const inputText = '18740165';
-        const url = `http://localhost:8080/api/ausencias/${inputText}`;
-
         try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const result = await response.json();
-            setAusencias(result);
+            const fetchedData = await getAusencias();
+            setAusencias(fetchedData);
         } catch (error) {
-            setError(error.message);
+            setError('Error al traer la información');
         } finally {
-            setLoading(false);
+            setLoadingAusencias(false);
         }
     };
 
     useEffect(() => {
-        getData();
-    }, []);
-
-    useEffect(() => {
-        getAusencias();
+        loadData();
+        loadAusencias();
     }, []);
 
     return (
-        <>
-
-            <div className="container text-start mt-3">
-                <div className="row">
-                    <div className="col-md-4">
-                        {loading ? (
-                            <Spinner animation="border" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                            </Spinner>
-                        ) : error ? (
-                            <Alert variant="danger">{error}</Alert>
-                        ) : (
-                            <PersonaView data={data} />
-                        )}
+        <Router> {/* Asegúrate de envolver tu aplicación con <Router> */}
+            <Routes>
+                <Route path="/" element={
+                    <div className="container text-start mt-3">
+                        <div className="row">
+                            <div className="col-md-4">
+                                {loadingData ? (
+                                    <Spinner animation="border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </Spinner>
+                                ) : error ? (
+                                    <Alert variant="danger">{error}</Alert>
+                                ) : (
+                                    <PersonaView data={data} />
+                                )}
+                            </div>
+                            <div className="col-md-4">
+                                {loadingData ? (
+                                    <Spinner animation="border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </Spinner>
+                                ) : error ? (
+                                    <Alert variant="danger">{error}</Alert>
+                                ) : (
+                                    <ContratoView data={data} />
+                                )}
+                            </div>
+                            <div className="col-md-4">
+                                {loadingData ? (
+                                    <Spinner animation="border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </Spinner>
+                                ) : error ? (
+                                    <Alert variant="danger">{error}</Alert>
+                                ) : (
+                                    <DeptoView data={data} />
+                                )}
+                            </div>
+                        </div>
+                        <div className='row'>
+                            <div className='col-md-8'>
+                                {loadingAusencias ? (
+                                    <Spinner animation="border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </Spinner>
+                                ) : error ? (
+                                    <Alert variant="danger">{error}</Alert>
+                                ) : (
+                                    <AusenciasView ausencias={ausencias} />
+                                )}
+                            </div>
+                        </div>
                     </div>
-                    <div className="col-md-4">
-                        {loading ? (
-                            <Spinner animation="border" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                            </Spinner>
-                        ) : error ? (
-                            <Alert variant="danger">{error}</Alert>
-                        ) : (
-                            <ContratoView data={data} />
-                        )}
+                } />
+                <Route path="/ausencias" element={
+                    <div className="container text-start mt-3">
+                        <div className='row'>
+                            <div className='col-md-8'>
+                                {loadingAusencias ? (
+                                    <Spinner animation="border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </Spinner>
+                                ) : error ? (
+                                    <Alert variant="danger">{error}</Alert>
+                                ) : (
+                                    <AusenciasView ausencias={ausencias} />
+                                )}
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className='row'>
-                    <div className='col-md-8'>
-                        {loading ? (
-                            <Spinner animation="border" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                            </Spinner>
-                        ) : error ? (
-                            <Alert variant="danger">{error}</Alert>
-                        ) : (
-                            <AusenciasView ausencias={ausencias} />
-                        )}
-                    </div>
-                </div>
-            </div>
-        </>
+                } />
+            </Routes>
+        </Router>
     );
 }
 
