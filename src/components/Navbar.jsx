@@ -19,8 +19,8 @@ function Navbar() {
                                     RRRHH
                                 </a>
                                 <ul className="dropdown-menu">
-                                    <li><a className="dropdown-item" href="/ausencias">Ausencias</a></li>
-                                    <li><a className="dropdown-item" href="#">Pronto</a></li>
+                                    <li><a className="dropdown-item" href="/ausencias">Ausencias y feriados</a></li>
+                                    <li><a className="dropdown-item" href="/licencias">Licencias Medicas</a></li>
                                     
                                     <li><hr className="dropdown-divider" /></li>
                                     <li><a className="dropdown-item" href="#">Pronto....</a></li>

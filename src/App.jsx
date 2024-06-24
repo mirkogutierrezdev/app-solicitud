@@ -1,9 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './components/Home';
 import AusenciasPage from './components/AusenciasPage';
+import LicenciasPage from './components/LicenciasPage';
 import { getAll } from './services/services';
+import HomePage from './components/HomePage';
 
 function App() {
     const [data, setData] = useState(null);
@@ -12,26 +13,31 @@ function App() {
 
     const loadData = async () => {
         setError(null);
-        setLoadingData(true); // Indicar que se está cargando
+        setLoadingData(true);
         try {
             const fetchedData = await getAll();
             setData(fetchedData);
         } catch (error) {
             setError('Error al traer la información');
         } finally {
-            setLoadingData(false); // Set loading to false regardless of success or failure
+            setLoadingData(false);
         }
     };
 
     useEffect(() => {
         loadData();
+        
     }, []);
+
+    // Asegurar que data esté cargando y contenga la información correcta
+    console.log("Data en App:", data);
 
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Home data={data} loadingData={loadingData} error={error} />} />
+                <Route path="/" element={<HomePage data={data} loadingData={loadingData} error={error} />} />
                 <Route path="/ausencias" element={<AusenciasPage data={data} loadingAusencias={loadingData} error={error} />} />
+                <Route path="/licencias" element={<LicenciasPage data={data} loadingLicencias={loadingData} error={error} />} />
             </Routes>
         </Router>
     );
