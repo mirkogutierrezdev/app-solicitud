@@ -1,16 +1,18 @@
 /* eslint-disable react/prop-types */
-import { Spinner, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import HomeView from './HomeView';
 
 function HomePage({ data, loadingData, error }) {
     return (
-        <div className="container text-start mt-3">
-            <div className="row justify-content-center">
-                <div className="col-md-10">
+        <Container className="text-start mt-3">
+            <Row className="justify-content-center">
+                <Col md={10}>
                     {loadingData ? (
-                        <Spinner animation="border" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </Spinner>
+                        <div className="d-flex justify-content-center align-items-center">
+                            <Spinner animation="border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                        </div>
                     ) : error ? (
                         <Alert variant="danger">{error}</Alert>
                     ) : data ? (
@@ -18,9 +20,9 @@ function HomePage({ data, loadingData, error }) {
                     ) : (
                         <Alert variant="warning">No data available.</Alert>
                     )}
-                </div>
-            </div>
-        </div>
+                </Col>
+            </Row>
+        </Container>
     );
 }
 

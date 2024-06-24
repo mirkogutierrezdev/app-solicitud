@@ -1,29 +1,28 @@
 /* eslint-disable react/prop-types */
-import { Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import LicenciasView from './LicenciasView';
 
 function LicenciasPage({ data, loadingLicencias, error }) {
     const licencias = data ? data.licencias : [];
 
-    // Asegurar que licencias se esté recibiendo correctamente
-    console.log("Licencias en LicenciasPage:", licencias);
-
     return (
-        <div className="container">
-            <div className="row">
-                <div className="col-md-8">
+        <Container className="mt-3">
+            <Row>
+                <Col md={12}>
                     {loadingLicencias ? (
-                        <Spinner animation="border" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </Spinner>
+                        <div className="d-flex justify-content-center align-items-center">
+                            <Spinner animation="border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                        </div>
                     ) : error ? (
                         <Alert variant="danger">{error}</Alert>
                     ) : (
                         <LicenciasView licencias={licencias} />
                     )}
-                </div>
-            </div>
-        </div>
+                </Col>
+            </Row>
+        </Container>
     );
 }
 
