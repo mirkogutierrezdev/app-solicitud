@@ -2,6 +2,7 @@
 
 
 function FeriadosView({ feriados }) {
+    
     return (
         <div className="container mt-4">
             <h2 className="text-center mb-4">Información de Feriados</h2>

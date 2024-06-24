@@ -13,8 +13,10 @@ function HomePage({ data, loadingData, error }) {
                         </Spinner>
                     ) : error ? (
                         <Alert variant="danger">{error}</Alert>
-                    ) : (
+                    ) : data ? (
                         <HomeView funcionario={data} />
+                    ) : (
+                        <Alert variant="warning">No data available.</Alert>
                     )}
                 </div>
             </div>

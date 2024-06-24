@@ -26,11 +26,9 @@ function App() {
 
     useEffect(() => {
         loadData();
-        
+
     }, []);
 
-    // Asegurar que data esté cargando y contenga la información correcta
-    console.log("Data en App:", data);
 
     return (
         <Router>
