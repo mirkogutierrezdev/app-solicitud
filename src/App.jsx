@@ -5,6 +5,7 @@ import AusenciasPage from './components/AusenciasPage';
 import LicenciasPage from './components/LicenciasPage';
 import { getAll } from './services/services';
 import HomePage from './components/HomePage';
+import FeriadosPage from './components/FeriadosPage';
 
 function App() {
     const [data, setData] = useState(null);
@@ -36,6 +37,8 @@ function App() {
                 <Route path="/" element={<HomePage data={data} loadingData={loadingData} error={error} />} />
                 <Route path="/ausencias" element={<AusenciasPage data={data} loadingAusencias={loadingData} error={error} />} />
                 <Route path="/licencias" element={<LicenciasPage data={data} loadingLicencias={loadingData} error={error} />} />
+                <Route path="/feriados" element={<FeriadosPage data={data} loadingLicencias={loadingData} error={error}/>} />
+
             </Routes>
         </Router>
     );
