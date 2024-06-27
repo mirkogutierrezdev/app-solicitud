@@ -9,8 +9,6 @@ function DiasAdmView({ diasAdm }) {
     saldo
   } = diasAdm;
 
-   console.log(diasAdm);
-
     return (
 
         <>

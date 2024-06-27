@@ -7,7 +7,7 @@ function FeriadosPage({data}) {
     const feriados = data ? data.feriados : [];
     const adm = data ? data.diasAdm : [];
 
-    console.log(data);
+  
 
     return (
 
