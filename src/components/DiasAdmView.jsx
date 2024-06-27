@@ -3,10 +3,13 @@ import { Row, Table } from "react-bootstrap"
 
 function DiasAdmView({ diasAdm }) {
 
-    const {
-        maximoDias,
-        diasUsados
-    } = diasAdm;
+  const {
+    maximo,
+    usados,
+    saldo
+  } = diasAdm;
+
+   console.log(diasAdm);
 
     return (
 
@@ -25,9 +28,9 @@ function DiasAdmView({ diasAdm }) {
                 <tbody>
                         <tr >
                            
-                            <td>{maximoDias}</td>
-                            <td>{diasUsados}</td>
-                            <td>{maximoDias -  diasUsados}</td>
+                            <td>{maximo}</td>
+                            <td>{usados}</td>
+                            <td>{saldo}</td>
                            
                         </tr>
                    

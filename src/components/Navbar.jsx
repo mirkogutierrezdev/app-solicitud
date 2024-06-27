@@ -27,7 +27,7 @@ function CustomNavbar() {
                             <NavDropdown.Item href="#">Asitencia</NavDropdown.Item>
                         </NavDropdown>
                         <NavDropdown title="Solicitudes" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="#">Solicitud de Feriado Legal</NavDropdown.Item>
+                            <NavDropdown.Item href="/solicitudes">Solicitud de Feriado Legal</NavDropdown.Item>
                             <NavDropdown.Divider />
                             <NavDropdown.Item href="#">Asitencia</NavDropdown.Item>
                         </NavDropdown>

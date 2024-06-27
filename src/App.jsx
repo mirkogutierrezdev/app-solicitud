@@ -6,6 +6,7 @@ import LicenciasPage from './components/LicenciasPage';
 import { getAll } from './services/services';
 import HomePage from './components/HomePage';
 import FeriadosPage from './components/FeriadosPage';
+import SolicitudesPage from './components/SolicitudesPage';
 
 function App() {
     const [data, setData] = useState(null);
@@ -38,6 +39,7 @@ function App() {
                 <Route path="/ausencias" element={<AusenciasPage data={data} loadingAusencias={loadingData} error={error} />} />
                 <Route path="/licencias" element={<LicenciasPage data={data} loadingLicencias={loadingData} error={error} />} />
                 <Route path="/feriados" element={<FeriadosPage data={data} loadingLicencias={loadingData} error={error}/>} />
+                <Route path="/solicitudes" element={<SolicitudesPage  />} />
 
             </Routes>
         </Router>
