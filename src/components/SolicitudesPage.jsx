@@ -2,98 +2,66 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
-import { differenceInDays, parseISO } from 'date-fns';
 import AdmSolView from "./AdmSolView";
 import FeriadoSolView from "./FeriadoSolView";
-import {getDiasWork} from "../services/services"
+import { getDiasWork } from "../services/services";
+import Swal from "sweetalert2";
 
 function SolicitudesPage({ data }) {
-
     const currentYear = new Date().getFullYear();
 
     const adm = data ? data.diasAdm : [];
     const feriados = data ? data.feriados : [];
 
     const [option, setOption] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [diasWork,setDiasWork] = useState(0);
-
-     // Filtra los feriados para mostrar solo los del año actual
-     const filteredFeriados = feriados.filter(feriado => {
-        const feriadoYear = feriado.anio; // Asumiendo que cada feriado tiene un campo 'date'
-
-        return feriadoYear === currentYear;
-    });
-    
-
-    // Extrae los datos necesarios del primer objeto filtrado (asumiendo que hay solo uno por año)
-    const {
-        
-        diasPendientes
-    } = filteredFeriados.length > 0 ? filteredFeriados[0] : { totalDias: 0, diasTomados: 0, diasPendientes: 0 };
-
- 
+    const [startDate, setStartDate] = useState(getFormattedCurrentDate());
+    const [endDate, setEndDate] = useState(getFormattedCurrentDate());
 
     
+    const filteredFeriados = feriados.filter(feriado => feriado.anio === currentYear);
+
+    
+    const { diasPendientes } = filteredFeriados.length > 0 ? filteredFeriados[0] : { totalDias: 0, diasTomados: 0, diasPendientes: 0 };
+
     const handleOptionChange = (e) => {
         setOption(e.target.value);
-        //console.log("Option selected:", e.target.value);
+        console.log(option);
     };
 
     const handleStartDateChange = (e) => {
         setStartDate(e.target.value);
-        //console.log("Start Date:", e.target.value);
-        calculateDifference(e.target.value, endDate);
+      
     };
 
     const handleEndDateChange = (e) => {
         setEndDate(e.target.value);
-    //    console.log("End Date:", e.target.value);
-       // calculateDifference(startDate, e.target.value);
-        
     };
 
-    const validaDias = async (fechaIni, fechaFin) => {
-
+    const getDayWork = async (fechaIni, fechaFin) => {
         try {
-            const dias = await getDiasWork(fechaIni,fechaFin);
+            const dias = await getDiasWork(fechaIni, fechaFin);
 
-            setDiasWork(dias);
-   
-           if(diasWork>diasPendientes){
-            alert("muchsa dias");
-           }
-            
+            if (dias > diasPendientes) {
+                Swal.fire({
+                    text: "No puede tomarse mas dias que su saldo",
+                    icon: "warning"
+                  });
+            } else {
+                console.log(`Días válidos: ${dias}`);
+            }
         } catch (error) {
             console.log(error);
-            
-        }
-
-        
-
-        return null;
-    }
-
-
-
-    const calculateDifference = (start, end) => {
-        if (start && end) {
-            const startParsed = parseISO(start);
-            const endParsed = parseISO(end);
-            let diff = differenceInDays(endParsed, startParsed);
-
-            if (diff < 0) {
-                alert("La fecha de inicio no puede ser mayor que la fecha de término.")
-                console.log("La fecha de inicio no puede ser mayor que la fecha de término.");
-            } else {
-                if (diff === 0) {
-                    diff = 1;
-                }
-                console.log("Diferencia en días:", diff);
-            }
         }
     };
+
+    function getFormattedCurrentDate() {
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
     return (
         <>
@@ -106,7 +74,7 @@ function SolicitudesPage({ data }) {
                         <AdmSolView diasAdm={adm} />
                     </Col>
                     <Col>
-                        <FeriadoSolView feriados={feriados} />
+                        <FeriadoSolView feriados={filteredFeriados} />
                     </Col>
                 </Row>
                 <Row>
@@ -150,12 +118,8 @@ function SolicitudesPage({ data }) {
                             />
                         </Form.Group>
                     </Col>
-                    <Col md={3} className="mt-3" >
-                   
-                            <Button className="mt-3"
-                            onClick={()=>validaDias(startDate,endDate)}
-                            >Validar</Button>
-                      
+                    <Col md={3} className="mt-3">
+                        <Button className="mt-3" onClick={() => getDayWork(startDate, endDate)}>Validar</Button>
                     </Col>
                 </Row>
             </Container>
