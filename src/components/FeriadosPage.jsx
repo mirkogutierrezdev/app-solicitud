@@ -3,14 +3,12 @@ import { Col, Container, Row } from "react-bootstrap"
 import FeriadosView from "./FeriadosView"
 import DiasAdmView from "./DiasAdmView";
 
-function FeriadosPage({data}) {
+function FeriadosPage({ data }) {
+
     const feriados = data ? data.feriados : [];
     const adm = data ? data.diasAdm : [];
 
-  
-
     return (
-
         <Container className="mt-3">
             <Row>
                 <Col>
@@ -22,14 +20,8 @@ function FeriadosPage({data}) {
                     <DiasAdmView diasAdm={adm} />
                 </Col>
             </Row>
-
-
         </Container>
-
-
     )
-
-
 }
 
 export default FeriadosPage

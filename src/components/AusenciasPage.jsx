@@ -4,12 +4,12 @@ import AusenciasView from './AusenciasView';
 
 
 function AusenciasPage({ data, loadingAusencias, error }) {
+
     const ausencias = data ? data.ausencias : [];
-    
+
 
     return (
         <Container className="mt-3">
-           
             <Row>
                 <Col md={12}>
                     {loadingAusencias ? (

@@ -13,7 +13,6 @@ function CustomNavbar() {
                         className="d-inline-block align-top"
                         alt="React Bootstrap logo"
                     />
-
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
@@ -28,7 +27,7 @@ function CustomNavbar() {
                         </NavDropdown>
                         <NavDropdown title="Solicitudes y permisos" id="basic-nav-dropdown">
                             <NavDropdown.Item href="/solicitudes">Solicitar</NavDropdown.Item>
-                          
+
                         </NavDropdown>
                         <Nav.Link disabled>Disabled</Nav.Link>
                     </Nav>

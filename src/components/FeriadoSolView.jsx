@@ -3,7 +3,7 @@ import { Table } from "react-bootstrap";
 
 // eslint-disable-next-line react/prop-types
 function FeriadoSolView({ feriados }) {
-   
+
 
     const currentYear = new Date().getFullYear();
 
@@ -13,7 +13,7 @@ function FeriadoSolView({ feriados }) {
 
         return feriadoYear === currentYear;
     });
-    
+
 
     // Extrae los datos necesarios del primer objeto filtrado (asumiendo que hay solo uno por año)
     const {
@@ -33,7 +33,6 @@ function FeriadoSolView({ feriados }) {
             </thead>
             <tbody>
                 <tr >
-
                     <td>{totalDias}</td>
                     <td>{diasTomados}</td>
                     <td>{diasPendientes}</td>
@@ -46,7 +45,6 @@ function FeriadoSolView({ feriados }) {
             </tbody>
         </Table>
     )
-
 }
 
 export default FeriadoSolView;

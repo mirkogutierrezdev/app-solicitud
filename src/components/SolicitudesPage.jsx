@@ -16,9 +16,6 @@ function SolicitudesPage({ data }) {
     const depto = data ? data.departamento : [];
 
     const {jefe_departamento} = depto;
-
-    
-
     const [option, setOption] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -26,7 +23,6 @@ function SolicitudesPage({ data }) {
     const [diasUsar, setDiasUsar] = useState(0);
     const [maxEndDate, setMaxEndDate] = useState('');
     const [jefe,setJefe] = useState('');
-
     const filteredFeriados = feriados.filter(feriado => feriado.anio === currentYear);
     const { diasPendientes } = filteredFeriados.length > 0 ? filteredFeriados[0] : { totalDias: 0, diasTomados: 0, diasPendientes: 0 };
 
@@ -42,8 +38,6 @@ function SolicitudesPage({ data }) {
             setEndDate('');
         }
     };
-
-    
 
     const handleStartDateChange = (e) => {
         setStartDate(e.target.value);

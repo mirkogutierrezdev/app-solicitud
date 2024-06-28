@@ -94,7 +94,6 @@ function AusenciasView({ ausencias }) {
                     </Form.Select>
                     <Form.Text muted>Selecciona un año para filtrar las ausencias.</Form.Text>
                 </Form.Group>
-
                 <Tabs
                     defaultActiveKey="all"
                     id="ausencias-tabs"
@@ -106,7 +105,6 @@ function AusenciasView({ ausencias }) {
                         <Tab key={index} eventKey={desc} title={desc} />
                     ))}
                 </Tabs>
-
                 <Table striped bordered hover>
                     <thead>
                         <tr>
@@ -135,7 +133,6 @@ function AusenciasView({ ausencias }) {
                         ))}
                     </tbody>
                 </Table>
-
                 <Pagination>
                     {Array.from({ length: Math.ceil(filteredAusencias.length / itemsPerPage) }, (_, index) => (
                         <Pagination.Item key={index + 1} active={index + 1 === currentPage} onClick={() => handlePageChange(index + 1)}>
