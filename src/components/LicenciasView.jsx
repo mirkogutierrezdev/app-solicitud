@@ -26,7 +26,6 @@ function LicenciasView({ licencias }) {
 
     const handleRowClick = (licencia) => {
         setSelectedLicencia({ ...licencia });
-
     };
 
     useEffect(() => {
@@ -94,9 +93,9 @@ function LicenciasView({ licencias }) {
                                         <tr key={index} onClick={() => handleRowClick(licencia.detalleLM)}>
                                             <td>{index + 1}</td>
                                             <td>{licencia.numlic}</td>
-                                            <td>{licencia.fechaInicio}</td>
-                                            <td>{licencia.fechaEmision}</td>
-                                            <td>{licencia.fechaRecepcion}</td>
+                                            <td>{formatDate(licencia.fechaInicio)}</td>
+                                            <td>{formatDate(licencia.fechaEmision)}</td>
+                                            <td>{formatDate(licencia.fechaRecepcion)}</td>
                                             <td>{licencia.diasLic}</td>
                                         </tr>
                                     ))
@@ -126,3 +125,11 @@ function LicenciasView({ licencias }) {
 }
 
 export default LicenciasView;
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}

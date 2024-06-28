@@ -67,6 +67,14 @@ function AusenciasView({ ausencias }) {
         return null; // O manejar un estado de carga aquí si es necesario
     }
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+
     return (
         <>
             <h2 className="mt-4 mb-3 text-center">Información de Ausencias</h2>
@@ -120,8 +128,8 @@ function AusenciasView({ ausencias }) {
                         {paginatedAusencias.map((ausencia, index) => (
                             <tr key={index}>
                                 <td>{ausencia.descripcion}</td>
-                                <td>{ausencia.fecha_inicio}</td>
-                                <td>{ausencia.fecha_termino}</td>
+                                <td>{formatDate(ausencia.fecha_inicio)}</td>
+                                <td>{formatDate(ausencia.fecha_termino)}</td>
                                 <td>{ausencia.dias_ausencia}</td>
                             </tr>
                         ))}

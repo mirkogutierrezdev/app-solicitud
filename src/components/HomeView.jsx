@@ -19,6 +19,7 @@ function HomeView({ funcionario }) {
 
     const {
         rut,
+        vrut,
         nombres,
         apellidopaterno,
         apellidomaterno,
@@ -27,6 +28,8 @@ function HomeView({ funcionario }) {
         contrato,
         departamento,
     } = funcionario;
+
+    console.log(vrut);
 
     if (!contrato || !departamento) {
         return (
@@ -50,7 +53,8 @@ function HomeView({ funcionario }) {
                         apellidopaterno={apellidopaterno}
                         apellidomaterno={apellidomaterno}
                         fecha_nac={fecha_nac}
-                        area={area} />
+                        area={area}
+                        vrut={vrut} />
                     <CardContrato contrato={contrato} />
                     <CardDepartamento departamento={departamento} />
                 </Col>

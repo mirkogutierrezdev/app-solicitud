@@ -24,12 +24,11 @@ function CustomNavbar() {
                             <NavDropdown.Item href="/feriados">Feriados y Administrativos</NavDropdown.Item>
                             <NavDropdown.Item href="/licencias">Licencias Medicas</NavDropdown.Item>
                             <NavDropdown.Divider />
-                            <NavDropdown.Item href="#">Asitencia</NavDropdown.Item>
+                            <NavDropdown.Item href="#">Asistencia</NavDropdown.Item>
                         </NavDropdown>
-                        <NavDropdown title="Solicitudes" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/solicitudes">Solicitud de Feriado Legal</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#">Asitencia</NavDropdown.Item>
+                        <NavDropdown title="Solicitudes y permisos" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/solicitudes">Solicitar</NavDropdown.Item>
+                          
                         </NavDropdown>
                         <Nav.Link disabled>Disabled</Nav.Link>
                     </Nav>

@@ -2,7 +2,6 @@
 import { Card, Col, Row } from "react-bootstrap";
 
 function CardContrato({ contrato }) {
-
     const {
         fechainicio,
         fechatermino,
@@ -10,6 +9,9 @@ function CardContrato({ contrato }) {
         grado,
         nombrecontrato
     } = contrato;
+
+    const formattedFechaInicio = formatDate(fechainicio);
+    const formattedFechaTermino = formatDate(fechatermino);
 
     return (
         <Card className="shadow rounded mb-4">
@@ -19,8 +21,8 @@ function CardContrato({ contrato }) {
             <Card.Body>
                 <Row>
                     <Col md={6}>
-                        <p><strong>Inicio Contrato:</strong> {fechainicio}</p>
-                        <p><strong>Término Contrato:</strong> {fechatermino}</p>
+                        <p><strong>Inicio Contrato:</strong> {formattedFechaInicio}</p>
+                        <p><strong>Término Contrato:</strong> {formattedFechaTermino}</p>
                         <p><strong>Grado:</strong> {grado}</p>
                     </Col>
                     <Col md={6}>
@@ -30,7 +32,15 @@ function CardContrato({ contrato }) {
                 </Row>
             </Card.Body>
         </Card>
-    )
+    );
 }
 
 export default CardContrato;
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}
