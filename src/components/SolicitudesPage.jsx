@@ -7,7 +7,6 @@ import FeriadoSolView from "./FeriadoSolView";
 import DetalleSolView from "./DetallaSolView";
 import { getDiasWork } from "../services/services";
 
-
 function SolicitudesPage({ data }) {
     const currentYear = new Date().getFullYear();
 
@@ -15,14 +14,15 @@ function SolicitudesPage({ data }) {
     const feriados = data ? data.feriados : [];
     const depto = data ? data.departamento : [];
 
-    const {jefe_departamento} = depto;
+    const { jefe_departamento } = depto;
     const [option, setOption] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [diasWork, setDiasWork] = useState(0);
     const [diasUsar, setDiasUsar] = useState(0);
     const [maxEndDate, setMaxEndDate] = useState('');
-    const [jefe,setJefe] = useState('');
+    const [jefe, setJefe] = useState('');
+
     const filteredFeriados = feriados.filter(feriado => feriado.anio === currentYear);
     const { diasPendientes } = filteredFeriados.length > 0 ? filteredFeriados[0] : { totalDias: 0, diasTomados: 0, diasPendientes: 0 };
 
@@ -34,8 +34,7 @@ function SolicitudesPage({ data }) {
             setStartDate(getFormattedCurrentDate());
             setEndDate(getFormattedCurrentDate());
         } else {
-            setStartDate('');
-            setEndDate('');
+            resetAllValues();
         }
     };
 
@@ -54,8 +53,7 @@ function SolicitudesPage({ data }) {
                     const dias = await getDiasWork(startDate, endDate);
                     setDiasWork(dias);
                     setDiasUsar(diasPendientes - dias);
-                    setJefe(jefe_departamento)
-                    
+                    setJefe(jefe_departamento);
                 } catch (error) {
                     console.log(error);
                 }
@@ -94,6 +92,15 @@ function SolicitudesPage({ data }) {
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
+    }
+
+    function resetAllValues() {
+        setStartDate('');
+        setEndDate('');
+        setDiasWork(0);
+        setDiasUsar(0);
+        setMaxEndDate('');
+        setJefe('');
     }
 
     return (
