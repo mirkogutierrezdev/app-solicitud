@@ -6,7 +6,7 @@ import DetalleLmView from './DetalleLmView';
 const initialDetails = {
     diasPago: 0,
     fechaFin: "",
-    fechaInico: "",
+    fechaInicio: "",
     imponiblePromedio: 0,
     imposicionesPromedio: 0,
     liquidoPromedio: 0,
@@ -118,7 +118,12 @@ function LicenciasView({ licencias }) {
                 </Card>
             </Col>
             <Col lg={4}>
-                <DetalleLmView detalle={selectedLicencia} />
+                <Card className="mb-4">
+                    <Card.Body>
+                        <h5 className="text-center mb-3">Detalle de Licencia Médica</h5>
+                        <DetalleLmView detalle={selectedLicencia} />
+                    </Card.Body>
+                </Card>
             </Col>
         </Row>
     );

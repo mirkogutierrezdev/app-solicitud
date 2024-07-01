@@ -1,0 +1,29 @@
+.home-tab-container {
+  background-color: #004080;
+  /* Fondo azul más oscuro */
+  border-radius: 50px;
+  /* Radio para dar forma de píldora */
+
+  margin: 20px auto;
+  /* Margen automático para centrar */
+}
+
+.home-tab-button {
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 16px;
+  /* Tamaño de fuente */
+  width: 250px;
+  /* Ancho fijo para todos los botones */
+  height: 50px;
+  text-align: center;
+  /* Centrar el texto */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-tab-button:hover {
+  background-color: #053363 !important;
+  /* Azul */
+  color: white !important;
+}

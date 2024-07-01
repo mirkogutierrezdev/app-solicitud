@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import { Container, Row, Col, Alert } from 'react-bootstrap';
 import CardFuncionario from './CardFuncionario';
-import CardContrato from './CardContrato';
-import CardDepartamento from './CardDepartamento';
+//import CardContrato from './CardContrato';
+//import CardDepartamento from './CardDepartamento';
 
 function HomeView({ funcionario }) {
     if (!funcionario) {
@@ -29,7 +29,7 @@ function HomeView({ funcionario }) {
         departamento,
     } = funcionario;
 
-    console.log(vrut);
+
 
     if (!contrato || !departamento) {
         return (
@@ -44,7 +44,7 @@ function HomeView({ funcionario }) {
     }
 
     return (
-        <Container fluid className="mt-4">
+        <Container  className="mt-4">
             <Row className="justify-content-center">
                 <Col md={10}>
                     <CardFuncionario
@@ -54,9 +54,12 @@ function HomeView({ funcionario }) {
                         apellidomaterno={apellidomaterno}
                         fecha_nac={fecha_nac}
                         area={area}
-                        vrut={vrut} />
-                    <CardContrato contrato={contrato} />
-                    <CardDepartamento departamento={departamento} />
+                        vrut={vrut} 
+                        contrato={contrato}
+                        departamento={departamento}
+                        
+                        />
+                   
                 </Col>
             </Row>
         </Container>

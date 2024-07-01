@@ -5,11 +5,11 @@ function FeriadosView({ feriados }) {
     return (
         <Container className="mt-4">
             <Row className="justify-content-center">
-                <h2 className="text-center mb-4">Información de Feriados</h2>
+                <h2 className="text-center mb-4" style={{ color: '#007BFF' }}>Información de Feriados</h2>
             </Row>
             <Row>
                 <Table responsive bordered striped className="text-center">
-                    <thead className="table-dark">
+                    <thead style={{ backgroundColor: '#CEE3F6', color: '#007BFF' }}>
                         <tr>
                             <th>#</th>
                             <th>Año</th>

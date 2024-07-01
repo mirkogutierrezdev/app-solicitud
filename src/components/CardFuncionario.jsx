@@ -1,29 +1,34 @@
 /* eslint-disable react/prop-types */
-import { Card, Col, Row } from "react-bootstrap";
+import { Card, Col, Row, Image } from "react-bootstrap";
 
-function CardFuncionario({ rut, nombres, apellidopaterno, apellidomaterno, fecha_nac, area,vrut }) {
+function CardFuncionario({ nombres, apellidopaterno, apellidomaterno, contrato, departamento }) {
+    const { escalafon, grado, nombrecontrato } = contrato;
+    const {nombre_departamento,jefe_departamento} = departamento;
+
+    const capitalize = (str) => {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    };
 
     return (
-
-        <Card className="shadow rounded mb-4">
-            <Card.Header className="bg-primary text-white text-center">
-                Datos Personales
-            </Card.Header>
+        <Card className="rounded mb-4">
             <Card.Body>
-                <Row>
-                    <Col md={6}>
-                        <p><strong>RUT:</strong> {rut}-{vrut}</p>
-                        <p><strong>Nombres:</strong> {nombres}</p>
-                        <p><strong>Apellidos:</strong> {`${apellidopaterno} ${apellidomaterno}`}</p>
+                <Row className="align-items-center">
+                    <Col md={4} className="text-center">
+                        <Image src="/src/img/yo.jpg" roundedCircle fluid style={{ width: '120px', height: '120px' }} />
                     </Col>
-                    <Col md={6}>
-                        <p><strong>Fecha de Nacimiento:</strong> {fecha_nac}</p>
-                        <p><strong>Área:</strong> {area}</p>
+                    <Col md={8}>
+                        <h3>{capitalize(nombres)} {capitalize(apellidopaterno)} {capitalize(apellidomaterno)}</h3>
+                        <h5>{capitalize(nombrecontrato)}</h5>
+                        <h5>{capitalize(escalafon)} Grado {grado}</h5>
+                        <h5>{capitalize(nombre_departamento)} </h5>
+                        <h5>Jefe Directo : {capitalize(jefe_departamento)} </h5>
+
+
                     </Col>
                 </Row>
             </Card.Body>
         </Card>
-    )
+    );
 }
 
 export default CardFuncionario;

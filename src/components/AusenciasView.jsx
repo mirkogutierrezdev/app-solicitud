@@ -78,14 +78,13 @@ function AusenciasView({ ausencias }) {
     return (
         <>
             <h2 className="mt-4 mb-3 text-center">Información de Ausencias</h2>
-            <div className="container text-start mt-3">
+            <div className="container mt-3">
                 <Form.Group controlId="yearFilter" className="mb-3">
                     <Form.Label>Filtrar por año:</Form.Label>
                     <Form.Select
                         value={selectedYear}
                         onChange={(e) => handleYearFilter(e.target.value)}
                         size="sm"
-                        style={{ width: `${selectedYear.length + 7}ch` }}
                     >
                         <option value="all">Todos los años</option>
                         {uniqueYears.map((year, index) => (
@@ -105,7 +104,7 @@ function AusenciasView({ ausencias }) {
                         <Tab key={index} eventKey={desc} title={desc} />
                     ))}
                 </Tabs>
-                <Table striped bordered hover>
+                <Table striped bordered hover responsive>
                     <thead>
                         <tr>
                             <th onClick={() => handleSort('descripcion')} style={{ cursor: 'pointer' }}>
@@ -133,7 +132,7 @@ function AusenciasView({ ausencias }) {
                         ))}
                     </tbody>
                 </Table>
-                <Pagination>
+                <Pagination className="justify-content-center">
                     {Array.from({ length: Math.ceil(filteredAusencias.length / itemsPerPage) }, (_, index) => (
                         <Pagination.Item key={index + 1} active={index + 1 === currentPage} onClick={() => handlePageChange(index + 1)}>
                             {index + 1}
