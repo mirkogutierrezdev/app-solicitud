@@ -2,7 +2,7 @@
 
 export const getAll = async () => {
 
-    const url = `http://localhost:8080/api/buscar/10067570`;
+    const url = `http://localhost:8081/smc/buscar/10691840`;
 
     try {
         const response = await fetch(url);
