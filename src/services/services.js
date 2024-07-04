@@ -2,7 +2,7 @@
 
 export const getAll = async () => {
 
-    const url = `http://localhost:8081/smc/buscar/19280310`;
+    const url = `http://localhost:8081/smc/buscar/18609631`;
 
     try {
         const response = await fetch(url);
@@ -19,8 +19,6 @@ export const getAll = async () => {
     return null;
 
 }
-
-
 
 
 export const getDiasWork = async (fechaIni, fechaFin) => {
@@ -108,45 +106,20 @@ export const getSolicitudesDepto = async (depto) => {
 }
 
 
-export const getPersona = async (rut) => {
-
-    const url = `http://localhost:8080/api/persona/buscar/${rut}`;
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const result = await response.json();
-        return result;
-
-    } catch (error) {
-        console.error(error)
-    }
-
-    return null;
-
-}
-
 export const getSolicitudesRut = async (rut) => {
-
-    const url = `http://localhost:8081/api/solicitudesPorRut/${rut}`;
-
     try {
-        const response = await fetch(url);
+        const response = await fetch(`http://localhost:8081/api/solicitudesPorRut/${rut}`);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        const result = await response.json();
-        return result;
-
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error(error)
+        console.error("Error fetching data:", error);
+        throw error;
     }
+};
 
-    return null;
-
-}
 
 
 

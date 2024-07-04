@@ -1,5 +1,5 @@
 import { Container, Row, Col, Card, Table, Button } from 'react-bootstrap';
-import { getSolicitudesDepto, getPersona } from '../services/services'; // Asegúrate de tener esta función en tu servicio
+import { getSolicitudesDepto } from '../services/services'; // Asegúrate de tener esta función en tu servicio
 import { useContext, useEffect, useState } from 'react';
 import DataContext from '../context/DataContext';
 
@@ -8,39 +8,14 @@ const InboxSolicitudes = () => {
     const depto = data ? data.departamento.depto : 0;
 
     const [dataSol, setDataSol] = useState([]);
-    const [dataPerson, setDataPerson] = useState([]);
-
-    const fetchPersonData = async (rut) => {
-        try {
-            
-            const result = await getPersona(rut); // Asegúrate de tener esta función en tu servicio
-            
-            return result;
-        } catch (error) {
-            console.error(`Error fetching person data for RUT ${rut}:`, error);
-            return null;
-        }
-    };
+   
+  
 
     const fetchData = async () => {
         try {
             const solicitudes = await getSolicitudesDepto(depto);
-            
-
-            const personas = await Promise.all(solicitudes.map(async (solicitud) => {
-                const rut = solicitud?.rut;
-            
-                if (rut) {
-                    return await fetchPersonData(rut);
-                } else {
-            
-                    return null; // o algún valor predeterminado
-                }
-            }));
-
-            
             setDataSol(solicitudes);
-            setDataPerson(personas);
+
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -84,7 +59,7 @@ const InboxSolicitudes = () => {
                                                 <td>{solicitud.solicitudId}</td>
                                                 <td>{solicitud.nombreSolicitud}</td>
                                                 <td>
-                                                    {dataPerson[index]?.nombres} {dataPerson[index]?.apellidopaterno} {dataPerson[index]?.apellidomaterno}
+                                                    {solicitud.nombre}
                                                 </td>
                                                 <td>{new Date(solicitud.fechaSolicitud).toLocaleDateString()}</td>
                                                 <td>{solicitud.nombreEstado}</td>
