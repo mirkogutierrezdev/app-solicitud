@@ -68,6 +68,7 @@ const Sidebar = () => {
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu style={{ backgroundColor: '#003366', border: 'none' }}>
+                            <Dropdown.Item onClick={handleClose} href='/mis-solicitudes' style={{ color: 'white', backgroundColor: 'transparent' }}>Mis solicitudes</Dropdown.Item>
                                 <Dropdown.Item onClick={handleClose} href='/solicitudes' style={{ color: 'white', backgroundColor: 'transparent' }}>Feriados y Administrativos</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>

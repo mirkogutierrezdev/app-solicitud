@@ -2,7 +2,7 @@
 
 export const getAll = async () => {
 
-    const url = `http://localhost:8081/smc/buscar/10691840`;
+    const url = `http://localhost:8081/smc/buscar/19280310`;
 
     try {
         const response = await fetch(url);
@@ -127,6 +127,27 @@ export const getPersona = async (rut) => {
     return null;
 
 }
+
+export const getSolicitudesRut = async (rut) => {
+
+    const url = `http://localhost:8081/api/solicitudesPorRut/${rut}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    return null;
+
+}
+
 
 
 
