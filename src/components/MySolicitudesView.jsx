@@ -47,11 +47,11 @@ function MySolicitudesView() {
     return (
         <Container className="mt-4">
             <div>
-                <h2>Mis solicitudes</h2>
+                <h2 className="text-center">Mis solicitudes</h2>
                 {solicitudes.length === 0 ? (
                     <div>No hay registros</div> // Mostrar mensaje cuando no hay registros
                 ) : (
-                    <Table striped bordered hover>
+                    <Table striped bordered hover className="mt-3">
                         <thead>
                             <tr>
                                 <th>ID Solicitud</th>
