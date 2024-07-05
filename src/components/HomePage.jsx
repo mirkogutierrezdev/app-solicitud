@@ -19,7 +19,7 @@ function HomePage({ data, loadingData, error }) {
           ) : data ? (
             <HomeView funcionario={data} />
           ) : (
-            <Alert variant="warning">No data available.</Alert>
+            <Alert variant="warning">Funcionario no registra información o no tiene un contrato vigente</Alert>
           )}
         </Col>
       </Row>
