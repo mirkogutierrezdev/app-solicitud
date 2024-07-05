@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { Container, Table, Alert } from "react-bootstrap";
+import React, { useContext, useEffect, useState } from "react";
+import { Container, Table, Alert, Button, Collapse } from "react-bootstrap";
 import DataContext from "../context/DataContext";
 import { getSolicitudesRut } from "../services/services";
 
@@ -10,6 +10,10 @@ function MySolicitudesView() {
     const [solicitudes, setSolicitudes] = useState([]);
     const [loading, setLoading] = useState(true); // Estado para manejar la carga de datos
     const [error, setError] = useState(null); // Estado para manejar errores
+    const [openSolicitudId, setOpenSolicitudId] = useState(null); // Estado para la solicitud abierta
+
+
+    console.log(solicitudes);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchData = async () => {
@@ -31,6 +35,10 @@ function MySolicitudesView() {
             setLoading(false); // Establecer loading a false si no hay rut
         }
     }, [fetchData, rut]);
+
+    const handleToggleCollapse = (solicitudId) => {
+        setOpenSolicitudId(openSolicitudId === solicitudId ? null : solicitudId);
+    };
 
     if (loading) {
         return <div>Loading...</div>; // Mostrar mensaje de carga mientras se obtienen los datos
@@ -59,17 +67,46 @@ function MySolicitudesView() {
                                 <th>Nombre Solicitud</th>
                                 <th>Nombre Estado</th>
                                 <th>Comentarios</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {solicitudes.map((solicitud) => (
-                                <tr key={solicitud.solicitudId}>
-                                    <td>{solicitud.solicitudId}</td>
-                                    <td>{solicitud.fechaSolicitud}</td>
-                                    <td>{solicitud.nombreSolicitud}</td>
-                                    <td>{solicitud.nombreEstado}</td>
-                                    <td>{solicitud.comentarios}</td>
-                                </tr>
+                                <React.Fragment key={solicitud.solicitudId}>
+                                    <tr>
+                                        <td>{solicitud.solicitudId}</td>
+                                        <td>{solicitud.fechaSolicitud}</td>
+                                        <td>{solicitud.nombreSolicitud}</td>
+                                        <td>{solicitud.nombreEstado}</td>
+                                        <td>{solicitud.comentarios}</td>
+                                        <td>
+                                            <Button
+                                                variant="info"
+                                                size="sm"
+                                                className="me-2"
+                                                onClick={() => handleToggleCollapse(solicitud.solicitudId)}
+                                                aria-controls={`collapse-${solicitud.solicitudId}`}
+                                                aria-expanded={openSolicitudId === solicitud.solicitudId}
+                                            >
+                                                {openSolicitudId === solicitud.solicitudId ? 'Ocultar' : 'Ver'}
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="6" style={{ padding: 0 }}>
+                                            <Collapse in={openSolicitudId === solicitud.solicitudId}>
+                                                <div id={`collapse-${solicitud.solicitudId}`} style={{ padding: '1rem' }}>
+                                                    <p><strong>ID Solicitud:</strong> {solicitud.solicitudId}</p>
+                                                    <p><strong>Fecha Solicitud:</strong> {solicitud.fechaSolicitud}</p>
+                                                    <p><strong>Nombre Solicitud:</strong> {solicitud.nombreSolicitud}</p>
+                                                    <p><strong>Nombre Estado:</strong> {solicitud.nombreEstado}</p>
+                                                    <p><strong>Comentarios de solicitud:</strong> {solicitud.comentarios}</p>
+                                                    {/* Agrega más detalles aquí según sea necesario */}
+                                                </div>
+                                            </Collapse>
+                                        </td>
+                                    </tr>
+                                </React.Fragment>
                             ))}
                         </tbody>
                     </Table>
