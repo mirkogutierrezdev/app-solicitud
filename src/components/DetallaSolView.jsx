@@ -15,11 +15,13 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
     const departamento = data ? data.departamento : "";
     const rut = data ? data.rut : 0;
 
-    const { depto } = departamento;
+    const { depto, nombre_departamento } = departamento;
 
     const currentDate = new Date(); // Obtiene la fecha y hora actuales
 
     const currentDateString = currentDate.toISOString().slice(0, 10);
+
+
 
     const handlerClick = async () => {
         const solicitud = {
@@ -30,6 +32,7 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
             tipoSolicitud: option,
             estado: estado,
             depto: depto,
+            nombre_departamento: nombre_departamento,
             fechaDer: currentDateString
         };
 
@@ -40,8 +43,8 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
                 text: result.message,
                 icon: "success"
             });
-          
-          
+
+
         } catch (error) {
             console.error('Error al guardar la solicitud:', error);
         }

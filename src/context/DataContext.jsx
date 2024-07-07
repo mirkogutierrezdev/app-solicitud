@@ -9,6 +9,8 @@ const DataContext = createContext(null);
 export const DataProvider = ({ children }) => {
   const [data, setData] = useState(null);
 
+
+
   useEffect(() => {
     fetchData();
   }, []);

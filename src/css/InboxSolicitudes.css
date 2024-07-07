@@ -1,0 +1,10 @@
+.unread-row {
+    background-color: #e2e3e5;
+    /* Color de fondo para filas no leídas */
+    font-weight: bold;
+}
+
+.read-row {
+    background-color: #ffffff;
+    /* Color de fondo para filas leídas */
+}

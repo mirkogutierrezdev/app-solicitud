@@ -2,7 +2,7 @@
 
 export const getAll = async () => {
 
-    const url = `http://localhost:8081/smc/buscar/18609631`;
+    const url = `http://localhost:8081/smc/buscar/6814340 `;
 
     try {
         const response = await fetch(url);
@@ -49,11 +49,13 @@ export const saveSolicitud = async (solicitud) => {
             },
             body: JSON.stringify(solicitud)
         });
-        
+
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            const errorData = await response.json(); // Intenta obtener el mensaje de error del servidor
+            const errorMessage = errorData.message || 'Network response was not ok';
+            throw new Error(errorMessage);
         }
-        
+
         const result = await response.json();
         return result;
 
@@ -62,6 +64,7 @@ export const saveSolicitud = async (solicitud) => {
         return null;
     }
 };
+
 
 
 export const getSolicitudes = async () => {
@@ -120,6 +123,25 @@ export const getSolicitudesRut = async (rut) => {
     }
 };
 
+export const getSolicitudesNoLeidas = async (depto) => {
+
+    const url = `http://localhost:8081/api/solNoLeidas/${depto}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    return null;
+
+}
 
 
 

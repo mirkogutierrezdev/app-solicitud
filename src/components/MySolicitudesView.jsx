@@ -13,7 +13,7 @@ function MySolicitudesView() {
     const [openSolicitudId, setOpenSolicitudId] = useState(null); // Estado para la solicitud abierta
 
 
-    console.log(solicitudes);
+
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchData = async () => {
