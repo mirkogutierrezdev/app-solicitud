@@ -5,17 +5,15 @@ import { getSolicitudesRut } from "../services/services";
 
 function MySolicitudesView() {
     const data = useContext(DataContext);
-    const rut = data ? data.rut : ""; // Asumiendo que data contiene el rut necesario para obtener las solicitudes
+    const rut = data ? data.data.rut : ""; // Asumiendo que data contiene el rut necesario para obtener las solicitudes
+    console.log("DataContext data:", data); // Verificar el contenido de data
+    console.log("Extracted rut:", rut); // Verificar el valor extraído de rut
 
     const [solicitudes, setSolicitudes] = useState([]);
     const [loading, setLoading] = useState(true); // Estado para manejar la carga de datos
     const [error, setError] = useState(null); // Estado para manejar errores
     const [openSolicitudId, setOpenSolicitudId] = useState(null); // Estado para la solicitud abierta
 
-
-
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchData = async () => {
         try {
             const dataSol = await getSolicitudesRut(rut);
@@ -34,7 +32,7 @@ function MySolicitudesView() {
         } else {
             setLoading(false); // Establecer loading a false si no hay rut
         }
-    }, [fetchData, rut]);
+    }, [rut]); // Dependencia en rut
 
     const handleToggleCollapse = (solicitudId) => {
         setOpenSolicitudId(openSolicitudId === solicitudId ? null : solicitudId);
@@ -59,7 +57,7 @@ function MySolicitudesView() {
                 {solicitudes.length === 0 ? (
                     <div>No hay registros</div> // Mostrar mensaje cuando no hay registros
                 ) : (
-                    <Table striped bordered hover className="mt-3">
+                    <Table bordered hover className="mt-3">
                         <thead>
                             <tr>
                                 <th>ID Solicitud</th>
@@ -101,7 +99,7 @@ function MySolicitudesView() {
                                                     <p><strong>Nombre Solicitud:</strong> {solicitud.nombreSolicitud}</p>
                                                     <p><strong>Nombre Estado:</strong> {solicitud.nombreEstado}</p>
                                                     <p><strong>Comentarios de solicitud:</strong> {solicitud.comentarios}</p>
-                                                    {/* Agrega más detalles aquí según sea necesario */}
+
                                                 </div>
                                             </Collapse>
                                         </td>

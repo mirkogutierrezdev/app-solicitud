@@ -8,3 +8,15 @@
     background-color: #ffffff;
     /* Color de fondo para filas leídas */
 }
+
+.inbox-container {
+    margin-top: 20px;
+    margin-left: 30px;
+    /* Ajusta el margen superior según sea necesario */
+}
+
+/* Estilo para la tabla dentro del Card */
+.card-body {
+    overflow-x: auto;
+    /* Agrega barra de desplazamiento horizontal si es necesario */
+}

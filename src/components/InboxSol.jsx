@@ -1,22 +1,19 @@
-import { Container, Row, Col, Card, Table, Button } from 'react-bootstrap';
-import { getSolicitudesDepto } from '../services/services'; // Asegúrate de tener esta función en tu servicio
 import { useContext, useEffect, useState } from 'react';
+import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap';
+import { getSolicitudesDepto, saveEntrada, updateDerivacion } from '../services/services';
 import DataContext from '../context/DataContext';
+import InboxSolGrid from './InboxSolGrid';
+import InboxSolModal from './InboxSolModal';
 import '../css/InboxSolicitudes.css';
 
-
-
-const InboxSolicitudes = () => {
-    const data = useContext(DataContext);
+const InboxSol = () => {
+    // eslint-disable-next-line no-unused-vars
+    const { data, setNoLeidas } = useContext(DataContext);
     const depto = data ? data.departamento.depto : 0;
 
     const [dataSol, setDataSol] = useState([]);
-
-    const [noLeidas, setNoLeidas] = useState(0);
-
-
-
-
+    const [showModal, setShowModal] = useState(false);
+    const [selectedSolicitud, setSelectedSolicitud] = useState(null);
 
     const fetchData = async () => {
         try {
@@ -29,79 +26,97 @@ const InboxSolicitudes = () => {
 
     useEffect(() => {
         fetchData(); // Llamada inicial al montar el componente
+    }, [depto, data]);
 
+    const handleShowModal = (solicitud) => {
+        setSelectedSolicitud(solicitud);
+        const { derivacionId, solicitudId } = solicitud;
+        updateDerivacion(derivacionId, solicitudId, true)
+            .then(() => {
+                // Actualizar el estado de la solicitud después de marcar como leída
+                setDataSol(prevDataSol =>
+                    prevDataSol.map(item =>
+                        item.solicitudId === solicitudId
+                            ? { ...item, leida: true }
+                            : item
+                    )
+                );
+                setShowModal(true);
+            })
+            .catch(error => console.error('Error actualizando derivacion:', error));
+    };
 
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setSelectedSolicitud(null);
+    };
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [depto, data]); // Se ejecuta cada vez que 'depto' cambia
+    const handleDerivar = () => {
+        // Lógica para derivar la solicitud
+        handleCloseModal();
+    };
 
-    useEffect(() => {
-        // Calcular la cantidad de no leídas
-        const cantidadNoLeidas = dataSol.reduce((acc, object) => {
-            return !object.leida ? acc + 1 : acc;
-        }, 0);
-        setNoLeidas(cantidadNoLeidas);
-    }, [dataSol]); // Ejecutar cuando dataSol cambie
+    const handleSave = ({ solicitudId, funcionarioId, derivacionId }) => {
 
-    console.log(noLeidas);
+        const obtenerFechaActual = () => {
+            const fechaActual = new Date();
+            const año = fechaActual.getFullYear();
+            const mes = String(fechaActual.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
+            const dia = String(fechaActual.getDate()).padStart(2, '0');
 
+            const fechaFormateada = `${año}-${mes}-${dia}`;
+            return fechaFormateada;
+        };
 
+        const fechaEntrada = obtenerFechaActual()
 
+        const entrada = {
+            solicitudId: solicitudId,
+            funcionarioId: funcionarioId,
+            derivacionId: derivacionId,
+            fechaEntrada: fechaEntrada
+        }
+        saveEntrada(entrada)
+        // handleCloseModal();
+    };
+
+    const handleRechazar = () => {
+        // Lógica para rechazar la solicitud
+        handleCloseModal();
+    };
 
     return (
-        <Container fluid>
+        <Container className='ml-3'>
             <Row className="my-4 text-center">
                 <Col>
                     <h1>Inbox de Solicitudes</h1>
+                    <ButtonGroup className="mt-3">
+                        <Button variant="outline-primary">Recibidas</Button>
+                        <Button variant="outline-primary">Entrantes</Button>
+                        <Button variant="outline-primary">Derivadas</Button>
+                    </ButtonGroup>
                 </Col>
             </Row>
-            <Row style={{ marginLeft: '90px' }}>
+            <Row>
                 <Col>
                     <Card>
                         <Card.Header>Solicitudes Recibidas</Card.Header>
                         <Card.Body>
-                            {dataSol.length === 0 ? (
-                                <p>No hay solicitudes para mostrar.</p>
-                            ) : (
-                                <Table bordered hover responsive>
-                                    <thead className="bg-black text-white">
-                                        <tr>
-                                            <th>#</th>
-
-                                            <th>Tipo Solicitud</th>
-                                            <th>Funcionario</th>
-                                            <th>Dependencia</th>
-                                            <th>Fecha Solicitud</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {dataSol.map((solicitud, index) => (
-                                            <tr
-                                                key={solicitud.solicitudId}
-                                                className={solicitud.leida ? 'read-row' : 'unread-row'}
-                                            >
-                                                <td>{index + 1}</td>
-
-                                                <td>{solicitud.nombreSolicitud}</td>
-                                                <td>{solicitud.nombre}</td>
-                                                <td>{solicitud.nombreDepartamento}</td>
-                                                <td>{new Date(solicitud.fechaSolicitud).toLocaleDateString()}</td>
-                                                <td>
-                                                    <Button variant="info" size="sm" className="me-2">Ver</Button>
-
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
-                            )}
+                            <InboxSolGrid dataSol={dataSol} handleShowModal={handleShowModal} />
                         </Card.Body>
                     </Card>
                 </Col>
             </Row>
+            <InboxSolModal
+                showModal={showModal}
+                handleCloseModal={handleCloseModal}
+                selectedSolicitud={selectedSolicitud}
+                handleDerivar={handleDerivar}
+                handleRechazar={handleRechazar}
+                handlerSave={handleSave}
+            />
         </Container>
     );
 };
 
-export default InboxSolicitudes;
+export default InboxSol;

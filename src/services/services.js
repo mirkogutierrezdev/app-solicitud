@@ -2,7 +2,7 @@
 
 export const getAll = async () => {
 
-    const url = `http://localhost:8081/smc/buscar/6814340 `;
+    const url = `http://localhost:8081/smc/buscar/6814340`;
 
     try {
         const response = await fetch(url);
@@ -64,6 +64,8 @@ export const saveSolicitud = async (solicitud) => {
         return null;
     }
 };
+
+
 
 
 
@@ -143,6 +145,55 @@ export const getSolicitudesNoLeidas = async (depto) => {
 
 }
 
+export const updateDerivacion = async (idDerivacion, idSolicitud, estado) => {
+    const url = `http://localhost:8081/api/derivacion/${idDerivacion}/${idSolicitud}?estado=${estado}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(`Error ${response.status}: ${errorMessage}`);
+        }
+
+        // No se espera un cuerpo de respuesta en este caso, ya que el controlador devuelve ResponseEntity<Void>
+        return true; // Otra confirmación según sea necesario
+
+    } catch (error) {
+        console.error('Error al procesar la solicitud:', error);
+        return false; // Retorna false u otro valor según tu lógica de manejo de errores
+    }
+};
 
 
+export const saveEntrada = async (entrada) => {
+    const url = `http://localhost:8081/api/entrada`;
 
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(entrada)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json(); // Intenta obtener el mensaje de error del servidor
+            const errorMessage = errorData.message || 'Network response was not ok';
+            throw new Error(errorMessage);
+        }
+
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
+};

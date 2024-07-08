@@ -2,14 +2,12 @@
 import { createContext, useState, useEffect } from "react";
 import { getAll } from "../services/services";
 
-
 const DataContext = createContext(null);
 
 // eslint-disable-next-line react/prop-types
 export const DataProvider = ({ children }) => {
   const [data, setData] = useState(null);
-
-
+  const [noLeidas, setNoLeidas] = useState(0);
 
   useEffect(() => {
     fetchData();
@@ -25,7 +23,7 @@ export const DataProvider = ({ children }) => {
   };
 
   return (
-    <DataContext.Provider value={data}>
+    <DataContext.Provider value={{ data, noLeidas, setNoLeidas }}>
       {children}
     </DataContext.Provider>
   );
