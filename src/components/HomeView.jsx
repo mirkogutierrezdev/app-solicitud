@@ -44,7 +44,7 @@ function HomeView({ funcionario }) {
     }
 
     return (
-        <Container  className="mt-4">
+        <Container className="mt-4">
             <Row className="justify-content-center">
                 <Col md={10}>
                     <CardFuncionario
@@ -54,12 +54,12 @@ function HomeView({ funcionario }) {
                         apellidomaterno={apellidomaterno}
                         fecha_nac={fecha_nac}
                         area={area}
-                        vrut={vrut} 
+                        vrut={vrut}
                         contrato={contrato}
                         departamento={departamento}
-                        
-                        />
-                   
+
+                    />
+
                 </Col>
             </Row>
         </Container>

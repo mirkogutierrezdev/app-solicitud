@@ -1,8 +1,8 @@
 
 
-export const getAll = async () => {
+export const getFuncionario = async () => {
 
-    const url = `http://localhost:8081/smc/buscar/6814340`;
+    const url = `http://localhost:8081/api/smc/byRut/10067570`;
 
     try {
         const response = await fetch(url);
@@ -22,7 +22,7 @@ export const getAll = async () => {
 
 
 export const getDiasWork = async (fechaIni, fechaFin) => {
-    const url = `http://localhost:8081/api/calcular?fechaInicio=${fechaIni}&fechaFin=${fechaFin}`;
+    const url = `http://localhost:8081/api/utils/calcular?fechaInicio=${fechaIni}&fechaFin=${fechaFin}`;
 
     try {
         const response = await fetch(url);
@@ -39,7 +39,7 @@ export const getDiasWork = async (fechaIni, fechaFin) => {
 };
 
 export const saveSolicitud = async (solicitud) => {
-    const url = `http://localhost:8081/api/solicitud`;
+    const url = `http://localhost:8081/api/solicitud/create`;
 
     try {
         const response = await fetch(url, {
@@ -68,10 +68,9 @@ export const saveSolicitud = async (solicitud) => {
 
 
 
-
 export const getSolicitudes = async () => {
 
-    const url = `http://localhost:8081/api/list-solicitudes`;
+    const url = `http://localhost:8081/api/solicitud/list`;
 
     try {
         const response = await fetch(url);
@@ -92,7 +91,7 @@ export const getSolicitudes = async () => {
 
 export const getSolicitudesDepto = async (depto) => {
 
-    const url = `http://localhost:8081/api/solicitudesPorDepartamento/${depto}`;
+    const url = `http://localhost:8081/api/solicitud/byDepto/${depto}`;
 
     try {
         const response = await fetch(url);
@@ -113,7 +112,7 @@ export const getSolicitudesDepto = async (depto) => {
 
 export const getSolicitudesRut = async (rut) => {
     try {
-        const response = await fetch(`http://localhost:8081/api/solicitudesPorRut/${rut}`);
+        const response = await fetch(`http://localhost:8081/api/solicitud/byRut/${rut}`);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -127,7 +126,7 @@ export const getSolicitudesRut = async (rut) => {
 
 export const getSolicitudesNoLeidas = async (depto) => {
 
-    const url = `http://localhost:8081/api/solNoLeidas/${depto}`;
+    const url = `http://localhost:8081/api/derivacion/unreadbydepto/${depto}`;
 
     try {
         const response = await fetch(url);
@@ -146,7 +145,7 @@ export const getSolicitudesNoLeidas = async (depto) => {
 }
 
 export const updateDerivacion = async (idDerivacion, idSolicitud, estado) => {
-    const url = `http://localhost:8081/api/derivacion/${idDerivacion}/${idSolicitud}?estado=${estado}`;
+    const url = `http://localhost:8081/api/derivacion/read/${idDerivacion}/${idSolicitud}?estado=${estado}`;
 
     try {
         const response = await fetch(url, {
@@ -172,7 +171,7 @@ export const updateDerivacion = async (idDerivacion, idSolicitud, estado) => {
 
 
 export const saveEntrada = async (entrada) => {
-    const url = `http://localhost:8081/api/entrada`;
+    const url = `http://localhost:8081/api/entrada/create`;
 
     try {
         const response = await fetch(url, {

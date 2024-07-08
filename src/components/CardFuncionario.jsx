@@ -3,7 +3,7 @@ import { Card, Col, Row, Image } from "react-bootstrap";
 
 function CardFuncionario({ nombres, apellidopaterno, apellidomaterno, contrato, departamento }) {
     const { escalafon, grado, nombrecontrato } = contrato;
-    const {nombre_departamento,jefe_departamento} = departamento;
+    const { nombre_departamento, jefe_departamento } = departamento;
 
     const capitalize = (str) => {
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();

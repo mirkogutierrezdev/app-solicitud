@@ -3,7 +3,7 @@ import { Card, Col, Row } from "react-bootstrap";
 
 function DetalleLmView({ detalle }) {
     const {
-               diasPago,
+        diasPago,
         numlic,
         imponiblePromedio,
         liquidoPromedio,
@@ -17,9 +17,9 @@ function DetalleLmView({ detalle }) {
 
     return (
         <Card className="shadow rounded mb-4">
-       
+
             <Card.Body>
-               
+
                 <Row className="mb-3">
                     <Col md={6}>
                         <p><strong>Días a pagar:</strong> {formatNumberWithCommas(diasPago)}</p>

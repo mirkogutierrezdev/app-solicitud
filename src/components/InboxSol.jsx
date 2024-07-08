@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 import { getSolicitudesDepto, saveEntrada, updateDerivacion } from '../services/services';
 import DataContext from '../context/DataContext';
 import InboxSolGrid from './InboxSolGrid';
@@ -90,11 +90,7 @@ const InboxSol = () => {
             <Row className="my-4 text-center">
                 <Col>
                     <h1>Inbox de Solicitudes</h1>
-                    <ButtonGroup className="mt-3">
-                        <Button variant="outline-primary">Recibidas</Button>
-                        <Button variant="outline-primary">Entrantes</Button>
-                        <Button variant="outline-primary">Derivadas</Button>
-                    </ButtonGroup>
+                  
                 </Col>
             </Row>
             <Row>

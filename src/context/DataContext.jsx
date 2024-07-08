@@ -1,6 +1,6 @@
 // DataContext.js
 import { createContext, useState, useEffect } from "react";
-import { getAll } from "../services/services";
+import { getFuncionario } from "../services/services";
 
 const DataContext = createContext(null);
 
@@ -15,7 +15,7 @@ export const DataProvider = ({ children }) => {
 
   const fetchData = async () => {
     try {
-      const result = await getAll();
+      const result = await getFuncionario();
       setData(result);
     } catch (error) {
       console.error("Error fetching data:", error);

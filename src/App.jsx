@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AusenciasPage from './components/AusenciasPage';
 import LicenciasPage from './components/LicenciasPage';
-import { getAll } from './services/services';
+import { getFuncionario } from './services/services';
 import HomePage from './components/HomePage';
 import FeriadosPage from './components/FeriadosPage';
 import SolicitudesPage from './components/SolicitudesPage';
@@ -19,7 +19,7 @@ function App() {
         setError(null);
         setLoadingData(true);
         try {
-            const fetchedData = await getAll();
+            const fetchedData = await getFuncionario();
             setData(fetchedData);
         } catch (error) {
             setError('Error al traer la información');
