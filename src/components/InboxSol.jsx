@@ -51,12 +51,12 @@ const InboxSol = () => {
         setSelectedSolicitud(null);
     };
 
-    const handleDerivar = () => {
+    const handleSave = () => {
         // Lógica para derivar la solicitud
         handleCloseModal();
     };
 
-    const handleSave = ({ solicitudId, funcionarioId, derivacionId }) => {
+    const handleDerivar = ({ solicitudId, funcionarioId, derivacionId }) => {
 
         const obtenerFechaActual = () => {
             const fechaActual = new Date();
@@ -90,7 +90,7 @@ const InboxSol = () => {
             <Row className="my-4 text-center">
                 <Col>
                     <h1>Inbox de Solicitudes</h1>
-                  
+
                 </Col>
             </Row>
             <Row>
