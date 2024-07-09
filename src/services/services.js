@@ -196,3 +196,30 @@ export const saveEntrada = async (entrada) => {
         return null;
     }
 };
+
+export const saveDerivacion = async (derivacion) => {
+    const url = `http://localhost:8081/api/derivacion/create`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(derivacion)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json(); // Intenta obtener el mensaje de error del servidor
+            const errorMessage = errorData.message || 'Network response was not ok';
+            throw new Error(errorMessage);
+        }
+
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
+};

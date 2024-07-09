@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import { getSolicitudesDepto, saveEntrada, updateDerivacion } from '../services/services';
+import { getSolicitudesDepto, saveDerivacion, saveEntrada, updateDerivacion } from '../services/services';
 import DataContext from '../context/DataContext';
 import InboxSolGrid from './InboxSolGrid';
 import InboxSolModal from './InboxSolModal';
@@ -22,6 +22,16 @@ const InboxSol = () => {
         } catch (error) {
             console.error("Error fetching data:", error);
         }
+    };
+
+    const obtenerFechaActual = () => {
+        const fechaActual = new Date();
+        const año = fechaActual.getFullYear();
+        const mes = String(fechaActual.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
+        const dia = String(fechaActual.getDate()).padStart(2, '0');
+
+        const fechaFormateada = `${año}-${mes}-${dia}`;
+        return fechaFormateada;
     };
 
     useEffect(() => {
@@ -51,22 +61,7 @@ const InboxSol = () => {
         setSelectedSolicitud(null);
     };
 
-    const handleSave = () => {
-        // Lógica para derivar la solicitud
-        handleCloseModal();
-    };
-
-    const handleDerivar = ({ solicitudId, funcionarioId, derivacionId }) => {
-
-        const obtenerFechaActual = () => {
-            const fechaActual = new Date();
-            const año = fechaActual.getFullYear();
-            const mes = String(fechaActual.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
-            const dia = String(fechaActual.getDate()).padStart(2, '0');
-
-            const fechaFormateada = `${año}-${mes}-${dia}`;
-            return fechaFormateada;
-        };
+    const handleSave = ({ solicitudId, funcionarioId, derivacionId }) => {
 
         const fechaEntrada = obtenerFechaActual()
 
@@ -77,6 +72,34 @@ const InboxSol = () => {
             fechaEntrada: fechaEntrada
         }
         saveEntrada(entrada)
+        handleCloseModal();
+    };
+
+    const handleDerivar = ({ solicitudId, funcionarioId, derivacionId }) => {
+
+        
+
+        const fechaEntrada = obtenerFechaActual()
+
+       
+
+        const derivacion = {
+            depto:depto,
+            idSolicitud:solicitudId,
+            estado:"PENDIENTE",
+            fechaDerivacion:fechaEntrada
+
+
+        }
+
+        const entrada = {
+            solicitudId: solicitudId,
+            funcionarioId: funcionarioId,
+            derivacionId: derivacionId,
+            fechaEntrada: fechaEntrada
+        }
+        saveEntrada(entrada)
+        saveDerivacion(derivacion)
         // handleCloseModal();
     };
 

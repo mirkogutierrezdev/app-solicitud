@@ -33,7 +33,7 @@ const InboxSolModal = ({ showModal, handleCloseModal, selectedSolicitud, handleD
                 <Button variant="danger" onClick={handleRechazar}>
                     <XCircle className="me-2" /> Rechazar
                 </Button>
-                <Button variant="success" onClick={handleDerivar}>
+                <Button variant="success" onClick={()=>handleDerivar(selectedSolicitud)}>
                     <CheckCircle className="me-2" /> Guardar y Derivar
                 </Button>
 
