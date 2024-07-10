@@ -1,19 +1,20 @@
 import { useContext, useEffect, useState } from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
-import { getSolicitudesDepto, saveDerivacion, saveEntrada, updateDerivacion } from '../services/services';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { getSolicitudesDepto, getSolicitudesInbox, saveDerivacion, saveEntrada, updateDerivacion } from '../services/services';
 import DataContext from '../context/DataContext';
 import InboxSolGrid from './InboxSolGrid';
 import InboxSolModal from './InboxSolModal';
 import '../css/InboxSolicitudes.css';
 
 const InboxSol = () => {
-    // eslint-disable-next-line no-unused-vars
-    const { data, setNoLeidas } = useContext(DataContext);
+    const { data } = useContext(DataContext);
     const depto = data ? data.departamento.depto : 0;
 
     const [dataSol, setDataSol] = useState([]);
+    const [dataSolInbox, setDataSolInbox] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedSolicitud, setSelectedSolicitud] = useState(null);
+    const [viewType, setViewType] = useState('entrada'); // 'entrada' or 'recepcionadas'
 
     const fetchData = async () => {
         try {
@@ -24,10 +25,19 @@ const InboxSol = () => {
         }
     };
 
+    const fetchDataInbox = async () => {
+        try {
+            const solInbox = await getSolicitudesInbox(depto);
+            setDataSolInbox(solInbox);
+        } catch (error) {
+            console.error("Error fetching inbox data:", error);
+        }
+    };
+
     const obtenerFechaActual = () => {
         const fechaActual = new Date();
         const año = fechaActual.getFullYear();
-        const mes = String(fechaActual.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
+        const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
         const dia = String(fechaActual.getDate()).padStart(2, '0');
 
         const fechaFormateada = `${año}-${mes}-${dia}`;
@@ -35,15 +45,23 @@ const InboxSol = () => {
     };
 
     useEffect(() => {
-        fetchData(); // Llamada inicial al montar el componente
+        fetchData();
+        fetchDataInbox();
     }, [depto, data]);
+
+    useEffect(() => {
+        console.log("DataSolInbox:", dataSolInbox);
+        if (dataSolInbox.length > 0) {
+            const { derivacion } = dataSolInbox[0];
+            console.log("Derivacion:", derivacion);
+        }
+    }, [dataSolInbox]);
 
     const handleShowModal = (solicitud) => {
         setSelectedSolicitud(solicitud);
         const { derivacionId, solicitudId } = solicitud;
         updateDerivacion(derivacionId, solicitudId, true)
             .then(() => {
-                // Actualizar el estado de la solicitud después de marcar como leída
                 setDataSol(prevDataSol =>
                     prevDataSol.map(item =>
                         item.solicitudId === solicitudId
@@ -62,66 +80,64 @@ const InboxSol = () => {
     };
 
     const handleSave = ({ solicitudId, funcionarioId, derivacionId }) => {
-
-        const fechaEntrada = obtenerFechaActual()
+        const fechaEntrada = obtenerFechaActual();
 
         const entrada = {
             solicitudId: solicitudId,
             funcionarioId: funcionarioId,
             derivacionId: derivacionId,
             fechaEntrada: fechaEntrada
-        }
-        saveEntrada(entrada)
+        };
+        saveEntrada(entrada);
         handleCloseModal();
     };
 
     const handleDerivar = ({ solicitudId, funcionarioId, derivacionId }) => {
-
-        
-
-        const fechaEntrada = obtenerFechaActual()
-
-       
+        const fechaEntrada = obtenerFechaActual();
 
         const derivacion = {
-            depto:depto,
-            idSolicitud:solicitudId,
-            estado:"PENDIENTE",
-            fechaDerivacion:fechaEntrada
-
-
-        }
+            depto: depto,
+            idSolicitud: solicitudId,
+            estado: "PENDIENTE",
+            fechaDerivacion: fechaEntrada
+        };
 
         const entrada = {
             solicitudId: solicitudId,
             funcionarioId: funcionarioId,
             derivacionId: derivacionId,
             fechaEntrada: fechaEntrada
-        }
-        saveEntrada(entrada)
-        saveDerivacion(derivacion)
-        // handleCloseModal();
+        };
+        saveEntrada(entrada);
+        saveDerivacion(derivacion);
     };
 
     const handleRechazar = () => {
-        // Lógica para rechazar la solicitud
         handleCloseModal();
     };
+
+    const handleViewChange = (view) => {
+        setViewType(view);
+    };
+
+    const filteredDataSol = viewType === 'entrada' ? dataSol : dataSolInbox;
 
     return (
         <Container className='ml-3'>
             <Row className="my-4 text-center">
                 <Col>
                     <h1>Inbox de Solicitudes</h1>
-
                 </Col>
             </Row>
             <Row>
                 <Col>
                     <Card>
-                        <Card.Header>Solicitudes Recibidas</Card.Header>
+                        <Card.Header>
+                            <Button variant="primary" onClick={() => handleViewChange('entrada')}>Entrada</Button>
+                            <Button variant="secondary" onClick={() => handleViewChange('recepcionadas')}>Recepcionadas</Button>
+                        </Card.Header>
                         <Card.Body>
-                            <InboxSolGrid dataSol={dataSol} handleShowModal={handleShowModal} />
+                            <InboxSolGrid dataSol={filteredDataSol} handleShowModal={handleShowModal} />
                         </Card.Body>
                     </Card>
                 </Col>

@@ -223,3 +223,24 @@ export const saveDerivacion = async (derivacion) => {
         return null;
     }
 };
+
+
+export const getSolicitudesInbox = async (depto) => {
+
+    const url = `http://localhost:8081/api/entrada/buscarDepto/${depto}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    return null;
+
+}

@@ -5,9 +5,8 @@ import { getSolicitudesRut } from "../services/services";
 
 function MySolicitudesView() {
     const data = useContext(DataContext);
-    const rut = data ? data.data.rut : ""; // Asumiendo que data contiene el rut necesario para obtener las solicitudes
-    console.log("DataContext data:", data); // Verificar el contenido de data
-    console.log("Extracted rut:", rut); // Verificar el valor extraído de rut
+    const rut = data ? data.rut : ""; // Asumiendo que data contiene el rut necesario para obtener las solicitudes
+
 
     const [solicitudes, setSolicitudes] = useState([]);
     const [loading, setLoading] = useState(true); // Estado para manejar la carga de datos
