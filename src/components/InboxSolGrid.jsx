@@ -4,7 +4,7 @@ import { Table, Button } from 'react-bootstrap';
 
 import DataContext from '../context/DataContext';
 
-const InboxSolGrid = ({ dataSol, handleShowModal }) => {
+const InboxSolGrid = ({ dataSol, handleShowModal , viewType}) => {
     const { setNoLeidas } = useContext(DataContext);
 
     useEffect(() => {
@@ -31,27 +31,30 @@ const InboxSolGrid = ({ dataSol, handleShowModal }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {dataSol.map((solicitud, index) => (
-                            <tr
-                                key={solicitud.solicitudId}
-                                className={solicitud.leida ? 'read-row' : 'unread-row'}
-                            >
-                                <td>{index + 1}</td>
-                                <td>{solicitud.nombre}</td>
-                                <td>{solicitud.nombreDepartamento}</td>
-                                <td>{new Date(solicitud.fechaSolicitud).toLocaleDateString()}</td>
-                                <td>
-                                    <Button
-                                        variant="info"
-                                        size="sm"
-                                        className="me-2"
-                                        onClick={() => handleShowModal(solicitud)}
-                                    >
-                                        Ver
-                                    </Button>
-                                </td>
-                            </tr>
-                        ))}
+                        {dataSol.map((solicitud, index) => {
+                            const fecha = viewType === 'entrada' ? solicitud.fechaEntrada : solicitud.fechaDerivacion;
+                            return (
+                                <tr
+                                    key={index}
+                                    className={solicitud.leida ? 'read-row' : 'unread-row'}
+                                >
+                                    <td>{index + 1}</td>
+                                    <td>{solicitud.nombreFuncionario}</td>
+                                    <td>{solicitud.nombreDepartamento}</td>
+                                    <td>{new Date(fecha).toLocaleDateString()}</td>
+                                    <td>
+                                        <Button
+                                            variant="info"
+                                            size="sm"
+                                            className="me-2"
+                                            onClick={() => handleShowModal(solicitud)}
+                                        >
+                                            Ver
+                                        </Button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </Table>
             )}

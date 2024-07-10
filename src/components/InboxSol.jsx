@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
-import { getSolicitudesDepto, getSolicitudesInbox, saveDerivacion, saveEntrada, updateDerivacion } from '../services/services';
+import { getSolicitudesDepto, getSolicitudesInbox,  saveEntrada } from '../services/services';
 import DataContext from '../context/DataContext';
 import InboxSolGrid from './InboxSolGrid';
 import InboxSolModal from './InboxSolModal';
@@ -9,6 +9,7 @@ import '../css/InboxSolicitudes.css';
 const InboxSol = () => {
     const { data } = useContext(DataContext);
     const depto = data ? data.departamento.depto : 0;
+    const rut = data ? data.rut : 0;
 
     const [dataSol, setDataSol] = useState([]);
     const [dataSolInbox, setDataSolInbox] = useState([]);
@@ -59,8 +60,8 @@ const InboxSol = () => {
 
     const handleShowModal = (solicitud) => {
         setSelectedSolicitud(solicitud);
-        const { derivacionId, solicitudId } = solicitud;
-        updateDerivacion(derivacionId, solicitudId, true)
+    //    const { derivacionId, solicitudId } = solicitud;
+      /*   updateDerivacion(derivacionId, solicitudId, true)
             .then(() => {
                 setDataSol(prevDataSol =>
                     prevDataSol.map(item =>
@@ -69,9 +70,10 @@ const InboxSol = () => {
                             : item
                     )
                 );
-                setShowModal(true);
+             
             })
-            .catch(error => console.error('Error actualizando derivacion:', error));
+            .catch(error => console.error('Error actualizando derivacion:', error)); */
+            setShowModal(true);
     };
 
     const handleCloseModal = () => {
@@ -86,7 +88,8 @@ const InboxSol = () => {
             solicitudId: solicitudId,
             funcionarioId: funcionarioId,
             derivacionId: derivacionId,
-            fechaEntrada: fechaEntrada
+            fechaEntrada: fechaEntrada,
+            rut:rut
         };
         saveEntrada(entrada);
         handleCloseModal();
@@ -99,17 +102,13 @@ const InboxSol = () => {
             depto: depto,
             idSolicitud: solicitudId,
             estado: "PENDIENTE",
-            fechaDerivacion: fechaEntrada
+            fechaDerivacion: fechaEntrada,
+
         };
 
-        const entrada = {
-            solicitudId: solicitudId,
-            funcionarioId: funcionarioId,
-            derivacionId: derivacionId,
-            fechaEntrada: fechaEntrada
-        };
-        saveEntrada(entrada);
-        saveDerivacion(derivacion);
+
+        console.log(derivacion);
+        //    saveDerivacion(derivacion);
     };
 
     const handleRechazar = () => {
@@ -137,7 +136,7 @@ const InboxSol = () => {
                             <Button variant="secondary" onClick={() => handleViewChange('recepcionadas')}>Recepcionadas</Button>
                         </Card.Header>
                         <Card.Body>
-                            <InboxSolGrid dataSol={filteredDataSol} handleShowModal={handleShowModal} />
+                            <InboxSolGrid dataSol={filteredDataSol} viewType={viewType} handleShowModal={handleShowModal} />
                         </Card.Body>
                     </Card>
                 </Col>
