@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
-import { getSolicitudesDepto, getSolicitudesInbox,  saveEntrada } from '../services/services';
+import { getSalidasInbox, getSolicitudesDepto, getSolicitudesInbox, saveDerivacion, saveEntrada } from '../services/services';
 import DataContext from '../context/DataContext';
 import InboxSolGrid from './InboxSolGrid';
 import InboxSolModal from './InboxSolModal';
@@ -13,14 +13,24 @@ const InboxSol = () => {
 
     const [dataSol, setDataSol] = useState([]);
     const [dataSolInbox, setDataSolInbox] = useState([]);
+    const [dataOutBox, setDataOutBox] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedSolicitud, setSelectedSolicitud] = useState(null);
-    const [viewType, setViewType] = useState('entrada'); // 'entrada' or 'recepcionadas'
+    const [viewType, setViewType] = useState('entrada'); // 'entrada', 'recepcionadas' or 'derivaciones'
 
     const fetchData = async () => {
         try {
             const solicitudes = await getSolicitudesDepto(depto);
             setDataSol(solicitudes);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    const fetchDataOutbox = async () => {
+        try {
+            const salidas = await getSalidasInbox(depto);
+            setDataOutBox(salidas);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -41,39 +51,22 @@ const InboxSol = () => {
         const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
         const dia = String(fechaActual.getDate()).padStart(2, '0');
 
-        const fechaFormateada = `${año}-${mes}-${dia}`;
-        return fechaFormateada;
+        return `${año}-${mes}-${dia}`;
     };
 
     useEffect(() => {
-        fetchData();
-        fetchDataInbox();
-    }, [depto, data]);
-
-    useEffect(() => {
-        console.log("DataSolInbox:", dataSolInbox);
-        if (dataSolInbox.length > 0) {
-            const { derivacion } = dataSolInbox[0];
-            console.log("Derivacion:", derivacion);
+        if (viewType === 'entrada') {
+            fetchData();
+        } else if (viewType === 'recepcionadas') {
+            fetchDataInbox();
+        } else if (viewType === 'derivaciones') {
+            fetchDataOutbox();
         }
-    }, [dataSolInbox]);
+    }, [viewType, depto, data]);
 
     const handleShowModal = (solicitud) => {
         setSelectedSolicitud(solicitud);
-    //    const { derivacionId, solicitudId } = solicitud;
-      /*   updateDerivacion(derivacionId, solicitudId, true)
-            .then(() => {
-                setDataSol(prevDataSol =>
-                    prevDataSol.map(item =>
-                        item.solicitudId === solicitudId
-                            ? { ...item, leida: true }
-                            : item
-                    )
-                );
-             
-            })
-            .catch(error => console.error('Error actualizando derivacion:', error)); */
-            setShowModal(true);
+        setShowModal(true);
     };
 
     const handleCloseModal = () => {
@@ -81,34 +74,33 @@ const InboxSol = () => {
         setSelectedSolicitud(null);
     };
 
-    const handleSave = ({ solicitudId, funcionarioId, derivacionId }) => {
+    const handleSave = async ({ solicitudId, funcionarioId, derivacionId }) => {
         const fechaEntrada = obtenerFechaActual();
 
         const entrada = {
-            solicitudId: solicitudId,
-            funcionarioId: funcionarioId,
-            derivacionId: derivacionId,
-            fechaEntrada: fechaEntrada,
-            rut:rut
+            solicitudId,
+            funcionarioId,
+            derivacionId,
+            fechaEntrada,
+            rut,
         };
-        saveEntrada(entrada);
+        await saveEntrada(entrada);
         handleCloseModal();
+        fetchDataInbox();  // Refetch inbox data after saving
     };
 
-    const handleDerivar = ({ solicitudId, funcionarioId, derivacionId }) => {
+    const handleDerivar = async ({ solicitudId }) => {
         const fechaEntrada = obtenerFechaActual();
 
         const derivacion = {
-            depto: depto,
+            depto,
             idSolicitud: solicitudId,
             estado: "PENDIENTE",
             fechaDerivacion: fechaEntrada,
-
+            rut,
         };
-
-
-        console.log(derivacion);
-        //    saveDerivacion(derivacion);
+        await saveDerivacion(derivacion);
+        fetchData();  // Refetch data after derivation
     };
 
     const handleRechazar = () => {
@@ -119,7 +111,7 @@ const InboxSol = () => {
         setViewType(view);
     };
 
-    const filteredDataSol = viewType === 'entrada' ? dataSol : dataSolInbox;
+    const filteredDataSol = viewType === 'entrada' ? dataSol : viewType === 'recepcionadas' ? dataSolInbox : dataOutBox;
 
     return (
         <Container className='ml-3'>
@@ -134,6 +126,7 @@ const InboxSol = () => {
                         <Card.Header>
                             <Button variant="primary" onClick={() => handleViewChange('entrada')}>Entrada</Button>
                             <Button variant="secondary" onClick={() => handleViewChange('recepcionadas')}>Recepcionadas</Button>
+                            <Button variant="warning" onClick={() => handleViewChange('derivaciones')}>Derivaciones</Button>
                         </Card.Header>
                         <Card.Body>
                             <InboxSolGrid dataSol={filteredDataSol} viewType={viewType} handleShowModal={handleShowModal} />
@@ -147,7 +140,7 @@ const InboxSol = () => {
                 selectedSolicitud={selectedSolicitud}
                 handleDerivar={handleDerivar}
                 handleRechazar={handleRechazar}
-                handlerSave={handleSave}
+                handleSave={handleSave}
             />
         </Container>
     );

@@ -1,12 +1,8 @@
 /* eslint-disable react/prop-types */
-
 import { Button, Modal } from 'react-bootstrap';
 import { CheckCircle, Save, X, XCircle } from 'react-bootstrap-icons';
 
-const InboxSolModal = ({ showModal, handleCloseModal, selectedSolicitud, handleDerivar, handleRechazar, handlerSave }) => {
-
-
-
+const InboxSolModal = ({ showModal, handleCloseModal, selectedSolicitud, handleDerivar, handleRechazar, handleSave }) => {
     return (
         <Modal show={showModal} onHide={handleCloseModal} backdrop="static">
             <Modal.Header closeButton>
@@ -26,17 +22,15 @@ const InboxSolModal = ({ showModal, handleCloseModal, selectedSolicitud, handleD
                 )}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="primary" onClick={() => handlerSave(selectedSolicitud)}>
+                <Button variant="primary" onClick={() => handleSave(selectedSolicitud)}>
                     <Save className="me-2" /> Guardar
                 </Button>
-
                 <Button variant="danger" onClick={handleRechazar}>
                     <XCircle className="me-2" /> Rechazar
                 </Button>
-                <Button variant="success" onClick={()=>handleDerivar(selectedSolicitud)}>
+                <Button variant="success" onClick={() => handleDerivar(selectedSolicitud)}>
                     <CheckCircle className="me-2" /> Guardar y Derivar
                 </Button>
-
                 <Button variant="secondary" onClick={handleCloseModal}>
                     <X className="me-2" /> Cerrar
                 </Button>

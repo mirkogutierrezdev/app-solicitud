@@ -244,3 +244,24 @@ export const getSolicitudesInbox = async (depto) => {
     return null;
 
 }
+
+
+export const getSalidasInbox = async (depto) => {
+
+    const url = `http://localhost:8081/api/salida/buscar/depto/${depto}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    return null;
+
+}

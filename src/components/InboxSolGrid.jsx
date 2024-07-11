@@ -4,7 +4,7 @@ import { Table, Button } from 'react-bootstrap';
 
 import DataContext from '../context/DataContext';
 
-const InboxSolGrid = ({ dataSol, handleShowModal , viewType}) => {
+const InboxSolGrid = ({ dataSol, handleShowModal, viewType }) => {
     const { setNoLeidas } = useContext(DataContext);
 
     useEffect(() => {
@@ -39,7 +39,7 @@ const InboxSolGrid = ({ dataSol, handleShowModal , viewType}) => {
                                     className={solicitud.leida ? 'read-row' : 'unread-row'}
                                 >
                                     <td>{index + 1}</td>
-                                    <td>{solicitud.nombreFuncionario}</td>
+                                    <td>{solicitud.nombre}</td>
                                     <td>{solicitud.nombreDepartamento}</td>
                                     <td>{new Date(fecha).toLocaleDateString()}</td>
                                     <td>
