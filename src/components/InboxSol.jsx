@@ -13,10 +13,15 @@ const InboxSol = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    
+
+
+
     const fetchData = async () => {
         try {
             const dataSol = await getSolicitudesInbox(depto);
             setSolicitudes(dataSol);
+            
             setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -27,9 +32,11 @@ const InboxSol = () => {
 
     useEffect(() => {
         fetchData();
+      
         const intervalId = setInterval(fetchData, 5000); // Actualiza cada 5 segundos
 
         return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
+        
     }, []);
 
     return (
@@ -51,7 +58,7 @@ const InboxSol = () => {
                     </thead>
                     <tbody>
                         {solicitudes.map((sol) => (
-                            <SolicitudRow key={sol.solicitud.id} solicitud={sol} />
+                            <SolicitudRow key={sol.solicitud.id} solicitud={sol} leida={sol.derivaciones.leida}  />
                         ))}
                     </tbody>
                 </Table>
