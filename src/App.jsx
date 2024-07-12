@@ -8,7 +8,7 @@ import HomePage from './components/HomePage';
 import FeriadosPage from './components/FeriadosPage';
 import SolicitudesPage from './components/SolicitudesPage';
 import InboxSol from './components/InboxSol';
-import MySolicitudesView from './components/MySolicitudesView';
+/* import MySolicitudesView from './components/MySolicitudesView'; */
 
 function App() {
     const [data, setData] = useState(null);
@@ -36,12 +36,12 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/inboxSol" element={<InboxSol  />} />
+                <Route path="/inboxSol" element={<InboxSol />} />
                 <Route path="/" element={<HomePage data={data} loadingData={loadingData} error={error} />} />
-                <Route path="/mysolicitudes" element={<MySolicitudesView />} />
+                {/*    <Route path="/mysolicitudes" element={<MySolicitudesView />} /> */}
                 <Route path="/ausencias" element={<AusenciasPage data={data} loadingAusencias={loadingData} error={error} />} />
                 <Route path="/licencias" element={<LicenciasPage data={data} loadingLicencias={loadingData} error={error} />} />
-                <Route path="/feriados" element={<FeriadosPage data={data} loadingLicencias={loadingData} error={error}/>} />
+                <Route path="/feriados" element={<FeriadosPage data={data} loadingLicencias={loadingData} error={error} />} />
                 <Route path="/solicitudes" element={<SolicitudesPage data={data} />} />
             </Routes>
         </Router>

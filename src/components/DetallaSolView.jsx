@@ -2,8 +2,8 @@
 import { useContext } from "react";
 import { Table, Button } from "react-bootstrap";
 import DataContext from "../context/DataContext";
- import { saveSolicitud } from "../services/services";
-import Swal from "sweetalert2";  
+import { saveSolicitud } from "../services/services";
+import Swal from "sweetalert2";
 
 function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fechaInicio, fechaFin }) {
 
@@ -12,13 +12,13 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
     console.log(data);
 
 
-    const estado = 'PENDIENTE' 
+    const estado = 'PENDIENTE'
 
     // Acceder a los campos específicos de 'data' según sea necesario
     const departamento = data.data ? data.data.departamento : "";
     const rut = data.data ? data.data.rut : 0;
-    
-   // console.log(rut);
+
+    // console.log(rut);
 
     const { depto, nombre_departamento } = departamento;
 
@@ -28,7 +28,7 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
 
 
 
-     const handlerClick = async () => {
+    const handlerClick = async () => {
         const solicitud = {
             fechaSol: currentDateString,
             fechaInicio: fechaInicio,
@@ -53,11 +53,11 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
         } catch (error) {
             console.error('Error al guardar la solicitud:', error);
         }
-    } 
+    }
 
     return (
         <Table responsive bordered striped className="text-center">
-             <thead className="table-dark">
+            <thead className="table-dark">
                 <tr>
                     <th>Tipo de Solicitud</th>
                     <th>Días a Usar</th>
@@ -76,7 +76,7 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
                         <Button onClick={handlerClick} variant="primary" disabled={!btnActivo}>Derivar</Button>
                     </td>
                 </tr>
-            </tbody> 
+            </tbody>
         </Table>
     )
 }
