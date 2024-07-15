@@ -141,3 +141,50 @@ export const getSolicitudesInbox = async (depto) => {
 
 }
 
+export const getDepto = async () => {
+
+    const url = `http://localhost:8080/api/departamentos/list`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    return null;
+
+}
+export const postDepto = async (departamentos) => {
+    const url = `http://localhost:8081/api/departamentos/create`; // Modifica esta URL según sea necesario
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(departamentos),
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(`Network response was not ok: ${response.status} - ${errorMessage}`);
+        }
+
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error('Error en la solicitud POST:', error);
+        throw error; // Propaga el error para manejarlo donde sea llamado postDepto
+    }
+};
+
+
+

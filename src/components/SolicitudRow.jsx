@@ -95,10 +95,6 @@ const SolicitudRow = ({ solicitud }) => {
 
     const isCurrentDepartment = lastDerivacion && lastDerivacion.departamento.depto == dataDepartamento.depto;
 
-
-    console.log("Última derivación:", lastDerivacion.departamento.depto);
-    console.log("¿Es el departamento actual?:", isCurrentDepartment);
-
     return (
         <>
             <tr>

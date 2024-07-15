@@ -8,6 +8,7 @@ import HomePage from './components/HomePage';
 import FeriadosPage from './components/FeriadosPage';
 import SolicitudesPage from './components/SolicitudesPage';
 import InboxSol from './components/InboxSol';
+import GrabarDepto from './components/GrabarDepto';
 /* import MySolicitudesView from './components/MySolicitudesView'; */
 
 function App() {
@@ -39,6 +40,8 @@ function App() {
                 <Route path="/inboxSol" element={<InboxSol />} />
                 <Route path="/" element={<HomePage data={data} loadingData={loadingData} error={error} />} />
                 {/*    <Route path="/mysolicitudes" element={<MySolicitudesView />} /> */}
+                <Route path="/grabar" element={<GrabarDepto />} />
+
                 <Route path="/ausencias" element={<AusenciasPage data={data} loadingAusencias={loadingData} error={error} />} />
                 <Route path="/licencias" element={<LicenciasPage data={data} loadingLicencias={loadingData} error={error} />} />
                 <Route path="/feriados" element={<FeriadosPage data={data} loadingLicencias={loadingData} error={error} />} />
