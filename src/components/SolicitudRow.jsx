@@ -13,10 +13,12 @@ const SolicitudRow = ({ solicitud }) => {
     const [open, setOpen] = useState(false);
     const infoFun = useContext(DataContext);
 
+    console.log(solicitud);
+
     const [dataFunc, setDataFun] = useState({});
     const { data } = dataFunc || {};
     const [dataDepartamento, setDataDepartamento] = useState({});
-    const [isRecibirDisabled, setRecibirDisabled] = useState(false);
+   // const [isRecibirDisabled, setRecibirDisabled] = useState(false);
 
     useEffect(() => {
         if (infoFun && infoFun.data) {
@@ -74,7 +76,7 @@ const SolicitudRow = ({ solicitud }) => {
                 text: "Recepción realizada con éxito",
                 icon: "success"
             });
-            setRecibirDisabled(true); // Deshabilitar el botón después de recibir con éxito
+       //     setRecibirDisabled(true); // Deshabilitar el botón después de recibir con éxito
         } catch (error) {
             Swal.fire({
                 text: "Error al grabar la Recepción",
@@ -105,14 +107,14 @@ const SolicitudRow = ({ solicitud }) => {
                 <td>
                     <Button
                         onClick={handleRecibir}
-                        disabled={isRecibirDisabled || !isCurrentDepartment}
+                     
                     >
                         Recibir <FaCircleCheck />
                     </Button>{" "}
                     <Button
                         variant="warning"
                         onClick={handleGuardarYDerivar}
-                        disabled={!isCurrentDepartment}
+                        
                     >
                         Derivar <FaArrowAltCircleRight />
                     </Button>{" "}

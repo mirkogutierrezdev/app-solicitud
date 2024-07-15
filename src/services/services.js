@@ -2,7 +2,7 @@
 
 export const getFuncionario = async () => {
 
-    const url = `http://localhost:8081/api/smc/byRut/10067570`;
+    const url = `http://localhost:8081/api/smc/byRut/10890403`;
 
     try {
         const response = await fetch(url);
