@@ -1,23 +1,40 @@
 import { useContext, useEffect, useState } from 'react';
 import { Offcanvas, OffcanvasHeader, OffcanvasBody, Button, Dropdown } from 'react-bootstrap';
 import DataContext from '../context/DataContext';
+import { esJefe } from '../services/services';
 
 const Sidebar = () => {
     const { data, noLeidas } = useContext(DataContext);
     const nombres = data ? data.nombres : "";
-    const isJefe = data ? data.contrato.isJefe : 0;
+    const depto = data ? data.departamento.depto : 0;
+    const rut = data ? data.rut : 0;
 
+
+    const [isJefe, setIsJefe] = useState(false);
     const [show, setShow] = useState(false);
     const [unreadMessages, setUnreadMessages] = useState(noLeidas);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const getIsJefe = async () => {
+        try {
+            const result = await esJefe(depto, rut);
+            setIsJefe(result);
+        } catch (error) {
+            console.error('Error fetching esJefe:', error);
+        }
+    };
+
     useEffect(() => {
         setUnreadMessages(noLeidas);
     }, [noLeidas]);
 
-
+    useEffect(() => {
+        if (depto && rut) {
+            getIsJefe();
+        }
+    }, [depto, rut]);
 
     return (
         <>
@@ -33,7 +50,7 @@ const Sidebar = () => {
                     </div>
                     <p style={{ marginTop: '5px', marginBottom: '0', fontSize: '12px' }}>{nombres}</p>
                 </div>
-                {isJefe === 1 && (
+                {isJefe && (
                     <div className='text-center text-white mt-3'>
                         <a href='/inboxSol' style={{ textDecoration: 'none', color: 'white' }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" className="bi bi-inbox" viewBox="0 0 16 16">
@@ -73,15 +90,16 @@ const Sidebar = () => {
                         <Dropdown>
                             <Dropdown.Toggle variant="link" id="dropdown-basic" style={{ color: 'white', width: '100%', textAlign: 'left' }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
-                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                    <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.35 2.056L9.373 8.775l-.707 2.121 2.122-.707 4.778-4.778-2-2z" />
+                                    <path fillRule="evenodd" d="M1 13.5V15h1.5l4.978-4.978-.707-.707L1 13.5zm1-.707 4.264-4.264.707.707L2.707 13H2v-.707z" />
+                                    <path fillRule="evenodd" d="M1 1v10h10V1H1zM0 0h12v12H0V0z" />
                                 </svg>
                                 <span className="ms-2">Solicitudes</span>
                             </Dropdown.Toggle>
 
-                            <Dropdown.Menu style={{ backgroundColor: '#003366', border: 'none' }}>
-                                <Dropdown.Item onClick={handleClose} href='/mysolicitudes' style={{ color: 'white', backgroundColor: 'transparent' }}>Mis solicitudes</Dropdown.Item>
-                                <Dropdown.Item onClick={handleClose} href='/solicitudes' style={{ color: 'white', backgroundColor: 'transparent' }}>Feriados y Administrativos</Dropdown.Item>
+                            <Dropdown.Menu>
+                                <Dropdown.Item href="/solicitudes" onClick={handleClose}>Solicitar</Dropdown.Item>
+                                <Dropdown.Item href="/mysolicitudes" onClick={handleClose}>Mis Solicitudes</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </div>

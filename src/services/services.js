@@ -2,7 +2,7 @@
 
 export const getFuncionario = async () => {
 
-    const url = `http://localhost:8081/api/smc/byRut/10890403`;
+    const url = `http://localhost:8081/api/smc/byRut/10067570`;
 
     try {
         const response = await fetch(url);
@@ -185,6 +185,27 @@ export const postDepto = async (departamentos) => {
         throw error; // Propaga el error para manejarlo donde sea llamado postDepto
     }
 };
+
+export const esJefe = async (depto, rut) => {
+
+    const url = `http://localhost:8081/api/departamentos/esjefe/${depto}/${rut}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    return null;
+
+}
+
 
 
 

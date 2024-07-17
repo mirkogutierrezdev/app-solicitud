@@ -13,12 +13,9 @@ const SolicitudRow = ({ solicitud }) => {
     const [open, setOpen] = useState(false);
     const infoFun = useContext(DataContext);
 
-    console.log(solicitud);
-
+    const [isRecibirDisabled, setRecibirDisabled] = useState(true);
     const [dataFunc, setDataFun] = useState({});
-    const { data } = dataFunc || {};
     const [dataDepartamento, setDataDepartamento] = useState({});
-   // const [isRecibirDisabled, setRecibirDisabled] = useState(false);
 
     useEffect(() => {
         if (infoFun && infoFun.data) {
@@ -44,7 +41,7 @@ const SolicitudRow = ({ solicitud }) => {
             idSolicitud: solicitud.solicitud.id,
             estado: "PENDIENTE",
             fechaDerivacion: fechaDerivacion,
-            rut: data.rut
+            rut: dataFunc.data.rut
         };
 
         try {
@@ -67,7 +64,7 @@ const SolicitudRow = ({ solicitud }) => {
         const entrada = {
             solicitudId: solicitud.solicitud.id,
             fechaEntrada: fechaEntrada,
-            rut: data ? data.rut : null
+            rut: dataFunc.data.rut
         };
 
         try {
@@ -76,7 +73,7 @@ const SolicitudRow = ({ solicitud }) => {
                 text: "Recepción realizada con éxito",
                 icon: "success"
             });
-       //     setRecibirDisabled(true); // Deshabilitar el botón después de recibir con éxito
+            setRecibirDisabled(true); // Deshabilitar el botón después de recibir con éxito
         } catch (error) {
             Swal.fire({
                 text: "Error al grabar la Recepción",
@@ -90,38 +87,53 @@ const SolicitudRow = ({ solicitud }) => {
         // Lógica para rechazar la solicitud
     };
 
-    // Verifica si la solicitud pertenece al departamento actual
-    const lastDerivacion = solicitud.derivaciones && solicitud.derivaciones.length > 0
-        ? solicitud.derivaciones[solicitud.derivaciones.length - 1]
-        : null;
+    useEffect(() => {
+        const verificarEstadoBotonRecibir = () => {
+            const lastDerivacion = solicitud?.derivaciones?.length > 0
+                ? solicitud.derivaciones[solicitud.derivaciones.length - 1]
+                : null;
 
-    const isCurrentDepartment = lastDerivacion && lastDerivacion.departamento.depto == dataDepartamento.depto;
+            const hasEntrada = solicitud?.entradas?.some(entrada => entrada.solicitudId === solicitud.solicitud.id);
+
+            // Logs para depuración
+            console.log("Última derivación:", lastDerivacion);
+            console.log("Entradas:", solicitud?.entradas);
+            console.log("Departamento actual:", dataDepartamento.depto);
+            console.log("¿Tiene entrada?:", hasEntrada);
+
+            if (lastDerivacion && lastDerivacion.departamento.deptoSmc === dataDepartamento.depto && !hasEntrada) {
+                setRecibirDisabled(false);
+            } else {
+                setRecibirDisabled(true);
+            }
+        };
+
+        verificarEstadoBotonRecibir();
+    }, [solicitud, dataDepartamento]);
 
     return (
         <>
             <tr>
-                <td>{solicitud.solicitud.id}</td>
-                <td>{solicitud.solicitud.funcionario.nombre}</td>
-                <td>{solicitud.solicitud.tipoSolicitud.nombre}</td>
-                <td>{solicitud.solicitud.estado.nombre}</td>
+                <td>{solicitud?.solicitud?.id}</td>
+                <td>{solicitud?.solicitud?.funcionario?.nombre}</td>
+                <td>{solicitud?.solicitud?.tipoSolicitud?.nombre}</td>
+                <td>{solicitud?.solicitud?.estado?.nombre}</td>
                 <td>
                     <Button
                         onClick={handleRecibir}
-                     
+                        disabled={isRecibirDisabled}
                     >
                         Recibir <FaCircleCheck />
                     </Button>{" "}
                     <Button
                         variant="warning"
                         onClick={handleGuardarYDerivar}
-                        
                     >
                         Derivar <FaArrowAltCircleRight />
                     </Button>{" "}
                     <Button
                         variant="danger"
                         onClick={handleRechazar}
-                        disabled={!isCurrentDepartment}
                     >
                         Rechazar <FaCircleNotch />
                     </Button>
@@ -129,7 +141,7 @@ const SolicitudRow = ({ solicitud }) => {
                 <td>
                     <Button
                         onClick={() => setOpen(!open)}
-                        aria-controls={`movement-collapse-${solicitud.solicitud.id}`}
+                        aria-controls={`movement-collapse-${solicitud?.solicitud?.id}`}
                         aria-expanded={open}
                     >
                         Ver Movimiento <MdRemoveRedEye />
@@ -139,12 +151,12 @@ const SolicitudRow = ({ solicitud }) => {
             <tr>
                 <td colSpan="6">
                     <Collapse in={open}>
-                        <div id={`movement-collapse-${solicitud.solicitud.id}`}>
+                        <div id={`movement-collapse-${solicitud?.solicitud?.id}`}>
                             <ListGroup>
                                 <ListGroup.Item>
                                     <strong>Derivaciones:</strong>
                                     <ul>
-                                        {solicitud.derivaciones.map((derivacion, index) => (
+                                        {solicitud?.derivaciones?.map((derivacion, index) => (
                                             <li key={index}>
                                                 <div>Fecha de Derivación: {derivacion.fechaDerivacion}</div>
                                                 <div>Departamento: {derivacion.departamento.nombre}</div>
@@ -156,7 +168,7 @@ const SolicitudRow = ({ solicitud }) => {
                                 <ListGroup.Item>
                                     <strong>Entradas:</strong>
                                     <ul>
-                                        {solicitud.entradas.map((entrada, index) => (
+                                        {solicitud?.entradas?.map((entrada, index) => (
                                             <li key={index}>
                                                 <div>Fecha de Entrada: {entrada.fechaEntrada}</div>
                                                 <div>Funcionario: {entrada.funcionario.nombre}</div>
@@ -167,7 +179,7 @@ const SolicitudRow = ({ solicitud }) => {
                                 <ListGroup.Item>
                                     <strong>Salidas:</strong>
                                     <ul>
-                                        {solicitud.salidas.map((salida, index) => (
+                                        {solicitud?.salidas?.map((salida, index) => (
                                             <li key={index}>
                                                 <div>Fecha de Salida: {salida.fechaSalida}</div>
                                                 <div>Funcionario: {salida.funcionario.nombre}</div>

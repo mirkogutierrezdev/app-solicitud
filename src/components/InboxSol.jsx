@@ -13,6 +13,8 @@ const InboxSol = () => {
     const [loading, setLoading] = useState(true);
     const [depto, setDepto] = useState(null);
 
+
+
     useEffect(() => {
         if (data && data.departamento) {
             setDepto(data.departamento.depto);

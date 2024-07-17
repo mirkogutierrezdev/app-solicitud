@@ -9,7 +9,7 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
 
     const data = useContext(DataContext);
 
-    console.log(data);
+
 
 
     const estado = 'PENDIENTE'
