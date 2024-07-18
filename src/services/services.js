@@ -2,7 +2,7 @@
 
 export const getFuncionario = async () => {
 
-    const url = `http://localhost:8081/api/smc/byRut/10735521`;
+    const url = `http://localhost:8081/api/smc/byRut/10067570`;
 
     try {
         const response = await fetch(url);
@@ -206,6 +206,34 @@ export const esJefe = async (depto, rut) => {
 
 }
 
+
+export const saveAprobacion = async (solicitud) => {
+
+    const url = `http://localhost:8081/api/aprobaciones/create`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(solicitud)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json(); // Intenta obtener el mensaje de error del servidor
+            const errorMessage = errorData.message || 'Network response was not ok';
+            throw new Error(errorMessage);
+        }
+
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
+};
 
 
 

@@ -2,11 +2,12 @@
 import { useContext, useEffect, useState } from "react";
 import { Button, Collapse, ListGroup } from "react-bootstrap";
 import { MdRemoveRedEye } from "react-icons/md";
-import { saveDerivacion, saveEntrada } from "../services/services";
+import { saveAprobacion, saveDerivacion, saveEntrada } from "../services/services";
 import DataContext from "../context/DataContext";
 import Swal from 'sweetalert2';
 import { FaCircleCheck, FaCircleNotch } from "react-icons/fa6";
 import { FaArrowAltCircleRight } from "react-icons/fa";
+import '../css/InboxSolicitudes.css';
 
 const SolicitudRow = ({ solicitud }) => {
     const [open, setOpen] = useState(false);
@@ -90,6 +91,31 @@ const SolicitudRow = ({ solicitud }) => {
         // Lógica para rechazar la solicitud
     };
 
+    const handlerAprobar = () => {
+
+        const fechaActual = obtenerFechaActual();
+
+        const solicitudDto = {
+            idSolicitud: solicitud.solicitud.id,
+            rutFuncionario: data.rut,
+            fechaAprobacion:fechaActual
+
+        }
+        saveAprobacion(solicitudDto).then(() => {         
+            Swal.fire({
+                text: "Solicitud aprobada con éxito",
+                icon: "success"
+            });
+        }).catch((error) => {         
+            Swal.fire({
+                text: "Error al aprobar la solicitud",
+                icon: "error"
+            });
+            console.log(error);
+        });
+        
+    }
+
     const verificarEstadoBotones = () => {
         const derivacionesSinEntrada = solicitud?.derivaciones?.filter(derivacion => {
             return derivacion.departamento.deptoSmc == dataDepartamento.depto &&
@@ -105,9 +131,10 @@ const SolicitudRow = ({ solicitud }) => {
 
 
         const derivacionesConSalida = solicitud?.derivaciones?.filter(derivacion => {
-            return solicitud.salidas.some(salida => salida.derivacion.id === derivacion.id);
+            return derivacion.departamento.deptoSmc != dataDepartamento.depto &&
+             solicitud.salidas.some(salida => salida.derivacion.id === derivacion.id);
         });
-        console.log(derivacionesConSalida);
+        
 
 
 
@@ -128,6 +155,7 @@ const SolicitudRow = ({ solicitud }) => {
 
     useEffect(() => {
         verificarEstadoBotones();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitud, dataDepartamento]);
 
 
@@ -136,9 +164,11 @@ const SolicitudRow = ({ solicitud }) => {
         derivacion.departamento.deptoSmc == dataDepartamento.depto
     );
 
+    console.log(solicitud.derivaciones)
+
     return (
         <>
-            <tr>
+            <tr className="unread-row">
                 <td>{solicitud?.solicitud?.id}</td>
                 <td>{solicitud?.solicitud?.funcionario?.nombre}</td>
                 <td>{solicitud?.solicitud?.tipoSolicitud?.nombre}</td>
@@ -163,6 +193,14 @@ const SolicitudRow = ({ solicitud }) => {
                         disabled={!isCurrentDepartment}
                     >
                         Rechazar <FaCircleNotch />
+                    </Button>
+
+                    <Button
+                        variant="success"
+                        onClick={handlerAprobar}
+                    
+                    >
+                        Aprobar <FaCircleCheck />
                     </Button>
                 </td>
                 <td>
