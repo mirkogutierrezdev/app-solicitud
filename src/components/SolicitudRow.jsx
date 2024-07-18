@@ -92,32 +92,37 @@ const SolicitudRow = ({ solicitud }) => {
 
     const verificarEstadoBotones = () => {
         const derivacionesSinEntrada = solicitud?.derivaciones?.filter(derivacion => {
-            return derivacion.departamento.deptoSmc == dataDepartamento.depto && 
+            return derivacion.departamento.deptoSmc == dataDepartamento.depto &&
                 !solicitud.entradas.some(entrada => entrada.derivacion.id === derivacion.id);
         });
 
-        
+
+        // eslint-disable-next-line no-unused-vars
         const derivacionesConEntrada = solicitud?.derivaciones?.filter(derivacion => {
-            return derivacion.departamento.deptoSmc == dataDepartamento.depto && 
+            return derivacion.departamento.deptoSmc == dataDepartamento.depto &&
                 solicitud.entradas.some(entrada => entrada.derivacion.id === derivacion.id);
         });
 
-        //console.log(solicitud);
-        console.log(derivacionesSinEntrada);
-        
+
+        const derivacionesConSalida = solicitud?.derivaciones?.filter(derivacion => {
+            return solicitud.salidas.some(salida => salida.derivacion.id === derivacion.id);
+        });
+        console.log(derivacionesConSalida);
+
+
 
         if (derivacionesSinEntrada?.length > 0) {
-            
+
             setRecibirDisabled(false);
-        
+
         } else {
             setRecibirDisabled(true);
         }
 
-        if (derivacionesConEntrada?.length > 0) {
-            setDerivarDisabled(false);
-        } else {
+        if (derivacionesConSalida?.length > 0) {
             setDerivarDisabled(true);
+        } else {
+            setDerivarDisabled(false);
         }
     };
 
@@ -125,9 +130,9 @@ const SolicitudRow = ({ solicitud }) => {
         verificarEstadoBotones();
     }, [solicitud, dataDepartamento]);
 
-    
 
-    const isCurrentDepartment = solicitud?.derivaciones?.some(derivacion => 
+
+    const isCurrentDepartment = solicitud?.derivaciones?.some(derivacion =>
         derivacion.departamento.deptoSmc == dataDepartamento.depto
     );
 
