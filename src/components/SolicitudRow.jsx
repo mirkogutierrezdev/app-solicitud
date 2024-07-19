@@ -9,11 +9,9 @@ import { FaCircleCheck, FaCircleNotch } from "react-icons/fa6";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 import '../css/InboxSolicitudes.css';
 
-const SolicitudRow = ({ solicitud }) => {
+const SolicitudRow = ({ solicitud, leida }) => {
     const [open, setOpen] = useState(false);
     const infoFun = useContext(DataContext);
-    // eslint-disable-next-line no-unused-vars
-    const { noLeidas, setNoLeidas } = useContext(DataContext);
 
     const [dataFunc, setDataFun] = useState({});
     const { data } = dataFunc || {};
@@ -21,18 +19,8 @@ const SolicitudRow = ({ solicitud }) => {
     const [isRecibirDisabled, setRecibirDisabled] = useState(true);
     const [isDerivarDisabled, setDerivarDisabled] = useState(true);
 
+    
 
-
-    useEffect(() => {
-        let contadorLeidas = 0;
-        solicitud.derivaciones.forEach(derivacion => {
-            if (derivacion.leida !== true) {
-                contadorLeidas += 1;
-            }
-        });
-        setNoLeidas(contadorLeidas);
-        console.log(contadorLeidas);
-    }, [solicitud.derivaciones]);
     useEffect(() => {
         if (infoFun && infoFun.data) {
             setDataFun(infoFun);
@@ -106,15 +94,14 @@ const SolicitudRow = ({ solicitud }) => {
     };
 
     const handlerAprobar = () => {
-
         const fechaActual = obtenerFechaActual();
 
         const solicitudDto = {
             idSolicitud: solicitud.solicitud.id,
             rutFuncionario: data.rut,
-            fechaAprobacion:fechaActual
+            fechaAprobacion: fechaActual
+        };
 
-        }
         saveAprobacion(solicitudDto).then(() => {         
             Swal.fire({
                 text: "Solicitud aprobada con éxito",
@@ -127,8 +114,7 @@ const SolicitudRow = ({ solicitud }) => {
             });
             console.log(error);
         });
-        
-    }
+    };
 
     const verificarEstadoBotones = () => {
         const derivacionesSinEntrada = solicitud?.derivaciones?.filter(derivacion => {
@@ -136,26 +122,13 @@ const SolicitudRow = ({ solicitud }) => {
                 !solicitud.entradas.some(entrada => entrada.derivacion.id === derivacion.id);
         });
 
-
-        // eslint-disable-next-line no-unused-vars
-        const derivacionesConEntrada = solicitud?.derivaciones?.filter(derivacion => {
-            return derivacion.departamento.deptoSmc == dataDepartamento.depto &&
-                solicitud.entradas.some(entrada => entrada.derivacion.id === derivacion.id);
-        });
-
-
         const derivacionesConSalida = solicitud?.derivaciones?.filter(derivacion => {
             return derivacion.departamento.deptoSmc != dataDepartamento.depto &&
-             solicitud.salidas.some(salida => salida.derivacion.id === derivacion.id);
+                solicitud.salidas.some(salida => salida.derivacion.id === derivacion.id);
         });
-        
-
-
 
         if (derivacionesSinEntrada?.length > 0) {
-
             setRecibirDisabled(false);
-
         } else {
             setRecibirDisabled(true);
         }
@@ -169,20 +142,19 @@ const SolicitudRow = ({ solicitud }) => {
 
     useEffect(() => {
         verificarEstadoBotones();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitud, dataDepartamento]);
-
-
 
     const isCurrentDepartment = solicitud?.derivaciones?.some(derivacion =>
         derivacion.departamento.deptoSmc == dataDepartamento.depto
     );
 
-    console.log(solicitud.derivaciones)
+    
 
+    console.log(leida)
+    
     return (
         <>
-            <tr className="unread-row">
+            <tr  className={leida ? "read-row" : "unread-row"} >
                 <td>{solicitud?.solicitud?.id}</td>
                 <td>{solicitud?.solicitud?.funcionario?.nombre}</td>
                 <td>{solicitud?.solicitud?.tipoSolicitud?.nombre}</td>
@@ -208,11 +180,9 @@ const SolicitudRow = ({ solicitud }) => {
                     >
                         Rechazar <FaCircleNotch />
                     </Button>
-
                     <Button
                         variant="success"
                         onClick={handlerAprobar}
-                    
                     >
                         Aprobar <FaCircleCheck />
                     </Button>

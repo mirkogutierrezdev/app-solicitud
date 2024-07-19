@@ -6,14 +6,31 @@ import SolicitudRow from "./SolicitudRow";
 
 const InboxSol = () => {
     const dataFunc = useContext(DataContext);
-    const { data } = dataFunc;
+    const { data, setNoLeidas } = dataFunc;
 
     const [solicitudes, setSolicitudes] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [depto, setDepto] = useState(null);
 
+    
 
+ 
+
+    useEffect(() => {
+        // Calcular la cantidad de no leídas
+        if (Array.isArray(solicitudes)) {
+            const cantidadNoLeidas = solicitudes.reduce((acc, solicitud) => {
+                // Verificar si alguna derivación de la solicitud no ha sido leída
+                const noLeidas = solicitud.derivaciones.some(derivacion => derivacion.leida === false);
+                return noLeidas ? acc + 1 : acc;
+            }, 0);
+            setNoLeidas(cantidadNoLeidas);
+          
+        } else {
+            console.error("solicitudes no es un array:", solicitudes);
+        }
+    }, [solicitudes, setNoLeidas]);
 
     useEffect(() => {
         if (data && data.departamento) {
@@ -42,6 +59,8 @@ const InboxSol = () => {
         return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
     }, [depto]);
 
+    
+
     return (
         <Container>
             <h2>Bandeja de Solicitudes</h2>
@@ -61,7 +80,8 @@ const InboxSol = () => {
                     </thead>
                     <tbody>
                         {solicitudes.map((sol) => (
-                            <SolicitudRow key={sol.solicitud.id} solicitud={sol} leida={sol.derivaciones.leida} />
+                        console.log(sol.derivaciones.leida),
+                            <SolicitudRow key={sol.solicitud.id} solicitud={sol} leida={sol.derivaciones}/>
                         ))}
                     </tbody>
                 </Table>
