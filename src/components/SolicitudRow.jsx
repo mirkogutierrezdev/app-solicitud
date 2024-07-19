@@ -12,6 +12,8 @@ import '../css/InboxSolicitudes.css';
 const SolicitudRow = ({ solicitud }) => {
     const [open, setOpen] = useState(false);
     const infoFun = useContext(DataContext);
+    // eslint-disable-next-line no-unused-vars
+    const { noLeidas, setNoLeidas } = useContext(DataContext);
 
     const [dataFunc, setDataFun] = useState({});
     const { data } = dataFunc || {};
@@ -19,6 +21,18 @@ const SolicitudRow = ({ solicitud }) => {
     const [isRecibirDisabled, setRecibirDisabled] = useState(true);
     const [isDerivarDisabled, setDerivarDisabled] = useState(true);
 
+
+
+    useEffect(() => {
+        let contadorLeidas = 0;
+        solicitud.derivaciones.forEach(derivacion => {
+            if (derivacion.leida !== true) {
+                contadorLeidas += 1;
+            }
+        });
+        setNoLeidas(contadorLeidas);
+        console.log(contadorLeidas);
+    }, [solicitud.derivaciones]);
     useEffect(() => {
         if (infoFun && infoFun.data) {
             setDataFun(infoFun);
