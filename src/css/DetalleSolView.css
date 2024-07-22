@@ -1,0 +1,25 @@
+.detalle-sol-card {
+    margin: 20px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detalle-sol-card .card-header {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+}
+
+.detalle-sol-card .card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.detalle-sol-card .form-group {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.detalle-sol-card .btn {
+    align-self: center;
+}
