@@ -1,17 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useContext, useEffect, useState } from "react";
-import { Button, Collapse, ListGroup } from "react-bootstrap";
-import { MdRemoveRedEye } from "react-icons/md";
 import { getEsSub, saveAprobacion, saveDerivacion, saveEntrada, saveRechazo } from "../services/services";
 import DataContext from "../context/DataContext";
 import Swal from 'sweetalert2';
-import { FaCircleCheck, FaCircleNotch } from "react-icons/fa6";
-import { FaArrowAltCircleRight } from "react-icons/fa";
 import '../css/InboxSolicitudes.css';
+import InboxCollapse from "./InboxCollapse";
+import InboxActions from "./InboxActions";
 
-
-
-const SolicitudRow = ({ solicitud }) => {
+const InboxRow = ({ solicitud }) => {
     const [open, setOpen] = useState(false);
     const infoFun = useContext(DataContext);
 
@@ -23,9 +19,6 @@ const SolicitudRow = ({ solicitud }) => {
     const [isAprobarDisable, setAprobarDisabled] = useState(true);
     const [isRechazarDisable, setRechazarDisabled] = useState(true);
     const [esSubdir, setEsSubdir] = useState(false);
-
-    console.log(solicitud);
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -75,21 +68,30 @@ const SolicitudRow = ({ solicitud }) => {
             rut: data.rut
         };
 
-        try {
-            await saveDerivacion(derivacion);
-            Swal.fire({
-                text: "Derivación realizada con éxito",
-                icon: "success"
-            });
-            setDerivarDisabled(true); // Deshabilitar el botón después de derivar con éxito
-            setRecibirDisabled(true); // Deshabilitar el botón "Recibir" después de derivar con éxito
-        } catch (error) {
-            Swal.fire({
-                text: "Error al grabar la derivación",
-                icon: "error"
-            });
-            console.log(error);
-        }
+        Swal.fire({
+            title: '¿Está seguro de derivar la solicitud?',
+            showDenyButton: true,
+            confirmButtonText: `Sí, estoy seguro`,
+            denyButtonText: `No`,
+            icon: 'question'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await saveDerivacion(derivacion);
+                    Swal.fire({
+                        text: "Solicitud derivada con éxito",
+                        icon: "success"
+                    });
+                    setDerivarDisabled(true); // Deshabilitar el botón después de derivar con éxito
+                } catch (error) {
+                    Swal.fire({
+                        text: "Error al derivar la solicitud",
+                        icon: "error"
+                    });
+                    console.log(error);
+                }
+            }
+        });
     };
 
     const handleRecibir = async () => {
@@ -100,21 +102,31 @@ const SolicitudRow = ({ solicitud }) => {
             rut: data ? data.rut : null
         };
 
-        try {
-            await saveEntrada(entrada);
-            Swal.fire({
-                text: "Recepción realizada con éxito",
-                icon: "success"
-            });
-            setRecibirDisabled(true); // Deshabilitar el botón después de recibir con éxito
-            setDerivarDisabled(false); // Habilitar el botón "Derivar" después de recibir con éxito
-        } catch (error) {
-            Swal.fire({
-                text: "Error al grabar la Recepción",
-                icon: "error"
-            });
-            console.log(error);
+       Swal.fire({
+            title: '¿Está seguro de recibir la solicitud?',
+            showDenyButton: true,
+            confirmButtonText: `Sí, estoy seguro`,
+            denyButtonText: `No`,
+            icon: 'question'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await saveEntrada(entrada);
+                    Swal.fire({
+                        text: "Solicitud recibida con éxito",
+                        icon: "success"
+                    });
+                    setRecibirDisabled(true); // Deshabilitar el botón después de recibir con éxito
+                } catch (error) {
+                    Swal.fire({
+                        text: "Error al recibir la solicitud",
+                        icon: "error"
+                    });
+                    console.log(error);
+                }
+            }
         }
+        );
     };
 
     const handleRechazar = () => {
@@ -130,8 +142,9 @@ const SolicitudRow = ({ solicitud }) => {
         Swal.fire({
             title: '¿Está seguro de rechazar la solicitud?',
             showDenyButton: true,
-            confirmButtonText: `Sí, estoy sesguro`,
+            confirmButtonText: `Sí, estoy seguro`,
             denyButtonText: `No`,
+            icon: 'question'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
@@ -166,8 +179,9 @@ const SolicitudRow = ({ solicitud }) => {
         Swal.fire({
             title: '¿Está seguro de aprobar la solicitud?',
             showDenyButton: true,
-            confirmButtonText: `Sí, estoy sesguro`,
+            confirmButtonText: `Sí, estoy seguro`,
             denyButtonText: `No`,
+            icon: 'question'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
@@ -186,8 +200,6 @@ const SolicitudRow = ({ solicitud }) => {
                 }
             }
         });
-
-
     };
 
     const verificarEstadoBotones = () => {
@@ -210,19 +222,14 @@ const SolicitudRow = ({ solicitud }) => {
         } else {
             if (derivacionesSinEntrada?.length > 0) {
                 setRecibirDisabled(false);
-
-
             } else {
                 setRecibirDisabled(true);
                 setRechazarDisabled(false);
-
             }
 
             if (derivacionesConSalida?.length > 0) {
                 setDerivarDisabled(true);
                 setRechazarDisabled(true);
-
-
             } else {
                 setDerivarDisabled(false);
             }
@@ -232,8 +239,6 @@ const SolicitudRow = ({ solicitud }) => {
                 setDerivarDisabled(true);
                 setAprobarDisabled(true);
             }
-
-
         }
     };
 
@@ -242,107 +247,23 @@ const SolicitudRow = ({ solicitud }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitud, dataDepartamento]);
 
-    // const isCurrentDepartment = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto);
 
     const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto && derivacion.leida == false);
-
-    /*  console.log('solicitud', solicitud);
-     console.log('dataDepartamento', dataDepartamento); */
 
     return (
         <>
             <tr className={isLeida ? "unread-row" : "read-row"}>
-                <td>{solicitud?.solicitud?.id}</td>
-                <td>{solicitud?.solicitud?.funcionario?.nombre}</td>
-                <td>{solicitud?.solicitud?.tipoSolicitud?.nombre}</td>
-                <td>{solicitud?.solicitud?.estado?.nombre}</td>
-                <td>
-                    <Button
-                        onClick={handleRecibir}
-                        disabled={isRecibirDisabled}
-                    >
-                        Recibir <FaCircleCheck />
-                    </Button>{" "}
-                    <Button
-                        className={esSubdir ? "hidden-button" : ""}
-                        variant="warning"
-                        onClick={handleGuardarYDerivar}
-                        disabled={isDerivarDisabled}
-                    >
-                        Derivar <FaArrowAltCircleRight />
-                    </Button>{" "}
-                    <Button
-                        variant="danger"
-                        onClick={handleRechazar}
-                        disabled={isRechazarDisable}
-                    >
-                        Rechazar <FaCircleNotch />
-                    </Button>
-                    <Button
-                        className={esSubdir ? "" : "hidden-button"}
-                        variant="success"
-                        onClick={handlerAprobar}
-                        disabled={isAprobarDisable}
-                    >
-                        Aprobar <FaCircleCheck />
-                    </Button>
-                </td>
-                <td>
-                    <Button
-                        onClick={() => setOpen(!open)}
-                        aria-controls={`movement-collapse-${solicitud?.solicitud?.id}`}
-                        aria-expanded={open}
-                    >
-                        Ver Movimiento <MdRemoveRedEye />
-                    </Button>
-                </td>
+                <InboxActions solicitud={solicitud} handleRecibir={handleRecibir} isRecibirDisabled={isRecibirDisabled}
+                    esSubdir={esSubdir} handleGuardarYDerivar={handleGuardarYDerivar}
+                    isDerivarDisabled={isDerivarDisabled} handleRechazar={handleRechazar}
+                    isRechazarDisable={isRechazarDisable} handlerAprobar={handlerAprobar}
+                    isAprobarDisable={isAprobarDisable} setOpen={setOpen} open={open} />
             </tr>
             <tr>
-                <td colSpan="6">
-                    <Collapse in={open}>
-                        <div id={`movement-collapse-${solicitud?.solicitud?.id}`}>
-                            <ListGroup>
-                                <ListGroup.Item>
-                                    <strong>Derivaciones:</strong>
-                                    <ul>
-                                        {solicitud?.derivaciones?.map((derivacion, index) => (
-                                            <li key={index}>
-                                                <div>Fecha de Derivación: {derivacion.fechaDerivacion}</div>
-                                                <div>Departamento: {derivacion.departamento.nombre}</div>
-                                                <div>Funcionario: {derivacion.funcionario.nombre}</div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </ListGroup.Item>
-                                <ListGroup.Item>
-                                    <strong>Entradas:</strong>
-                                    <ul>
-                                        {solicitud?.entradas?.map((entrada, index) => (
-                                            <li key={index}>
-                                                <div>Fecha de Entrada: {entrada.fechaEntrada}</div>
-                                                <div>Funcionario: {entrada.funcionario.nombre}</div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </ListGroup.Item>
-                                <ListGroup.Item>
-                                    <strong>Salidas:</strong>
-                                    <ul>
-                                        {solicitud?.salidas?.map((salida, index) => (
-                                            <li key={index}>
-                                                <div>Fecha de Salida: {salida.fechaSalida}</div>
-                                                <div>Funcionario: {salida.funcionario.nombre}</div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </ListGroup.Item>
-                            </ListGroup>
-                        </div>
-                    </Collapse>
-                </td>
+              <InboxCollapse solicitud={solicitud} open={open} />
             </tr>
         </>
     );
 };
 
-export default SolicitudRow;
+export default InboxRow;

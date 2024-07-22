@@ -2,8 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import { Container, Table, Spinner, Alert } from "react-bootstrap";
 import { getSolicitudesInbox } from "../services/services";
 import DataContext from "../context/DataContext";
-import SolicitudRow from "./SolicitudRow";
+
 import UnreadContext from "../context/UnreadContext";
+import InboxRow from "./InboxRow";
 
 const InboxSol = () => {
     const dataFunc = useContext(DataContext);
@@ -75,7 +76,7 @@ const InboxSol = () => {
                     <tbody>
                         {solicitudes.map((sol) => (
 
-                            <SolicitudRow key={sol.solicitud.id} solicitud={sol} />
+                            <InboxRow key={sol.solicitud.id} solicitud={sol} />
                         ))}
                     </tbody>
                 </Table>
