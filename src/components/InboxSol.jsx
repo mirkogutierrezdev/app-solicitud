@@ -3,39 +3,33 @@ import { Container, Table, Spinner, Alert } from "react-bootstrap";
 import { getSolicitudesInbox } from "../services/services";
 import DataContext from "../context/DataContext";
 import SolicitudRow from "./SolicitudRow";
+import UnreadContext from "../context/UnreadContext";
 
 const InboxSol = () => {
     const dataFunc = useContext(DataContext);
-    const { data, setNoLeidas } = dataFunc;
+    const { data } = dataFunc;
 
     const [solicitudes, setSolicitudes] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [depto, setDepto] = useState(null);
+    const [depto, setLocalDepto] = useState(null);
 
-    
+    const { setDepto } = useContext(UnreadContext);
 
- 
 
     useEffect(() => {
-        // Calcular la cantidad de no leídas
-        if (Array.isArray(solicitudes)) {
-            const cantidadNoLeidas = solicitudes.reduce((acc, solicitud) => {
-                // Verificar si alguna derivación de la solicitud no ha sido leída
-                const noLeidas = solicitud.derivaciones.some(derivacion => derivacion.leida === false);
-                return noLeidas ? acc + 1 : acc;
-            }, 0);
-            setNoLeidas(cantidadNoLeidas);
-          
-        } else {
-            console.error("solicitudes no es un array:", solicitudes);
+        if (data && data.departamento) {
+            setLocalDepto(data.departamento.depto);
+            setDepto(data.departamento.depto);
         }
-    }, [solicitudes, setNoLeidas]);
+    }, [data, setDepto]);
+
 
     useEffect(() => {
         if (data && data.departamento) {
             setDepto(data.departamento.depto);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
     useEffect(() => {
@@ -59,7 +53,7 @@ const InboxSol = () => {
         return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
     }, [depto]);
 
-    
+
 
     return (
         <Container>
@@ -80,8 +74,8 @@ const InboxSol = () => {
                     </thead>
                     <tbody>
                         {solicitudes.map((sol) => (
-                        console.log(sol.derivaciones.leida),
-                            <SolicitudRow key={sol.solicitud.id} solicitud={sol} leida={sol.derivaciones}/>
+
+                            <SolicitudRow key={sol.solicitud.id} solicitud={sol} />
                         ))}
                     </tbody>
                 </Table>

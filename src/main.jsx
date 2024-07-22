@@ -8,6 +8,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from './components/SideBar.jsx';
 import HomeTabs from './components/HomeTabs..jsx';
 import { DataProvider } from './context/DataContext.jsx';
+import { UnreadProvider } from './context/UnreadContext';
 
 
 
@@ -16,9 +17,11 @@ import { DataProvider } from './context/DataContext.jsx';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <DataProvider>
-      <Sidebar />
-      <HomeTabs />
-      <App />
+      <UnreadProvider>
+        <Sidebar />
+        <HomeTabs />
+        <App />
+      </UnreadProvider>
     </DataProvider>
   </React.StrictMode>,
 )

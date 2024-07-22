@@ -2,14 +2,16 @@
 import { useContext, useEffect, useState } from "react";
 import { Button, Collapse, ListGroup } from "react-bootstrap";
 import { MdRemoveRedEye } from "react-icons/md";
-import { saveAprobacion, saveDerivacion, saveEntrada } from "../services/services";
+import { getEsSub, saveAprobacion, saveDerivacion, saveEntrada, saveRechazo } from "../services/services";
 import DataContext from "../context/DataContext";
 import Swal from 'sweetalert2';
 import { FaCircleCheck, FaCircleNotch } from "react-icons/fa6";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 import '../css/InboxSolicitudes.css';
 
-const SolicitudRow = ({ solicitud, leida }) => {
+
+
+const SolicitudRow = ({ solicitud }) => {
     const [open, setOpen] = useState(false);
     const infoFun = useContext(DataContext);
 
@@ -18,8 +20,28 @@ const SolicitudRow = ({ solicitud, leida }) => {
     const [dataDepartamento, setDataDepartamento] = useState({});
     const [isRecibirDisabled, setRecibirDisabled] = useState(true);
     const [isDerivarDisabled, setDerivarDisabled] = useState(true);
+    const [isAprobarDisable, setAprobarDisabled] = useState(true);
+    const [isRechazarDisable, setRechazarDisabled] = useState(true);
+    const [esSubdir, setEsSubdir] = useState(false);
 
-    
+    console.log(solicitud);
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (dataDepartamento.depto) {
+                    const dataSol = await getEsSub(dataDepartamento.depto);
+                    setEsSubdir(dataSol);
+
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+    }, [dataDepartamento.depto]);
 
     useEffect(() => {
         if (infoFun && infoFun.data) {
@@ -27,6 +49,12 @@ const SolicitudRow = ({ solicitud, leida }) => {
             setDataDepartamento(infoFun.data.departamento || {});
         }
     }, [infoFun]);
+
+    useEffect(() => {
+        if (esSubdir) {
+            setAprobarDisabled(false);
+        }
+    }, [esSubdir]);
 
     const obtenerFechaActual = () => {
         const fechaActual = new Date();
@@ -90,7 +118,39 @@ const SolicitudRow = ({ solicitud, leida }) => {
     };
 
     const handleRechazar = () => {
-        // Lógica para rechazar la solicitud
+        const fechaActual = obtenerFechaActual();
+
+        const solicitudDto = {
+            idSolicitud: solicitud.solicitud.id,
+            rutFuncionario: data.rut,
+            fechaAprobacion: fechaActual,
+            estado: "RECHAZADA"
+        };
+
+        Swal.fire({
+            title: '¿Está seguro de rechazar la solicitud?',
+            showDenyButton: true,
+            confirmButtonText: `Sí, estoy sesguro`,
+            denyButtonText: `No`,
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await saveRechazo(solicitudDto);
+                    Swal.fire({
+                        text: "Solicitud rechazada con éxito",
+                        icon: "success"
+                    });
+                    setAprobarDisabled(true); // Deshabilitar el botón después de aprobar con éxito
+                } catch (error) {
+                    Swal.fire({
+                        text: "Error al rechazar la solicitud",
+                        icon: "error"
+                    });
+                    console.log(error);
+                }
+            }
+        });
+
     };
 
     const handlerAprobar = () => {
@@ -99,21 +159,35 @@ const SolicitudRow = ({ solicitud, leida }) => {
         const solicitudDto = {
             idSolicitud: solicitud.solicitud.id,
             rutFuncionario: data.rut,
-            fechaAprobacion: fechaActual
+            fechaAprobacion: fechaActual,
+            estado: "APROBADA"
         };
 
-        saveAprobacion(solicitudDto).then(() => {         
-            Swal.fire({
-                text: "Solicitud aprobada con éxito",
-                icon: "success"
-            });
-        }).catch((error) => {         
-            Swal.fire({
-                text: "Error al aprobar la solicitud",
-                icon: "error"
-            });
-            console.log(error);
+        Swal.fire({
+            title: '¿Está seguro de aprobar la solicitud?',
+            showDenyButton: true,
+            confirmButtonText: `Sí, estoy sesguro`,
+            denyButtonText: `No`,
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await saveAprobacion(solicitudDto);
+                    Swal.fire({
+                        text: "Solicitud aprobada con éxito",
+                        icon: "success"
+                    });
+                    setAprobarDisabled(true); // Deshabilitar el botón después de aprobar con éxito
+                } catch (error) {
+                    Swal.fire({
+                        text: "Error al aprobar la solicitud",
+                        icon: "error"
+                    });
+                    console.log(error);
+                }
+            }
         });
+
+
     };
 
     const verificarEstadoBotones = () => {
@@ -127,34 +201,57 @@ const SolicitudRow = ({ solicitud, leida }) => {
                 solicitud.salidas.some(salida => salida.derivacion.id === derivacion.id);
         });
 
-        if (derivacionesSinEntrada?.length > 0) {
-            setRecibirDisabled(false);
-        } else {
-            setRecibirDisabled(true);
-        }
 
-        if (derivacionesConSalida?.length > 0) {
+        if (derivacionesSinEntrada.length > 0 && derivacionesConSalida.length == 0) {
+            setRecibirDisabled(false);
             setDerivarDisabled(true);
+            setRechazarDisabled(true);
+
         } else {
-            setDerivarDisabled(false);
+            if (derivacionesSinEntrada?.length > 0) {
+                setRecibirDisabled(false);
+
+
+            } else {
+                setRecibirDisabled(true);
+                setRechazarDisabled(false);
+
+            }
+
+            if (derivacionesConSalida?.length > 0) {
+                setDerivarDisabled(true);
+                setRechazarDisabled(true);
+
+
+            } else {
+                setDerivarDisabled(false);
+            }
+
+            if (solicitud.rechazo) {
+                setRechazarDisabled(true);
+                setDerivarDisabled(true);
+                setAprobarDisabled(true);
+            }
+
+
         }
     };
 
     useEffect(() => {
         verificarEstadoBotones();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitud, dataDepartamento]);
 
-    const isCurrentDepartment = solicitud?.derivaciones?.some(derivacion =>
-        derivacion.departamento.deptoSmc == dataDepartamento.depto
-    );
+    // const isCurrentDepartment = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto);
 
-    
+    const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto && derivacion.leida == false);
 
-    console.log(leida)
-    
+    /*  console.log('solicitud', solicitud);
+     console.log('dataDepartamento', dataDepartamento); */
+
     return (
         <>
-            <tr  className={leida ? "read-row" : "unread-row"} >
+            <tr className={isLeida ? "unread-row" : "read-row"}>
                 <td>{solicitud?.solicitud?.id}</td>
                 <td>{solicitud?.solicitud?.funcionario?.nombre}</td>
                 <td>{solicitud?.solicitud?.tipoSolicitud?.nombre}</td>
@@ -167,6 +264,7 @@ const SolicitudRow = ({ solicitud, leida }) => {
                         Recibir <FaCircleCheck />
                     </Button>{" "}
                     <Button
+                        className={esSubdir ? "hidden-button" : ""}
                         variant="warning"
                         onClick={handleGuardarYDerivar}
                         disabled={isDerivarDisabled}
@@ -176,13 +274,15 @@ const SolicitudRow = ({ solicitud, leida }) => {
                     <Button
                         variant="danger"
                         onClick={handleRechazar}
-                        disabled={!isCurrentDepartment}
+                        disabled={isRechazarDisable}
                     >
                         Rechazar <FaCircleNotch />
                     </Button>
                     <Button
+                        className={esSubdir ? "" : "hidden-button"}
                         variant="success"
                         onClick={handlerAprobar}
+                        disabled={isAprobarDisable}
                     >
                         Aprobar <FaCircleCheck />
                     </Button>
