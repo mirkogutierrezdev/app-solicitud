@@ -99,7 +99,7 @@ const Sidebar = () => {
 
                             <Dropdown.Menu>
                                 <Dropdown.Item href="/solicitudes" onClick={handleClose}>Solicitar</Dropdown.Item>
-                                <Dropdown.Item href="/mysolicitudes" onClick={handleClose}>Mis Solicitudes</Dropdown.Item>
+                                <Dropdown.Item href="/missolicitudes" onClick={handleClose}>Mis Solicitudes</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </div>

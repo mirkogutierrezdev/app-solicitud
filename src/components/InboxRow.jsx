@@ -11,6 +11,8 @@ const InboxRow = ({ solicitud }) => {
     const [open, setOpen] = useState(false);
     const infoFun = useContext(DataContext);
 
+    
+
     const [dataFunc, setDataFun] = useState({});
     const { data } = dataFunc || {};
     const [dataDepartamento, setDataDepartamento] = useState({});
@@ -26,7 +28,6 @@ const InboxRow = ({ solicitud }) => {
                 if (dataDepartamento.depto) {
                     const dataSol = await getEsSub(dataDepartamento.depto);
                     setEsSubdir(dataSol);
-
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);

@@ -17,6 +17,8 @@ const InboxSol = () => {
 
     const { setDepto } = useContext(UnreadContext);
 
+    console.log(solicitudes);
+
 
     useEffect(() => {
         if (data && data.departamento) {

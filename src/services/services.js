@@ -2,10 +2,10 @@
 //Funcion que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async () => {
 
-    //const url = `http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
-    //  const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
-   const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
- //    const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
+    const url = `http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
+    // const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
+    //const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
+  //  const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
 
     try {
         const response = await fetch(url);
@@ -302,7 +302,65 @@ export const getEsSub = async (depto) => {
 
 }
 
+export const getSolicitudesByRut = async (rut) => {
 
+    const url = `http://localhost:8081/api/solicitud/byRut/${rut}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    return null;
+
+}
+
+export const getRechazosBySolicitud = async (solicitudId) => {
+    const url = `http://localhost:8081/api/rechazos/bySolicitud/${solicitudId}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+        const text = await response.text();
+        if (!text) {
+            throw new Error("Empty response body");
+        }
+        const result = JSON.parse(text);
+        return result;
+    } catch (error) {
+        console.error("Error fetching rechazos:", error);
+        return null; // Devuelve null en caso de error para evitar que el error se propague
+    }
+};
+
+export const getAprobacionesBySolicitud = async (solicitudId) => {
+    const url = `http://localhost:8081/api/aprobaciones/bySolicitud/${solicitudId}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+        const text = await response.text();
+        if (!text) {
+            throw new Error("Empty response body");
+        }
+        const result = JSON.parse(text);
+        return result;
+    } catch (error) {
+        console.error("Error fetching aprobaciones:", error);
+        return null; // Devuelve null en caso de error para evitar que el error se propague
+    }
+};
 
 
 
