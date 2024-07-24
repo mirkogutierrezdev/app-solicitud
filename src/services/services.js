@@ -23,7 +23,7 @@ export const getFuncionario = async () => {
         return result;
 
     } catch (error) {
-        10735521
+
         console.error(error)
     }
 
