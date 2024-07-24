@@ -116,6 +116,7 @@ const InboxRow = ({ solicitud }) => {
                         icon: "success"
                     });
                     setRecibirDisabled(true); // Deshabilitar el botón después de recibir con éxito
+                    verificarEstadoBotones(); // Verificar el estado de los botones después de recibir
                 } catch (error) {
                     Swal.fire({
                         text: "Error al recibir la solicitud",
@@ -124,8 +125,7 @@ const InboxRow = ({ solicitud }) => {
                     console.log(error);
                 }
             }
-        }
-        );
+        });
     };
 
     const handleRechazar = async () => {
@@ -208,16 +208,11 @@ const InboxRow = ({ solicitud }) => {
     };
 
     const verificarEstadoBotones = () => {
-        // Obtener la lista de derivaciones y entradas relevantes para la solicitud actual
-        const derivacionesSinEntrada = solicitud?.derivaciones?.filter(derivacion => {
-            return derivacion.departamento.deptoSmc == dataDepartamento.depto &&
-                !solicitud.entradas.some(entrada => entrada.derivacion.id === derivacion.id);
-        });
+        console.log("verificarEstadoBotones called");
 
-        const derivacionesConSalida = solicitud?.derivaciones?.filter(derivacion => {
-            return derivacion.departamento.deptoSmc !== dataDepartamento.depto &&
-                solicitud.salidas.some(salida => salida.derivacion.id === derivacion.id);
-        });
+        // Obtener la última derivación de la solicitud
+        const ultimaDerivacion = solicitud?.derivaciones?.length > 0 ? solicitud.derivaciones[solicitud.derivaciones.length - 1] : null;
+        console.log("ultimaDerivacion:", ultimaDerivacion);
 
         // Si la solicitud está rechazada o aprobada, deshabilitar todos los botones
         if (solicitud?.rechazo || solicitud?.aprobacion) {
@@ -229,32 +224,46 @@ const InboxRow = ({ solicitud }) => {
         }
 
         // Controlar el botón Recibir
-        if (derivacionesSinEntrada.length > 0 && derivacionesConSalida.length === 0) {
+        const esUltimaDerivacionDeptoActual = ultimaDerivacion && ultimaDerivacion.departamento.deptoSmc == dataDepartamento.depto;
+        const entradaExistente = ultimaDerivacion && solicitud.entradas.some(entrada => entrada.derivacion.id === ultimaDerivacion.id);
+        console.log("esUltimaDerivacionDeptoActual:", esUltimaDerivacionDeptoActual);
+        console.log("entradaExistente:", entradaExistente);
+
+        // Condición para recibir
+        if (esUltimaDerivacionDeptoActual && !entradaExistente) {
             setRecibirDisabled(false);
-            setDerivarDisabled(true);
-            setRechazarDisabled(true);
-            setAprobarDisabled(true);
         } else {
             setRecibirDisabled(true);
+        }
 
-            // Controlar el botón Derivar
-            if (derivacionesConSalida.length > 0) {
-                setDerivarDisabled(true);
-            } else {
-                setDerivarDisabled(false);
-            }
+        // Condición para derivar
+        if (esUltimaDerivacionDeptoActual && entradaExistente) {
+            setDerivarDisabled(false);
+        } else {
+            setDerivarDisabled(true);
+        }
 
-            // Controlar el botón Rechazar
-            if (derivacionesSinEntrada.length === 0 && derivacionesConSalida.length === 0) {
-                setRechazarDisabled(false);
-            } else {
-                setRechazarDisabled(true);
-            }
+        // Condición para rechazar
+        if (esUltimaDerivacionDeptoActual && entradaExistente) {
+            setRechazarDisabled(false);
+        } else {
+            setRechazarDisabled(true);
+        }
 
-            // Controlar el botón Aprobar
+        // Condición para aprobar
+        if (esUltimaDerivacionDeptoActual && entradaExistente) {
             setAprobarDisabled(false);
+        } else {
+            setAprobarDisabled(true);
         }
     };
+
+
+    useEffect(() => {
+        verificarEstadoBotones();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [solicitud, dataDepartamento]);
+
 
     useEffect(() => {
         verificarEstadoBotones();
