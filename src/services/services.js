@@ -1,18 +1,18 @@
 
 //Funcion que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async () => {
-//Subdireccion de finanzas
+    //Subdireccion de finanzas
     const url = `http://192.168.10.44:8081/api/smc/byRut/13933050`; //Rut de funcionario
-    //const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
-  //const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
-   // const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
+    //const url = `http://192.168.10.44:8081/api/smc/byRut/19280310`; //Rut de funcionario
+    // const url = `http://192.168.10.44:8081/api/smc/byRut/10067570`; //Rut jefe departamento
+    // const url = `http://192.168.10.44:8081/api/smc/byRut/10735521`; //Rut Subdirector
 
     //Direccion de informatica
-   //const url = `http://localhost:8081/api/smc/byRut/18766677`; //Rut de funcionario
-   // const url = `http://localhost:8081/api/smc/byRut/13890844`; //Rut jefe de departamento
- //   const url = `http://localhost:8081/api/smc/byRut/10397956`; //Rut Director
-    
-    
+    //const url = `http://192.168.10.44:8081/api/smc/byRut/18766677`; //Rut de funcionario
+    // const url = `http://192.168.10.44:8081/api/smc/byRut/13890844`; //Rut jefe de departamento
+    //   const url = `http://192.168.10.44:8081/api/smc/byRut/10397956`; //Rut Director
+
+
 
     try {
         const response = await fetch(url);
