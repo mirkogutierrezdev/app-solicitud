@@ -77,7 +77,7 @@ const MisSolicitudes = () => {
                                     <td>{tipoSolicitud.nombre}</td>
                                     <td>{estado.nombre}</td>
                                     <td>{fechaSolicitud}</td>
-                                    
+
                                     <td>
                                         <Button
                                             onClick={() => handleToggle(id)}
@@ -100,7 +100,7 @@ const MisSolicitudes = () => {
                                                     {rechazos[id] && (
                                                         <>
                                                             <ListGroup.Item><strong>Fecha de Rechazo:</strong> {rechazos[id].fechaRechazo}</ListGroup.Item>
-                                                            <ListGroup.Item><strong>Motivo de Rechazo:</strong> {rechazos[id].motivoRechazo}</ListGroup.Item>
+                                                            <ListGroup.Item><strong>Motivo de Rechazo:</strong> {rechazos[id].comentario}</ListGroup.Item>
                                                             <ListGroup.Item><strong>Rechazado por:</strong> {rechazos[id].funcionario.nombre}</ListGroup.Item>
                                                         </>
                                                     )}

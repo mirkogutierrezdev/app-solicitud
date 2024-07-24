@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Container, Table, Spinner, Alert } from "react-bootstrap";
 import { getSolicitudesInbox } from "../services/services";
 import DataContext from "../context/DataContext";
-
+import '../css/InboxSolicitudes.css';
 import UnreadContext from "../context/UnreadContext";
 import InboxRow from "./InboxRow";
 
@@ -17,7 +17,7 @@ const InboxSol = () => {
 
     const { setDepto } = useContext(UnreadContext);
 
-    console.log(solicitudes);
+
 
 
     useEffect(() => {

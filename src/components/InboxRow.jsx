@@ -11,8 +11,6 @@ const InboxRow = ({ solicitud }) => {
     const [open, setOpen] = useState(false);
     const infoFun = useContext(DataContext);
 
-    
-
     const [dataFunc, setDataFun] = useState({});
     const { data } = dataFunc || {};
     const [dataDepartamento, setDataDepartamento] = useState({});
@@ -103,7 +101,7 @@ const InboxRow = ({ solicitud }) => {
             rut: data ? data.rut : null
         };
 
-       Swal.fire({
+        Swal.fire({
             title: '¿Está seguro de recibir la solicitud?',
             showDenyButton: true,
             confirmButtonText: `Sí, estoy seguro`,
@@ -130,24 +128,31 @@ const InboxRow = ({ solicitud }) => {
         );
     };
 
-    const handleRechazar = () => {
+    const handleRechazar = async () => {
         const fechaActual = obtenerFechaActual();
 
         const solicitudDto = {
             idSolicitud: solicitud.solicitud.id,
             rutFuncionario: data.rut,
             fechaAprobacion: fechaActual,
-            estado: "RECHAZADA"
+            estado: "RECHAZADA",
+            motivo: ""
         };
 
         Swal.fire({
             title: '¿Está seguro de rechazar la solicitud?',
+            input: 'textarea',
+            inputLabel: 'Motivo del rechazo',
+            inputPlaceholder: 'Ingrese el motivo aquí...',
             showDenyButton: true,
             confirmButtonText: `Sí, estoy seguro`,
             denyButtonText: `No`,
             icon: 'question'
         }).then(async (result) => {
             if (result.isConfirmed) {
+                const motivo = result.value; // Obtener el motivo del input
+                solicitudDto.motivo = motivo;
+
                 try {
                     await saveRechazo(solicitudDto);
                     Swal.fire({
@@ -164,10 +169,9 @@ const InboxRow = ({ solicitud }) => {
                 }
             }
         });
-
     };
 
-    const handlerAprobar = () => {
+    const handlerAprobar = async () => {
         const fechaActual = obtenerFechaActual();
 
         const solicitudDto = {
@@ -205,17 +209,16 @@ const InboxRow = ({ solicitud }) => {
 
     const verificarEstadoBotones = () => {
         const derivacionesSinEntrada = solicitud?.derivaciones?.filter(derivacion => {
-            return derivacion.departamento.deptoSmc == dataDepartamento.depto &&
+            return derivacion.departamento.deptoSmc === dataDepartamento.depto &&
                 !solicitud.entradas.some(entrada => entrada.derivacion.id === derivacion.id);
         });
 
         const derivacionesConSalida = solicitud?.derivaciones?.filter(derivacion => {
-            return derivacion.departamento.deptoSmc != dataDepartamento.depto &&
+            return derivacion.departamento.deptoSmc !== dataDepartamento.depto &&
                 solicitud.salidas.some(salida => salida.derivacion.id === derivacion.id);
         });
 
-
-        if (derivacionesSinEntrada.length > 0 && derivacionesConSalida.length == 0) {
+        if (derivacionesSinEntrada.length > 0 && derivacionesConSalida.length === 0) {
             setRecibirDisabled(false);
             setDerivarDisabled(true);
             setRechazarDisabled(true);
@@ -224,7 +227,7 @@ const InboxRow = ({ solicitud }) => {
             if (derivacionesSinEntrada?.length > 0) {
                 setRecibirDisabled(false);
             } else {
-                setRecibirDisabled(true);
+                setRecibirDisabled(false);
                 setRechazarDisabled(false);
             }
 
@@ -240,6 +243,12 @@ const InboxRow = ({ solicitud }) => {
                 setDerivarDisabled(true);
                 setAprobarDisabled(true);
             }
+
+            if (solicitud.aprobacion) {
+                setRechazarDisabled(true);
+                setDerivarDisabled(true);
+                setAprobarDisabled(true);
+            }
         }
     };
 
@@ -248,9 +257,9 @@ const InboxRow = ({ solicitud }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitud, dataDepartamento]);
 
+    const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc === dataDepartamento.depto && derivacion.leida === false);
 
-    const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto && derivacion.leida == false);
-
+    const estadoClass = solicitud?.aprobacion ? "estado-aprobado" : solicitud?.rechazo ? "estado-rechazado" : "";
     return (
         <>
             <tr className={isLeida ? "unread-row" : "read-row"}>
@@ -258,11 +267,11 @@ const InboxRow = ({ solicitud }) => {
                     esSubdir={esSubdir} handleGuardarYDerivar={handleGuardarYDerivar}
                     isDerivarDisabled={isDerivarDisabled} handleRechazar={handleRechazar}
                     isRechazarDisable={isRechazarDisable} handlerAprobar={handlerAprobar}
-                    isAprobarDisable={isAprobarDisable} setOpen={setOpen} open={open} />
+                    isAprobarDisable={isAprobarDisable} setOpen={setOpen} open={open}
+                    estadoClass={estadoClass} />
+
             </tr>
-            <tr>
-              <InboxCollapse solicitud={solicitud} open={open} />
-            </tr>
+            <InboxCollapse solicitud={solicitud} open={open} />
         </>
     );
 };

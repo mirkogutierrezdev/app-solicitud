@@ -1,19 +1,37 @@
 /* eslint-disable react/prop-types */
 import { Button } from "react-bootstrap";
-import { FaArrowAltCircleRight } from "react-icons/fa";
-import { FaCircleCheck, FaCircleNotch } from "react-icons/fa6";
+
 import { MdRemoveRedEye } from "react-icons/md";
+import '../css/InboxSolicitudes.css';
+import { FaCircleCheck, FaCircleNotch } from "react-icons/fa6";
+import { FaArrowAltCircleRight } from "react-icons/fa";
 
-const InboxActions = ({ solicitud: dataSol, handleRecibir,isRecibirDisabled,esSubdir,handleGuardarYDerivar,
-                        isDerivarDisabled,handleRechazar,isRechazarDisable,handlerAprobar,isAprobarDisable,setOpen,open }) => {
+const InboxActions = ({
+    solicitud: dataSol,
+    handleRecibir,
+    isRecibirDisabled,
+    esSubdir,
+    handleGuardarYDerivar,
+    isDerivarDisabled,
+    handleRechazar,
+    isRechazarDisable,
+    handlerAprobar,
+    isAprobarDisable,
+    setOpen,
+    open,
+    estadoClass
+}) => {
 
-    
+    // Verificar que estadoClass tiene el valor esperado
+    console.log("estadoClass:", estadoClass);
+
     return (
         <>
             <td>{dataSol?.solicitud?.id}</td>
             <td>{dataSol?.solicitud?.funcionario?.nombre}</td>
             <td>{dataSol?.solicitud?.tipoSolicitud?.nombre}</td>
-            <td>{dataSol?.solicitud?.estado?.nombre}</td>
+            <td><p className={estadoClass}>{dataSol?.solicitud?.estado?.nombre}</p></td>
+
             <td>
                 <Button
                     onClick={handleRecibir}
@@ -55,9 +73,7 @@ const InboxActions = ({ solicitud: dataSol, handleRecibir,isRecibirDisabled,esSu
                 </Button>
             </td>
         </>
-
-    )
-
+    );
 }
 
 export default InboxActions;
