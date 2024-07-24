@@ -23,7 +23,7 @@ const InboxActions = ({
 }) => {
 
     // Verificar que estadoClass tiene el valor esperado
-    console.log("estadoClass:", estadoClass);
+
 
     return (
         <>

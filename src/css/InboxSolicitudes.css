@@ -1,24 +1,14 @@
 .unread-row {
-    background-color: #e2e3e5;
+    background-color: #3a5385;
     /* Color de fondo para filas no leídas */
     font-weight: bold;
 }
 
 .read-row {
-    background-color: #ffffff;
+    background-color: #bb4747;
     /* Color de fondo para filas leídas */
 }
 
 .hidden-button {
     display: none;
-}
-
-.estado-aprobado {
-    color: green;
-    font-weight: bold;
-}
-
-.estado-rechazado {
-    color: red;
-    font-weight: bold;
 }

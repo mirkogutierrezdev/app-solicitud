@@ -208,8 +208,9 @@ const InboxRow = ({ solicitud }) => {
     };
 
     const verificarEstadoBotones = () => {
+        // Obtener la lista de derivaciones y entradas relevantes para la solicitud actual
         const derivacionesSinEntrada = solicitud?.derivaciones?.filter(derivacion => {
-            return derivacion.departamento.deptoSmc === dataDepartamento.depto &&
+            return derivacion.departamento.deptoSmc == dataDepartamento.depto &&
                 !solicitud.entradas.some(entrada => entrada.derivacion.id === derivacion.id);
         });
 
@@ -218,37 +219,40 @@ const InboxRow = ({ solicitud }) => {
                 solicitud.salidas.some(salida => salida.derivacion.id === derivacion.id);
         });
 
+        // Si la solicitud está rechazada o aprobada, deshabilitar todos los botones
+        if (solicitud?.rechazo || solicitud?.aprobacion) {
+            setRecibirDisabled(true);
+            setDerivarDisabled(true);
+            setRechazarDisabled(true);
+            setAprobarDisabled(true);
+            return;
+        }
+
+        // Controlar el botón Recibir
         if (derivacionesSinEntrada.length > 0 && derivacionesConSalida.length === 0) {
             setRecibirDisabled(false);
             setDerivarDisabled(true);
             setRechazarDisabled(true);
-
+            setAprobarDisabled(true);
         } else {
-            if (derivacionesSinEntrada?.length > 0) {
-                setRecibirDisabled(false);
-            } else {
-                setRecibirDisabled(false);
-                setRechazarDisabled(false);
-            }
+            setRecibirDisabled(true);
 
-            if (derivacionesConSalida?.length > 0) {
+            // Controlar el botón Derivar
+            if (derivacionesConSalida.length > 0) {
                 setDerivarDisabled(true);
-                setRechazarDisabled(true);
             } else {
                 setDerivarDisabled(false);
             }
 
-            if (solicitud.rechazo) {
+            // Controlar el botón Rechazar
+            if (derivacionesSinEntrada.length === 0 && derivacionesConSalida.length === 0) {
+                setRechazarDisabled(false);
+            } else {
                 setRechazarDisabled(true);
-                setDerivarDisabled(true);
-                setAprobarDisabled(true);
             }
 
-            if (solicitud.aprobacion) {
-                setRechazarDisabled(true);
-                setDerivarDisabled(true);
-                setAprobarDisabled(true);
-            }
+            // Controlar el botón Aprobar
+            setAprobarDisabled(false);
         }
     };
 
@@ -257,7 +261,7 @@ const InboxRow = ({ solicitud }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitud, dataDepartamento]);
 
-    const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc === dataDepartamento.depto && derivacion.leida === false);
+    const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto && derivacion.leida === false);
 
     const estadoClass = solicitud?.aprobacion ? "estado-aprobado" : solicitud?.rechazo ? "estado-rechazado" : "";
     return (
