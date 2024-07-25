@@ -64,19 +64,6 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
                 }
             }
         });
-
-        /* 
-                try {
-                    const result = await saveSolicitud(solicitud);
-        
-                    Swal.fire({
-                        text: result.message,
-                        icon: "success"
-                    });
-        
-                } catch (error) {
-                    console.error('Error al guardar la solicitud:', error);
-                } */
     };
 
     return (
@@ -84,25 +71,35 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
             <Card.Header as="h5">Detalles de la Solicitud</Card.Header>
             <Card.Body>
                 <Row className="mb-3">
-                    <Col>
-                        <Card.Text>
+                    <Col md={4}>
+                        <Card.Text className="single-line">
                             <strong>Tipo de Solicitud:</strong> {option}
                         </Card.Text>
                     </Col>
-                    <Col>
-                        <Card.Text>
-                            <strong>Días a Usar:</strong> {diasWork}
+                    <Col md={4}>
+                        <Card.Text className="single-line">
+                            <strong>Fecha Inicio:</strong> {fechaInicio}
+                        </Card.Text>
+                    </Col>
+                    <Col md={4}>
+                        <Card.Text className="single-line">
+                            <strong>Fecha Fin:</strong> {fechaFin}
                         </Card.Text>
                     </Col>
                 </Row>
                 <Row className="mb-3">
-                    <Col>
-                        <Card.Text>
+                    <Col md={4}>
+                        <Card.Text className="single-line">
+                            <strong>Días a Usar:</strong> {diasWork}
+                        </Card.Text>
+                    </Col>
+                    <Col md={4}>
+                        <Card.Text className="single-line">
                             <strong>Nuevo Saldo:</strong> {diasUsar}
                         </Card.Text>
                     </Col>
-                    <Col>
-                        <Card.Text>
+                    <Col md={4}>
+                        <Card.Text className="single-line">
                             <strong>Jefe de Departamento:</strong> {jefeDepto}
                         </Card.Text>
                     </Col>
@@ -111,7 +108,7 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
                     <Form.Label>Comentarios</Form.Label>
                     <Form.Control
                         as="textarea"
-                        rows={5}
+                        rows={3} // Reduce the height of the textarea
                         value={comments}
                         onChange={handleCommentsChange}
                         disabled={!option} // Desactiva el área de texto si no hay tipo de solicitud seleccionado

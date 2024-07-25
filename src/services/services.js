@@ -2,9 +2,9 @@
 //Funcion que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async () => {
     //Subdireccion de finanzas
- //   const url = `http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
-    const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
-    // const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
+    //   const url = `http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
+    // const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
+    const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
     // const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
 
     //Direccion de informatica
@@ -369,5 +369,25 @@ export const getAprobacionesBySolicitud = async (solicitudId) => {
     }
 };
 
+
+export const getPdf = async (solicitudId) => {
+
+    const url = `http://localhost:8081/api/pdf/solicitudes/${solicitudId}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    return null;
+
+}
 
 

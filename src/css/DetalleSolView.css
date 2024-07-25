@@ -23,3 +23,25 @@
 .detalle-sol-card .btn {
     align-self: center;
 }
+
+.detalle-sol-card {
+    border-radius: 0.5rem;
+}
+
+.single-line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+textarea.form-control {
+    resize: none;
+    /* Prevent resizing of the textarea */
+}
+
+@media (max-width: 768px) {
+    .single-line {
+        font-size: 0.875rem;
+        /* Adjust font size for smaller screens */
+    }
+}

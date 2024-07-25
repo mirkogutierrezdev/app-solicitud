@@ -5,6 +5,7 @@ import AdmSolView from "./AdmSolView";
 import FeriadoSolView from "./FeriadoSolView";
 import DetalleSolView from "./DetallaSolView";
 import { getDiasWork } from "../services/services";
+import '../css/SolicitudesPage.css'; // Asegúrate de agregar el archivo CSS
 
 function SolicitudesPage({ data }) {
 
@@ -139,40 +140,42 @@ function SolicitudesPage({ data }) {
                 <Col>
                     <Card className="shadow-sm">
                         <Card.Body>
-                            <Form.Group controlId="formSelectOption" className="mb-3">
-                                <Form.Label className="h5">Tipo de solicitud</Form.Label>
-                                <Form.Control
-                                    as="select"
-                                    value={option}
-                                    onChange={handleOptionChange}
-                                    className="p-2"
-                                >
-                                    <option value="">Seleccione una opción</option>
-                                    <option value="Feriado Legal">Feriado Legal</option>
-                                </Form.Control>
-                            </Form.Group>
-                            <Row>
-                                <Col md={6}>
-                                    <Form.Group controlId="formStartDate" className="mb-3">
-                                        <Form.Label className="h5">Fecha de inicio</Form.Label>
+                            <Row className="align-items-center mb-3">
+                                <Col md={4}>
+                                    <Form.Group controlId="formSelectOption">
+                                        <Form.Label className="h5 custom-font-size">Tipo de solicitud</Form.Label>
+                                        <Form.Control
+                                            as="select"
+                                            value={option}
+                                            onChange={handleOptionChange}
+                                            className="p-2 custom-font-size"
+                                        >
+                                            <option value="">Seleccione una opción</option>
+                                            <option value="Feriado Legal">Feriado Legal</option>
+                                        </Form.Control>
+                                    </Form.Group>
+                                </Col>
+                                <Col md={4}>
+                                    <Form.Group controlId="formStartDate">
+                                        <Form.Label className="h5 custom-font-size">Fecha de inicio</Form.Label>
                                         <Form.Control
                                             type="date"
                                             value={startDate}
                                             onChange={handleStartDateChange}
-                                            className="p-2"
+                                            className="p-2 custom-font-size"
                                             min={calculateFirstDayOfMonth()}
                                             disabled={!option}
                                         />
                                     </Form.Group>
                                 </Col>
-                                <Col md={6}>
-                                    <Form.Group controlId="formEndDate" className="mb-3">
-                                        <Form.Label className="h5">Fecha de término</Form.Label>
+                                <Col md={4}>
+                                    <Form.Group controlId="formEndDate">
+                                        <Form.Label className="h5 custom-font-size">Fecha de término</Form.Label>
                                         <Form.Control
                                             type="date"
                                             value={endDate}
                                             onChange={handleEndDateChange}
-                                            className="p-2"
+                                            className="p-2 custom-font-size"
                                             min={startDate}
                                             max={maxEndDate}
                                             disabled={!option}
