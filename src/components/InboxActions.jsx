@@ -7,14 +7,7 @@ import { FaCircleCheck, FaCircleNotch } from "react-icons/fa6";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 
 
-const getPdf = async (id) => {
-    try {
-        const response = await getPdf(id);
-        return response;
-    } catch (error) {
-        console.error(error);
-    }
-};
+
 
 
 const InboxActions = ({
@@ -82,13 +75,7 @@ const InboxActions = ({
                 >
                     Ver Movimiento <MdRemoveRedEye />
                 </Button>
-                <Button
-                    onClick={() => getPdf(dataSol?.solicitud?.id)}
-
-
-                >
-                    Ver Documento <MdRemoveRedEye />
-                </Button>
+              
             </td>
         </>
     );

@@ -38,7 +38,8 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
             motivo: comments // Añadir comentarios a la solicitud
         };
 
-        Swal.fire({
+        
+         Swal.fire({
             title: "Derivar Solicitud",
             text: "¿Está seguro de que desea derivar la solicitud?",
             icon: "question",
@@ -49,6 +50,7 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
             if (result.isConfirmed) {
                 try {
                     const result = await saveSolicitud(solicitud);
+                    console.log('Solicitud guardada:', result);
 
                     Swal.fire({
                         text: result.message,
@@ -63,7 +65,7 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
                     console.error('Error al guardar la solicitud:', error);
                 }
             }
-        });
+        }); 
     };
 
     return (
