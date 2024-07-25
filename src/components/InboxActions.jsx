@@ -49,7 +49,7 @@ const InboxActions = ({
                     onClick={handleGuardarYDerivar}
                     disabled={isDerivarDisabled}
                 >
-                    Derivar <FaArrowAltCircleRight />
+                    Aprobar y derivar <FaArrowAltCircleRight />
                 </Button>{" "}
                 <Button
                     variant="danger"
