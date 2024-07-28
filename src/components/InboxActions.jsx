@@ -10,6 +10,8 @@ import { FaArrowAltCircleRight } from "react-icons/fa";
 
 
 
+
+
 const InboxActions = ({
     solicitud: dataSol,
     handleRecibir,
@@ -23,7 +25,8 @@ const InboxActions = ({
     isAprobarDisable,
     setOpen,
     open,
-    estadoClass
+    estadoClass,
+    mostrarPdf
 }) => {
 
     // Verificar que estadoClass tiene el valor esperado
@@ -75,8 +78,19 @@ const InboxActions = ({
                 >
                     Ver Movimiento <MdRemoveRedEye />
                 </Button>
-              
+
             </td>
+            <td>
+                <Button
+                    onClick={mostrarPdf}
+                    aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
+                    aria-expanded={open}
+                >
+                    Pdf <MdRemoveRedEye />
+                </Button>
+
+            </td>
+
         </>
     );
 }

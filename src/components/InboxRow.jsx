@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import '../css/InboxSolicitudes.css';
 import InboxCollapse from "./InboxCollapse";
 import InboxActions from "./InboxActions";
+import axios from 'axios';
 
 const InboxRow = ({ solicitud }) => {
     const [open, setOpen] = useState(false);
@@ -171,6 +172,24 @@ const InboxRow = ({ solicitud }) => {
         });
     };
 
+    const mostrarPdf = async () => {
+        const response = await axios.get(`http://localhost:8081/api/aprobaciones/pdf/${solicitud.solicitud.id}`, {
+            responseType: 'blob',
+        });
+
+
+        const file = new Blob([response.data], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        window.open(fileURL); // Abre una nueva pestaña para previsualizar el PDF
+
+        // Limpieza de la URL del objeto Blob después de un tiempo para evitar fugas de memoria
+        setTimeout(() => URL.revokeObjectURL(fileURL), 100);
+
+    }
+
+
+
+
     const handlerAprobar = async () => {
         const fechaActual = obtenerFechaActual();
 
@@ -184,8 +203,8 @@ const InboxRow = ({ solicitud }) => {
         Swal.fire({
             title: '¿Está seguro de aprobar la solicitud?',
             showDenyButton: true,
-            confirmButtonText: `Sí, estoy seguro`,
-            denyButtonText: `No`,
+            confirmButtonText: 'Sí, estoy seguro',
+            denyButtonText: 'No',
             icon: 'question'
         }).then(async (result) => {
             if (result.isConfirmed) {
@@ -195,6 +214,19 @@ const InboxRow = ({ solicitud }) => {
                         text: "Solicitud aprobada con éxito",
                         icon: "success"
                     });
+
+                    // Generar el PDF y abrirlo en una nueva pestaña
+                    const response = await axios.get(`http://localhost:8081/api/aprobaciones/pdf/${solicitudDto.idSolicitud}`, {
+                        responseType: 'blob',
+                    });
+
+                    const file = new Blob([response.data], { type: 'application/pdf' });
+                    const fileURL = URL.createObjectURL(file);
+                    window.open(fileURL); // Abre una nueva pestaña para previsualizar el PDF
+
+                    // Limpieza de la URL del objeto Blob después de un tiempo para evitar fugas de memoria
+                    setTimeout(() => URL.revokeObjectURL(fileURL), 100);
+
                     setAprobarDisabled(true); // Deshabilitar el botón después de aprobar con éxito
                 } catch (error) {
                     Swal.fire({
@@ -206,13 +238,12 @@ const InboxRow = ({ solicitud }) => {
             }
         });
     };
-
     const verificarEstadoBotones = () => {
-        console.log("verificarEstadoBotones called");
+
 
         // Obtener la última derivación de la solicitud
         const ultimaDerivacion = solicitud?.derivaciones?.length > 0 ? solicitud.derivaciones[solicitud.derivaciones.length - 1] : null;
-        console.log("ultimaDerivacion:", ultimaDerivacion);
+
 
         // Si la solicitud está rechazada o aprobada, deshabilitar todos los botones
         if (solicitud?.rechazo || solicitud?.aprobacion) {
@@ -226,8 +257,6 @@ const InboxRow = ({ solicitud }) => {
         // Controlar el botón Recibir
         const esUltimaDerivacionDeptoActual = ultimaDerivacion && ultimaDerivacion.departamento.deptoSmc == dataDepartamento.depto;
         const entradaExistente = ultimaDerivacion && solicitud.entradas.some(entrada => entrada.derivacion.id === ultimaDerivacion.id);
-        console.log("esUltimaDerivacionDeptoActual:", esUltimaDerivacionDeptoActual);
-        console.log("entradaExistente:", entradaExistente);
 
         // Condición para recibir
         if (esUltimaDerivacionDeptoActual && !entradaExistente) {
@@ -281,12 +310,17 @@ const InboxRow = ({ solicitud }) => {
                     isDerivarDisabled={isDerivarDisabled} handleRechazar={handleRechazar}
                     isRechazarDisable={isRechazarDisable} handlerAprobar={handlerAprobar}
                     isAprobarDisable={isAprobarDisable} setOpen={setOpen} open={open}
-                    estadoClass={estadoClass} />
+                    estadoClass={estadoClass} mostrarPdf={mostrarPdf} />
 
             </tr>
             <InboxCollapse solicitud={solicitud} open={open} />
         </>
     );
 };
+
+
+
+
+
 
 export default InboxRow;
