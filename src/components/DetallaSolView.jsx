@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-import { useContext, useState } from "react";
-import { Card, Button, Form, Row, Col } from "react-bootstrap";
+import { useContext } from "react";
+import { Card, Button,  Row, Col } from "react-bootstrap";
 import DataContext from "../context/DataContext";
 import { saveSolicitud } from "../services/services";
 import Swal from "sweetalert2";
@@ -8,7 +8,7 @@ import '../css/DetalleSolView.css'; // Añade un archivo CSS para estilos person
 
 function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fechaInicio, fechaFin }) {
     const data = useContext(DataContext);
-    const [comments, setComments] = useState("");
+    
 
     const estado = 'PENDIENTE';
 
@@ -20,9 +20,6 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().slice(0, 10);
 
-    const handleCommentsChange = (e) => {
-        setComments(e.target.value);
-    };
 
     const handlerClick = async () => {
         const solicitud = {
@@ -34,8 +31,8 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
             estado: estado,
             depto: depto,
             nombre_departamento: nombre_departamento,
-            fechaDer: currentDateString,
-            motivo: comments // Añadir comentarios a la solicitud
+            fechaDer: currentDateString
+           
         };
 
         
@@ -58,7 +55,7 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
                     });
 
                     // Limpiar los campos después de grabar
-                    setComments("");
+                   
                     // Aquí puedes agregar más campos que deseas limpiar
 
                 } catch (error) {
@@ -106,16 +103,7 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
                         </Card.Text>
                     </Col>
                 </Row>
-                <Form.Group controlId="comments" className="mb-3">
-                    <Form.Label>Comentarios</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        rows={3} // Reduce the height of the textarea
-                        value={comments}
-                        onChange={handleCommentsChange}
-                        disabled={!option} // Desactiva el área de texto si no hay tipo de solicitud seleccionado
-                    />
-                </Form.Group>
+                
                 <Button onClick={handlerClick} variant="primary" disabled={!btnActivo || !option} className="mt-3">
                     Derivar
                 </Button>
