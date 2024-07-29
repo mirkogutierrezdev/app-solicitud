@@ -3,8 +3,7 @@ import axios from 'axios';
 //Función que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async () => {
 
-
-    // const url = `http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
+//http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
     //const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
     //const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
     const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
@@ -24,8 +23,8 @@ export const getFuncionario = async () => {
 }
 
 //Calcula los días hábiles entre dos fechas
-export const getDiasWork = async (fechaIni, fechaFin) => {
-    const url = `http://localhost:8081/api/utils/calcular?fechaInicio=${fechaIni}&fechaFin=${fechaFin}`;
+export const getDiasWork = async (fechaIni, fechaTermino) => {
+    const url = `http://localhost:8081/api/utils/calcular?fechaInicio=${fechaIni}&fechaTermino=${fechaTermino}`;
 
     try {
         const response = await axios.get(url);
@@ -237,3 +236,5 @@ export const getPdf = async (solicitudId) => {
         return null;
     }
 }
+
+
