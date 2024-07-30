@@ -6,7 +6,7 @@ import { saveSolicitud } from "../services/services";
 import Swal from "sweetalert2";
 import '../css/DetalleSolView.css'; // Añade un archivo CSS para estilos personalizados
 
-function DetalleSolView({ option, workDays, numDaysToUse, supervisor, btnActivo, startDate, endDate }) {
+function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveButton, startDate, endDate }) {
     const data = useContext(DataContext);
 
 
@@ -104,7 +104,7 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, btnActivo,
                     </Col>
                 </Row>
 
-                <Button onClick={handlerClick} variant="primary" disabled={!btnActivo || !option} className="mt-3">
+                <Button onClick={handlerClick} variant="primary" disabled={!isActiveButton || !option} className="mt-3">
                     Derivar
                 </Button>
             </Card.Body>

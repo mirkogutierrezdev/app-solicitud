@@ -102,22 +102,21 @@ function SolicitudesPage({ data }) {
         let date = new Date(startDate);
         let count = 0;
         const feriados = await getDataHolidays(startDate, calculateMaxPossibleEndDate(startDate, diasPendientes));
-    
+
         while (count < diasPendientes) {
             date.setDate(date.getDate() + 1);
             if (date.getDay() !== 0 && date.getDay() !== 6 && !isHoliday(date, feriados)) { // 0 = Sunday, 6 = Saturday
                 count++;
-               
             }
         }
-    
+
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-    
-    
+
+
     function calculateMaxPossibleEndDate(startDate, diasPendientes) {
         let date = new Date(startDate);
         date.setDate(date.getDate() + diasPendientes * 2); // Aproximadamente el doble para cubrir feriados y fines de semana
@@ -126,7 +125,7 @@ function SolicitudesPage({ data }) {
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-    
+
     function isHoliday(date, feriados) {
         // Normaliza la fecha a un formato común (año-mes-día)
         const normalizeDate = (d) => {
@@ -135,16 +134,16 @@ function SolicitudesPage({ data }) {
             const day = d.getDate().toString().padStart(2, '0');
             return `${year}-${month}-${day}`;
         };
-    
+
         const normalizedDate = normalizeDate(date);
-    
+
         return feriados.some(feriado => {
             const feriadoDate = new Date(feriado.feriado);
             const normalizedFeriadoDate = normalizeDate(feriadoDate);
             return normalizedDate === normalizedFeriadoDate;
         });
     }
-    
+
 
     function resetAllValues() {
         setStartDate(getFormattedCurrentDate());
@@ -229,6 +228,8 @@ function SolicitudesPage({ data }) {
                                 numDaysToUse={numDaysToUse}
                                 workDays={workDays}
                                 supervisor={supervisor}
+                                isActiveButton={isActiveButton}
+                                option={option}
                             />
                         </Card.Body>
                     </Card>
