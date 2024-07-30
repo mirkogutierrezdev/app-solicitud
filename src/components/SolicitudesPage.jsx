@@ -1,41 +1,50 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { Col, Container, Form, Row, Card } from "react-bootstrap";
 import AdmSolView from "./AdmSolView";
 import FeriadoSolView from "./FeriadoSolView";
 import DetalleSolView from "./DetallaSolView";
-import { getDiasWork } from "../services/services";
+import { getDiasWork, getFeriados } from "../services/services";
 import '../css/SolicitudesPage.css'; // Asegúrate de agregar el archivo CSS
 
 function SolicitudesPage({ data }) {
-
     const currentYear = new Date().getFullYear();
-
     const adm = data ? data.diasAdm : [];
     const feriados = data ? data.feriados : [];
     const depto = data ? data.departamento : [];
-
     const { jefe_departamento } = depto;
     const [option, setOption] = useState('');
     const [startDate, setStartDate] = useState(getFormattedCurrentDate());
     const [endDate, setEndDate] = useState('');
-    const [diasWork, setDiasWork] = useState(0);
-    const [diasUsar, setDiasUsar] = useState(0);
+    const [workDays, setWorkDays] = useState(0);
+    const [numDaysToUse, setNumDaysToUse] = useState(0);
     const [maxEndDate, setMaxEndDate] = useState('');
-    const [jefe, setJefe] = useState('');
-    const [btnActivo, setBtnActivo] = useState(false);
+    const [supervisor, setSupervisor] = useState('');
+    const [isActiveButton, setActiveButton] = useState(false);
+    const [dataHolidays, setDataHolidays] = useState([]);
 
     const filteredFeriados = feriados.filter(feriado => feriado.anio === currentYear);
-    const { diasPendientes } = filteredFeriados.length > 0 ? filteredFeriados[0] : { totalDias: 0, diasTomados: 0, diasPendientes: 0 };
+    const { diasPendientes: remainingDays } = filteredFeriados.length > 0 ? filteredFeriados[0] : { totalDias: 0, diasTomados: 0, diasPendientes: 0 };
 
-    const handleOptionChange = (e) => {
+    const getDataHolidays = async (fechaInicio, fechaTermino) => {
+        try {
+            const dataHolidays = await getFeriados(fechaInicio, fechaTermino);
+            setDataHolidays(dataHolidays);
+            return dataHolidays;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    };
+
+    const handleOptionChange = async (e) => {
         const selectedOption = e.target.value;
-
         setOption(selectedOption);
-        setBtnActivo(!btnActivo);
+        setActiveButton(!isActiveButton);
         if (selectedOption) {
             setStartDate(getFormattedCurrentDate());
-            const calculatedMaxEndDate = calculateMaxEndDate(getFormattedCurrentDate(), diasPendientes);
+            const calculatedMaxEndDate = await calculateMaxEndDate(getFormattedCurrentDate(), remainingDays);
             setEndDate(calculatedMaxEndDate);
             setMaxEndDate(calculatedMaxEndDate);
         } else {
@@ -43,9 +52,9 @@ function SolicitudesPage({ data }) {
         }
     };
 
-    const handleStartDateChange = (e) => {
+    const handleStartDateChange = async (e) => {
         setStartDate(e.target.value);
-        const calculatedMaxEndDate = calculateMaxEndDate(e.target.value, diasPendientes);
+        const calculatedMaxEndDate = await calculateMaxEndDate(e.target.value, remainingDays);
         setMaxEndDate(calculatedMaxEndDate);
         setEndDate(calculatedMaxEndDate);
     };
@@ -59,16 +68,16 @@ function SolicitudesPage({ data }) {
             const validaDias = async () => {
                 try {
                     const dias = await getDiasWork(startDate, endDate);
-                    setDiasWork(dias);
-                    setDiasUsar(diasPendientes - dias);
-                    setJefe(jefe_departamento);
+                    setWorkDays(dias);
+                    setNumDaysToUse(remainingDays - dias);
+                    setSupervisor(jefe_departamento);
                 } catch (error) {
                     console.log(error);
                 }
             };
             validaDias();
         }
-    }, [startDate, endDate, diasPendientes, jefe_departamento]);
+    }, [startDate, endDate, remainingDays, jefe_departamento]);
 
     function getFormattedCurrentDate() {
         const date = new Date();
@@ -89,30 +98,61 @@ function SolicitudesPage({ data }) {
         return `${year}-${month}-${day}`;
     }
 
-    function calculateMaxEndDate(startDate, diasPendientes) {
+    async function calculateMaxEndDate(startDate, diasPendientes) {
         let date = new Date(startDate);
         let count = 0;
-
+        const feriados = await getDataHolidays(startDate, calculateMaxPossibleEndDate(startDate, diasPendientes));
+    
         while (count < diasPendientes) {
             date.setDate(date.getDate() + 1);
-            if (date.getDay() !== 0 && date.getDay() !== 6) { // 0 = Sunday, 6 = Saturday
+            if (date.getDay() !== 0 && date.getDay() !== 6 && !isHoliday(date, feriados)) { // 0 = Sunday, 6 = Saturday
                 count++;
+               
             }
         }
-
+    
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+    
+    
+    function calculateMaxPossibleEndDate(startDate, diasPendientes) {
+        let date = new Date(startDate);
+        date.setDate(date.getDate() + diasPendientes * 2); // Aproximadamente el doble para cubrir feriados y fines de semana
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    function isHoliday(date, feriados) {
+        // Normaliza la fecha a un formato común (año-mes-día)
+        const normalizeDate = (d) => {
+            const year = d.getFullYear();
+            const month = (d.getMonth() + 1).toString().padStart(2, '0');
+            const day = d.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+    
+        const normalizedDate = normalizeDate(date);
+    
+        return feriados.some(feriado => {
+            const feriadoDate = new Date(feriado.feriado);
+            const normalizedFeriadoDate = normalizeDate(feriadoDate);
+            return normalizedDate === normalizedFeriadoDate;
+        });
+    }
+    
 
     function resetAllValues() {
         setStartDate(getFormattedCurrentDate());
         setEndDate('');
-        setDiasWork(0);
-        setDiasUsar(0);
+        setWorkDays(0);
+        setNumDaysToUse(0);
         setMaxEndDate('');
-        setJefe('');
+        setSupervisor('');
     }
 
     return (
@@ -184,13 +224,11 @@ function SolicitudesPage({ data }) {
                                 </Col>
                             </Row>
                             <DetalleSolView
-                                option={option}
-                                diasWork={diasWork}
-                                diasUsar={diasUsar}
-                                jefeDepto={jefe}
-                                btnActivo={btnActivo}
-                                fechaInicio={startDate}
-                                fechaFin={endDate}
+                                startDate={startDate}
+                                endDate={endDate}
+                                numDaysToUse={numDaysToUse}
+                                workDays={workDays}
+                                supervisor={supervisor}
                             />
                         </Card.Body>
                     </Card>

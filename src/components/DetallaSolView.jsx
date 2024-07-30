@@ -1,14 +1,14 @@
 /* eslint-disable react/prop-types */
 import { useContext } from "react";
-import { Card, Button,  Row, Col } from "react-bootstrap";
+import { Card, Button, Row, Col } from "react-bootstrap";
 import DataContext from "../context/DataContext";
 import { saveSolicitud } from "../services/services";
 import Swal from "sweetalert2";
 import '../css/DetalleSolView.css'; // Añade un archivo CSS para estilos personalizados
 
-function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fechaInicio, fechaFin }) {
+function DetalleSolView({ option, workDays, numDaysToUse, supervisor, btnActivo, startDate, endDate }) {
     const data = useContext(DataContext);
-    
+
 
     const estado = 'PENDIENTE';
 
@@ -24,19 +24,19 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
     const handlerClick = async () => {
         const solicitud = {
             fechaSol: currentDateString,
-            fechaInicio: fechaInicio,
-            fechaFin: fechaFin,
+            fechaInicio: startDate,
+            fechaFin: endDate,
             rut: rut,
             tipoSolicitud: option,
             estado: estado,
             depto: depto,
             nombre_departamento: nombre_departamento,
             fechaDer: currentDateString
-           
+
         };
 
-        
-         Swal.fire({
+
+        Swal.fire({
             title: "Derivar Solicitud",
             text: "¿Está seguro de que desea derivar la solicitud?",
             icon: "question",
@@ -55,14 +55,14 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
                     });
 
                     // Limpiar los campos después de grabar
-                   
+
                     // Aquí puedes agregar más campos que deseas limpiar
 
                 } catch (error) {
                     console.error('Error al guardar la solicitud:', error);
                 }
             }
-        }); 
+        });
     };
 
     return (
@@ -77,33 +77,33 @@ function DetalleSolView({ option, diasWork, diasUsar, jefeDepto, btnActivo, fech
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Fecha Inicio:</strong> {fechaInicio}
+                            <strong>Fecha Inicio:</strong> {startDate}
                         </Card.Text>
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Fecha Fin:</strong> {fechaFin}
+                            <strong>Fecha Fin:</strong> {endDate}
                         </Card.Text>
                     </Col>
                 </Row>
                 <Row className="mb-3">
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Días a Usar:</strong> {diasWork}
+                            <strong>Días a Usar:</strong> {workDays}
                         </Card.Text>
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Nuevo Saldo:</strong> {diasUsar}
+                            <strong>Nuevo Saldo:</strong> {numDaysToUse}
                         </Card.Text>
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Jefe de Departamento:</strong> {jefeDepto}
+                            <strong>Jefe de Departamento:</strong> {supervisor}
                         </Card.Text>
                     </Col>
                 </Row>
-                
+
                 <Button onClick={handlerClick} variant="primary" disabled={!btnActivo || !option} className="mt-3">
                     Derivar
                 </Button>

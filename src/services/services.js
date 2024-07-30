@@ -237,4 +237,16 @@ export const getPdf = async (solicitudId) => {
     }
 }
 
+export const getFeriados = async (fechaInicio,fechaTermino) => {
+    const url = `http://localhost:8081/api/utils/feriados/obtener?fechaInicio=${fechaInicio}&fechaTermino=${fechaTermino}`;
+
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 
