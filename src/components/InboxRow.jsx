@@ -4,9 +4,10 @@ import { getEsSub, saveAprobacion, saveDerivacion, saveEntrada, saveRechazo } fr
 import DataContext from "../context/DataContext";
 import Swal from 'sweetalert2';
 import '../css/InboxSolicitudes.css';
-import InboxCollapse from "./InboxCollapse";
+//import InboxCollapse from "./InboxCollapse";
 import InboxActions from "./InboxActions";
 import axios from 'axios';
+import InboxCollapse2 from "./InboxCollapse2";
 
 const InboxRow = ({ solicitud }) => {
     const [open, setOpen] = useState(false);
@@ -20,6 +21,8 @@ const InboxRow = ({ solicitud }) => {
     const [isAprobarDisable, setAprobarDisabled] = useState(true);
     const [isRechazarDisable, setRechazarDisabled] = useState(true);
     const [esSubdir, setEsSubdir] = useState(false);
+
+    console.log(solicitud);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -313,7 +316,7 @@ const InboxRow = ({ solicitud }) => {
                     estadoClass={estadoClass} mostrarPdf={mostrarPdf} />
 
             </tr>
-            <InboxCollapse solicitud={solicitud} open={open} />
+            <InboxCollapse2 solicitud={solicitud} open={open} />
         </>
     );
 };
