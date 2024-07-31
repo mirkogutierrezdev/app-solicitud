@@ -22,7 +22,7 @@ const InboxRow = ({ solicitud }) => {
     const [isRechazarDisable, setRechazarDisabled] = useState(true);
     const [esSubdir, setEsSubdir] = useState(false);
 
-    console.log(solicitud);
+    
 
     useEffect(() => {
         const fetchData = async () => {

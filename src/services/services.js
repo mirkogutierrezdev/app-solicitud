@@ -5,8 +5,8 @@ export const getFuncionario = async () => {
 
 //http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
     //const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
-    const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
-    //const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
+    //const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
+    const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
 
     //Direccion de informatica
     //  const url = `http://localhost:8081/api/smc/byRut/18766677`; //Rut de funcionario
@@ -249,4 +249,16 @@ export const getFeriados = async (fechaInicio,fechaTermino) => {
     }
 }
 
+
+export const getVderivaciones = async (solicitudId) => {
+    const url = `http://localhost:8081/api/derivacion/solicitudes/${solicitudId}`;
+
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
 
