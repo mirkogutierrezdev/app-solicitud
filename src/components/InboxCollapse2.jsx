@@ -3,6 +3,16 @@ import { useEffect, useState } from "react";
 import { Collapse, Table } from "react-bootstrap";
 import { getVderivaciones } from "../services/services";
 
+// Función para formatear la fecha en formato dd-MM-yyyy
+const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+};
+
 const InboxCollapse2 = ({ solicitud: dataSol, open }) => {
     const { solicitud } = dataSol;
 
@@ -24,7 +34,7 @@ const InboxCollapse2 = ({ solicitud: dataSol, open }) => {
 
         // Log para verificar los datos
         console.log(vderivaciones);
-    }, [solicitud]);
+    }, [solicitud, vderivaciones]);
 
     return (
         <tr>
@@ -37,7 +47,6 @@ const InboxCollapse2 = ({ solicitud: dataSol, open }) => {
                                     <th colSpan="5" className="text-center">Detalles de la Solicitud</th>
                                 </tr>
                                 <tr>
-                                    <th>Id Solicitud</th>
                                     <th>De</th>
                                     <th>Departamento</th>
                                     <th>Fecha Derivación</th>
@@ -46,14 +55,13 @@ const InboxCollapse2 = ({ solicitud: dataSol, open }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {vderivaciones?.map(({ solicitudId, fun_ori, depto_ori, fechaDerivacion, fun_ent, fechaEntrada }, index) => (
+                                {vderivaciones?.map(({ nombreFuncionarioOrigen, nombreDepartamentoOrigen, fechaDerivacion, nombreFuncionarioEntrada, fechaEntrada }, index) => (
                                     <tr key={index}>
-                                        <td>{solicitudId}</td>
-                                        <td>{fun_ori}</td>
-                                        <td>{depto_ori}</td>
-                                        <td>{new Date(fechaDerivacion).toLocaleDateString()}</td>
-                                        <td>{fun_ent}</td>
-                                        <td>{new Date(fechaEntrada).toLocaleDateString()}</td>
+                                        <td>{nombreFuncionarioOrigen}</td>
+                                        <td>{nombreDepartamentoOrigen}</td>
+                                        <td>{formatDate(fechaDerivacion)}</td>
+                                        <td>{nombreFuncionarioEntrada}</td>
+                                        <td>{formatDate(fechaEntrada)}</td>
                                     </tr>
                                 ))}
                             </tbody>
