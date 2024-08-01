@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useContext, useEffect, useState } from "react";
 import { getEsSub, saveAprobacion, saveDerivacion, saveEntrada, saveRechazo } from "../services/services";
@@ -9,8 +10,8 @@ import InboxActions from "./InboxActions";
 import axios from 'axios';
 import InboxCollapse2 from "./InboxCollapse2";
 
-const InboxRow = ({ solicitud }) => {
-    const [open, setOpen] = useState(false);
+const InboxRow = ({ solicitud ,open, setOpen}) => {
+    
     const infoFun = useContext(DataContext);
 
     const [dataFunc, setDataFun] = useState({});
@@ -22,7 +23,59 @@ const InboxRow = ({ solicitud }) => {
     const [isRechazarDisable, setRechazarDisabled] = useState(true);
     const [esSubdir, setEsSubdir] = useState(false);
 
-    
+    const verificarEstadoBotones = () => {
+
+
+        // Obtener la última derivación de la solicitud
+        const ultimaDerivacion = solicitud?.derivaciones?.length > 0 ? solicitud.derivaciones[solicitud.derivaciones.length - 1] : null;
+
+
+        // Si la solicitud está rechazada o aprobada, deshabilitar todos los botones
+        if (solicitud?.rechazo || solicitud?.aprobacion) {
+            setRecibirDisabled(true);
+            setDerivarDisabled(true);
+            setRechazarDisabled(true);
+            setAprobarDisabled(true);
+            return;
+        }
+
+        // Controlar el botón Recibir
+        const esUltimaDerivacionDeptoActual = ultimaDerivacion && ultimaDerivacion.departamento.deptoSmc == dataDepartamento.depto;
+        const entradaExistente = ultimaDerivacion && solicitud.entradas.some(entrada => entrada.derivacion.id === ultimaDerivacion.id);
+
+        // Condición para recibir
+        if (esUltimaDerivacionDeptoActual && !entradaExistente) {
+            setRecibirDisabled(false);
+        } else {
+            setRecibirDisabled(true);
+        }
+
+        // Condición para derivar
+        if (esUltimaDerivacionDeptoActual && entradaExistente) {
+            setDerivarDisabled(false);
+        } else {
+            setDerivarDisabled(true);
+        }
+
+        // Condición para rechazar
+        if (esUltimaDerivacionDeptoActual && entradaExistente) {
+            setRechazarDisabled(false);
+        } else {
+            setRechazarDisabled(true);
+        }
+
+        // Condición para aprobar
+        if (esUltimaDerivacionDeptoActual && entradaExistente) {
+            setAprobarDisabled(false);
+        } else {
+            setAprobarDisabled(true);
+        }
+    };
+
+    useEffect(() => {
+        verificarEstadoBotones();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [verificarEstadoBotones]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -190,9 +243,6 @@ const InboxRow = ({ solicitud }) => {
 
     }
 
-
-
-
     const handlerAprobar = async () => {
         const fechaActual = obtenerFechaActual();
 
@@ -241,61 +291,6 @@ const InboxRow = ({ solicitud }) => {
             }
         });
     };
-    const verificarEstadoBotones = () => {
-
-
-        // Obtener la última derivación de la solicitud
-        const ultimaDerivacion = solicitud?.derivaciones?.length > 0 ? solicitud.derivaciones[solicitud.derivaciones.length - 1] : null;
-
-
-        // Si la solicitud está rechazada o aprobada, deshabilitar todos los botones
-        if (solicitud?.rechazo || solicitud?.aprobacion) {
-            setRecibirDisabled(true);
-            setDerivarDisabled(true);
-            setRechazarDisabled(true);
-            setAprobarDisabled(true);
-            return;
-        }
-
-        // Controlar el botón Recibir
-        const esUltimaDerivacionDeptoActual = ultimaDerivacion && ultimaDerivacion.departamento.deptoSmc == dataDepartamento.depto;
-        const entradaExistente = ultimaDerivacion && solicitud.entradas.some(entrada => entrada.derivacion.id === ultimaDerivacion.id);
-
-        // Condición para recibir
-        if (esUltimaDerivacionDeptoActual && !entradaExistente) {
-            setRecibirDisabled(false);
-        } else {
-            setRecibirDisabled(true);
-        }
-
-        // Condición para derivar
-        if (esUltimaDerivacionDeptoActual && entradaExistente) {
-            setDerivarDisabled(false);
-        } else {
-            setDerivarDisabled(true);
-        }
-
-        // Condición para rechazar
-        if (esUltimaDerivacionDeptoActual && entradaExistente) {
-            setRechazarDisabled(false);
-        } else {
-            setRechazarDisabled(true);
-        }
-
-        // Condición para aprobar
-        if (esUltimaDerivacionDeptoActual && entradaExistente) {
-            setAprobarDisabled(false);
-        } else {
-            setAprobarDisabled(true);
-        }
-    };
-
-
-    useEffect(() => {
-        verificarEstadoBotones();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [solicitud, dataDepartamento]);
-
 
     useEffect(() => {
         verificarEstadoBotones();
@@ -308,22 +303,17 @@ const InboxRow = ({ solicitud }) => {
     return (
         <>
             <tr className={isLeida ? "unread-row" : "read-row"}>
-                <InboxActions solicitud={solicitud} handleRecibir={handleRecibir} isRecibirDisabled={isRecibirDisabled}
+                <InboxActions solicitud={solicitud} handleRecibir={handleRecibir}
+                 isRecibirDisabled={isRecibirDisabled}
                     esSubdir={esSubdir} handleGuardarYDerivar={handleGuardarYDerivar}
                     isDerivarDisabled={isDerivarDisabled} handleRechazar={handleRechazar}
                     isRechazarDisable={isRechazarDisable} handlerAprobar={handlerAprobar}
                     isAprobarDisable={isAprobarDisable} setOpen={setOpen} open={open}
                     estadoClass={estadoClass} mostrarPdf={mostrarPdf} />
-
             </tr>
             <InboxCollapse2 solicitud={solicitud} open={open} />
         </>
     );
 };
-
-
-
-
-
 
 export default InboxRow;

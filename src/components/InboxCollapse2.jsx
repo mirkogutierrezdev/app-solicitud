@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import { Collapse, Table } from "react-bootstrap";
+import { Card, Col, Collapse, Row, Table } from "react-bootstrap";
 import { getVderivaciones } from "../services/services";
 
 // Función para formatear la fecha en formato dd-MM-yyyy
@@ -14,9 +14,25 @@ const formatDate = (dateString) => {
 };
 
 const InboxCollapse2 = ({ solicitud: dataSol, open }) => {
+
+    
+
+
+
+ 
+
     const { solicitud } = dataSol;
+    const { fechaInicio, fechaFin } = solicitud;
+
+    const { estado } = solicitud;
+
+    const { nombre: nombreEstado } = estado;
+
+    
 
     const [vderivaciones, setVderivaciones] = useState([]);
+
+    
 
     useEffect(() => {
         const fetchData = async () => {
@@ -33,14 +49,31 @@ const InboxCollapse2 = ({ solicitud: dataSol, open }) => {
         }
 
         // Log para verificar los datos
-        console.log(vderivaciones);
-    }, [solicitud, vderivaciones]);
+    }, [solicitud]);
 
     return (
         <tr>
             <td colSpan="6">
                 <Collapse in={open}>
                     <div id={`movement-collapse-${solicitud?.id}`}>
+                        <Card className="m-3">
+                            <Card.Body>
+
+                                <Card.Text as ="div">
+                                    <Row>
+                                        <Col>
+                                            <strong>Estado : </strong> {nombreEstado}<br />
+                                        </Col>
+                                        <Col>
+                                            <strong>Desde : </strong> {formatDate(fechaInicio)}<br />
+                                        </Col>
+                                        <Col>
+                                            <strong>Hasta : </strong>{formatDate(fechaFin)}<br />
+                                        </Col>
+                                    </Row>
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
                         <Table bordered hover>
                             <thead>
                                 <tr>

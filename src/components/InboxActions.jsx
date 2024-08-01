@@ -7,11 +7,6 @@ import { FaCircleCheck, FaCircleNotch } from "react-icons/fa6";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 
 
-
-
-
-
-
 const InboxActions = ({
     solicitud: dataSol,
     handleRecibir,
@@ -29,7 +24,6 @@ const InboxActions = ({
     mostrarPdf
 }) => {
 
-    // Verificar que estadoClass tiene el valor esperado
 
 
     return (
@@ -71,13 +65,15 @@ const InboxActions = ({
                 </Button>
             </td>
             <td>
-                <Button
-                    onClick={() => setOpen(!open)}
-                    aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
-                    aria-expanded={open}
-                >
-                    Ver Movimiento <MdRemoveRedEye />
-                </Button>
+               <Button
+    variant="info"
+    onClick={() => setOpen(!open)}
+    aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
+    aria-expanded={open}
+    className="me-2"
+>
+    {open ? "Ocultar" : "Ver"} <MdRemoveRedEye />
+</Button>
 
             </td>
             <td>

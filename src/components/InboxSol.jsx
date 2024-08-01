@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Container, Table, Spinner, Alert } from "react-bootstrap";
+import { Container, Table, Spinner, Alert, Pagination } from "react-bootstrap";
 import { getSolicitudesInbox } from "../services/services";
 import DataContext from "../context/DataContext";
 import '../css/InboxSolicitudes.css';
@@ -16,6 +16,14 @@ const InboxSol = () => {
     const [depto, setLocalDepto] = useState(null);
 
     const { setDepto } = useContext(UnreadContext);
+    const [openId, setOpenId] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+
+
+    const handleToggle = (id) => {
+        setOpenId(openId === id ? null : id);
+    };
 
 
 
@@ -56,32 +64,61 @@ const InboxSol = () => {
         return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
     }, [depto]);
 
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = solicitudes.slice(indexOfFirstItem, indexOfLastItem);
+
+    const totalPages = Math.ceil(solicitudes.length / itemsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
 
     return (
         <Container>
-            <h2>Bandeja de Solicitudes</h2>
+            <h2 className="m-3 text-center">Bandeja de Solicitudes</h2>
             {loading ? (
                 <Spinner animation="border" />
             ) : (
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Funcionario</th>
-                            <th>Tipo de Solicitud</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                            <th>Movimiento</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {solicitudes.map((sol) => (
-
-                            <InboxRow key={sol.solicitud.id} solicitud={sol} />
+                <>
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Funcionario</th>
+                                <th>Tipo de Solicitud</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                                <th>Movimiento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentItems.map((sol) => (
+                                <InboxRow
+                                    key={sol.solicitud.id}
+                                    solicitud={sol}
+                                    open={openId === sol.solicitud.id}
+                                    setOpen={() => handleToggle(sol.solicitud.id)}
+                                />
+                            ))}
+                        </tbody>
+                    </Table>
+                    <div className="d-flex justify-content-center">
+                    <Pagination>
+                        {[...Array(totalPages)].map((_, index) => (
+                            <Pagination.Item
+                                key={index + 1}
+                                active={index + 1 === currentPage}
+                                onClick={() => handlePageChange(index + 1)}
+                            >
+                                {index + 1}
+                            </Pagination.Item>
                         ))}
-                    </tbody>
-                </Table>
+                    </Pagination>
+                    </div>
+                </>
+
             )}
             {error && <Alert variant="danger">Error: {error}</Alert>}
         </Container>
