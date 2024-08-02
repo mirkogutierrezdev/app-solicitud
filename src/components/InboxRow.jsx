@@ -297,6 +297,7 @@ const InboxRow = ({ solicitud ,open, setOpen}) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitud, dataDepartamento]);
 
+
     const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto && derivacion.leida === false);
 
     const estadoClass = solicitud?.aprobacion ? "estado-aprobado" : solicitud?.rechazo ? "estado-rechazado" : "";

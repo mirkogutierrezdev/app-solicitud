@@ -4,6 +4,16 @@ import { MdRemoveRedEye } from "react-icons/md";
 import { getAprobacionesBySolicitud, getRechazosBySolicitud, getSolicitudesByRut } from "../services/services";
 import DataContext from "../context/DataContext";
 
+
+const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+};
+
 const MisSolicitudes = () => {
     const [solicitudes, setSolicitudes] = useState([]);
     const [dataFunc, setDataFun] = useState({});
@@ -65,7 +75,7 @@ const MisSolicitudes = () => {
                         <th>Tipo de Solicitud</th>
                         <th>Estado</th>
                         <th>Fecha de Solicitud</th>
-                        <th>Acciones</th>
+                        <th>Detalle</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,7 +86,7 @@ const MisSolicitudes = () => {
                                     <td>{id}</td>
                                     <td>{tipoSolicitud.nombre}</td>
                                     <td>{estado.nombre}</td>
-                                    <td>{fechaSolicitud}</td>
+                                    <td>{formatDate(fechaSolicitud)}</td>
 
                                     <td>
                                         <Button
@@ -84,7 +94,7 @@ const MisSolicitudes = () => {
                                             aria-controls={`movement-collapse-${id}`}
                                             aria-expanded={open[id]}
                                         >
-                                            Ver Detalle <MdRemoveRedEye />
+                                             <MdRemoveRedEye />
                                         </Button>
                                     </td>
                                 </tr>

@@ -5,7 +5,7 @@ import { Col, Container, Form, Row, Card } from "react-bootstrap";
 import AdmSolView from "./AdmSolView";
 import FeriadoSolView from "./FeriadoSolView";
 import DetalleSolView from "./DetallaSolView";
-import { getDiasWork, getFeriados } from "../services/services";
+import { getDiasWork, getFeriados, getSolicitudesEnTramites } from "../services/services";
 import '../css/SolicitudesPage.css'; // Asegúrate de agregar el archivo CSS
 
 function SolicitudesPage({ data }) {
@@ -23,10 +23,15 @@ function SolicitudesPage({ data }) {
     const [supervisor, setSupervisor] = useState('');
     const [isActiveButton, setActiveButton] = useState(false);
     const [dataHolidays, setDataHolidays] = useState([]);
+    const [entramites, setEnTramites] = useState([]);
 
     const filteredFeriados = feriados.filter(feriado => feriado.anio === currentYear);
     const { diasPendientes: remainingDays } = filteredFeriados.length > 0 ? filteredFeriados[0] : { totalDias: 0, diasTomados: 0, diasPendientes: 0 };
 
+
+    const rut = data ? data.rut : 0;
+
+    
     const getDataHolidays = async (fechaInicio, fechaTermino) => {
         try {
             const dataHolidays = await getFeriados(fechaInicio, fechaTermino);
@@ -38,9 +43,26 @@ function SolicitudesPage({ data }) {
         }
     };
 
+
+    const buscaSolicitudesEnTramites = async (rut) => {
+        try {
+            const dataSolicitudes = await getSolicitudesEnTramites(rut);
+            setEnTramites(dataSolicitudes);
+            return dataSolicitudes;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    };
+
+
+    
+
     const handleOptionChange = async (e) => {
         const selectedOption = e.target.value;
         setOption(selectedOption);
+        buscaSolicitudesEnTramites(rut);
+        
         setActiveButton(!isActiveButton);
         if (selectedOption) {
             setStartDate(getFormattedCurrentDate());
@@ -68,6 +90,7 @@ function SolicitudesPage({ data }) {
             const validaDias = async () => {
                 try {
                     const dias = await getDiasWork(startDate, endDate);
+                  //  const entramites = await getSolicitudesEnTramites(startDate, endDate);
                     setWorkDays(dias);
                     setNumDaysToUse(remainingDays - dias);
                     setSupervisor(jefe_departamento);
@@ -153,6 +176,8 @@ function SolicitudesPage({ data }) {
         setMaxEndDate('');
         setSupervisor('');
     }
+
+    console.log(entramites);    
 
     return (
         <Container className="mt-5">

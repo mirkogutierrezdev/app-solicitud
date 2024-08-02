@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
 import { Button } from "react-bootstrap";
-
-import { MdRemoveRedEye } from "react-icons/md";
+import { MdOutlineCancel, MdRemoveRedEye } from "react-icons/md";
 import '../css/InboxSolicitudes.css';
-import { FaCircleCheck, FaCircleNotch } from "react-icons/fa6";
-import { FaArrowAltCircleRight } from "react-icons/fa";
-
+import { FaCircleCheck } from "react-icons/fa6";
+import { RiInboxArchiveLine, RiLoginBoxLine } from "react-icons/ri";
+import { AiOutlineFilePdf } from "react-icons/ai";
 
 const InboxActions = ({
     solicitud: dataSol,
@@ -25,7 +24,6 @@ const InboxActions = ({
 }) => {
 
 
-
     return (
         <>
             <td>{dataSol?.solicitud?.id}</td>
@@ -35,28 +33,35 @@ const InboxActions = ({
 
             <td>
                 <Button
+                    data-toggle="tooltip" data-placement="top" title="Recibir"
+                    className="mx-2"
                     onClick={handleRecibir}
                     disabled={isRecibirDisabled}
                 >
-                    Recibir <FaCircleCheck />
+                    <RiInboxArchiveLine />
                 </Button>{" "}
                 <Button
-                    className={esSubdir ? "hidden-button" : ""}
+                    data-toggle="tooltip" data-placement="top" title="Derivar"
+                    className={`mx-2  ${esSubdir ? "hidden-button" : ""}`}
+
                     variant="warning"
                     onClick={handleGuardarYDerivar}
                     disabled={isDerivarDisabled}
                 >
-                    Aprobar y derivar <FaArrowAltCircleRight />
+                    <RiLoginBoxLine />
                 </Button>{" "}
                 <Button
+                data-toggle="tooltip" data-placement="top" title="Recharzar"
+                    className="mx-2"
                     variant="danger"
                     onClick={handleRechazar}
                     disabled={isRechazarDisable}
                 >
-                    Rechazar <FaCircleNotch />
+                    <MdOutlineCancel />
                 </Button>
                 <Button
-                    className={esSubdir ? "" : "hidden-button"}
+                data-toggle="tooltip" data-placement="top" title="Aprobar"
+                    className={`mx-2 ${esSubdir ? "" : "hidden-button"}`}
                     variant="success"
                     onClick={handlerAprobar}
                     disabled={isAprobarDisable}
@@ -65,28 +70,30 @@ const InboxActions = ({
                 </Button>
             </td>
             <td>
-               <Button
-    variant="info"
-    onClick={() => setOpen(!open)}
-    aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
-    aria-expanded={open}
-    className="me-2"
->
-    {open ? "Ocultar" : "Ver"} <MdRemoveRedEye />
-</Button>
-
-            </td>
-            <td>
                 <Button
-                    onClick={mostrarPdf}
+                data-toggle="tooltip" data-placement="top" title="Ver Detalles"
+                    variant="info"
+                    onClick={() => setOpen(!open)}
                     aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
                     aria-expanded={open}
+                    className="me-2"
                 >
-                    Pdf <MdRemoveRedEye />
+                    {open ? "Ocultar" : "Ver"} <MdRemoveRedEye />
                 </Button>
-
             </td>
+            <td>
+                {dataSol.aprobacion && dataSol.aprobacion.pdf && (
+                    <Button
+                    data-toggle="tooltip" data-placement="top" title="Abrir PDF"
 
+                        onClick={mostrarPdf}
+                        aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
+                        aria-expanded={open}
+                    >
+                        <AiOutlineFilePdf />
+                    </Button>
+                )}
+            </td>
         </>
     );
 }

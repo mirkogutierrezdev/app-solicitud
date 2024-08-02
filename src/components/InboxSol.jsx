@@ -66,7 +66,9 @@ const InboxSol = () => {
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = solicitudes.slice(indexOfFirstItem, indexOfLastItem);
+    const sortItemes = solicitudes.sort((a, b) => b.solicitud.id - a.solicitud.id);
+    const currentItems = sortItemes.slice(indexOfFirstItem, indexOfLastItem);
+    
 
     const totalPages = Math.ceil(solicitudes.length / itemsPerPage);
 

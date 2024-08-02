@@ -12,3 +12,13 @@
 .hidden-button {
     display: none;
 }
+
+.estado-aprobado{
+    color: green;
+    font-weight: bold;
+}
+
+.estado-rechazado{
+    color: red;
+    font-weight: bold;
+}
