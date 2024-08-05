@@ -9,6 +9,8 @@ import { getDiasWork, getFeriados, getSolicitudesEnTramites } from "../services/
 import '../css/SolicitudesPage.css'; // Asegúrate de agregar el archivo CSS
 import Swal from "sweetalert2";
 
+
+
 function SolicitudesPage({ data }) {
     const currentYear = new Date().getFullYear();
     const adm = data ? data.diasAdm : [];
@@ -32,7 +34,7 @@ function SolicitudesPage({ data }) {
 
     const rut = data ? data.rut : 0;
 
-    
+
     const getDataHolidays = async (fechaInicio, fechaTermino) => {
         try {
             const dataHolidays = await getFeriados(fechaInicio, fechaTermino);
@@ -57,25 +59,25 @@ function SolicitudesPage({ data }) {
     };
 
 
-    
+
 
     const handleOptionChange = async (e) => {
         const selectedOption = e.target.value;
         setOption(selectedOption);
 
-        const solicitudesEnTramite = await buscaSolicitudesEnTramites(rut);
-        if (solicitudesEnTramite.length > 0) {
-            Swal.fire({
-                title: "Solicitud en trámite",
-                text: "Ya tienes una solicitud en trámite, no puedes realizar otra solicitud hasta que la actual sea aprobada o rechazada.",
-                icon: "warning",
-                confirmButtonText: "Ok",
-            });
-            return; // Salir de la función si hay solicitudes en trámite
-        }
-
-        setActiveButton(true); // Activar el botón si no hay solicitudes en trámite
         if (selectedOption) {
+            const solicitudesEnTramite = await buscaSolicitudesEnTramites(rut);
+            if (solicitudesEnTramite.length > 0) {
+                Swal.fire({
+                    title: "Solicitud en trámite",
+                    text: "Ya tienes una solicitud en trámite, no puedes realizar otra solicitud hasta que la actual sea aprobada o rechazada.",
+                    icon: "warning",
+                    confirmButtonText: "Ok",
+                });
+                return; // Salir de la función si hay solicitudes en trámite
+            }
+
+            setActiveButton(true); // Activar el botón si no hay solicitudes en trámite
             const currentDate = getFormattedCurrentDate();
             setStartDate(currentDate);
             const calculatedMaxEndDate = await calculateMaxEndDate(currentDate, remainingDays);
@@ -85,6 +87,7 @@ function SolicitudesPage({ data }) {
             resetAllValues();
         }
     };
+
 
     const handleStartDateChange = async (e) => {
         setStartDate(e.target.value);
@@ -102,7 +105,7 @@ function SolicitudesPage({ data }) {
             const validaDias = async () => {
                 try {
                     const dias = await getDiasWork(startDate, endDate);
-                  //  const entramites = await getSolicitudesEnTramites(startDate, endDate);
+                    //  const entramites = await getSolicitudesEnTramites(startDate, endDate);
                     setWorkDays(dias);
                     setNumDaysToUse(remainingDays - dias);
                     setSupervisor(jefe_departamento);
@@ -179,15 +182,15 @@ function SolicitudesPage({ data }) {
         });
     }
 
-
     const resetAllValues = () => {
-        setStartDate(null);
-        setEndDate(null);
-        setMaxEndDate(null);
+        setStartDate('');
+        setEndDate('');
+        setMaxEndDate('');
         setActiveButton(false);
     };
 
-    console.log(entramites);    
+
+    console.log(entramites);
 
     return (
         <Container className="mt-5">

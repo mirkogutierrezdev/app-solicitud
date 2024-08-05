@@ -7,12 +7,13 @@ import DataContext from "../context/DataContext";
 
 const formatDate = (dateString) => {
     if (!dateString) return '';
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
+    const date = new Date(dateString + 'T00:00:00'); // Asegura la fecha como UTC
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear();
     return `${day}-${month}-${year}`;
 };
+
 
 const MisSolicitudes = () => {
     const [solicitudes, setSolicitudes] = useState([]);
@@ -94,7 +95,7 @@ const MisSolicitudes = () => {
                                             aria-controls={`movement-collapse-${id}`}
                                             aria-expanded={open[id]}
                                         >
-                                             <MdRemoveRedEye />
+                                            <MdRemoveRedEye />
                                         </Button>
                                     </td>
                                 </tr>
@@ -104,19 +105,19 @@ const MisSolicitudes = () => {
                                             <div id={`movement-collapse-${id}`}>
                                                 <ListGroup>
                                                     <ListGroup.Item><strong>ID de Solicitud:</strong> {id}</ListGroup.Item>
-                                                    <ListGroup.Item><strong>Fecha de Solicitud:</strong> {fechaSolicitud}</ListGroup.Item>
+                                                    <ListGroup.Item><strong>Fecha de Solicitud:</strong> {formatDate(fechaSolicitud)}</ListGroup.Item>
                                                     <ListGroup.Item><strong>Tipo de Solicitud:</strong> {tipoSolicitud.nombre}</ListGroup.Item>
                                                     <ListGroup.Item><strong>Estado:</strong> {estado.nombre}</ListGroup.Item>
                                                     {rechazos[id] && (
                                                         <>
-                                                            <ListGroup.Item><strong>Fecha de Rechazo:</strong> {rechazos[id].fechaRechazo}</ListGroup.Item>
+                                                            <ListGroup.Item><strong>Fecha de Rechazo:</strong> {formatDate(rechazos[id].formatDatefechaRechazo)}</ListGroup.Item>
                                                             <ListGroup.Item><strong>Motivo de Rechazo:</strong> {rechazos[id].comentario}</ListGroup.Item>
                                                             <ListGroup.Item><strong>Rechazado por:</strong> {rechazos[id].funcionario.nombre}</ListGroup.Item>
                                                         </>
                                                     )}
                                                     {aprobaciones[id] && (
                                                         <>
-                                                            <ListGroup.Item><strong>Fecha de Aprobación:</strong> {aprobaciones[id].fechaAprobacion}</ListGroup.Item>
+                                                            <ListGroup.Item><strong>Fecha de Aprobación:</strong> {formatDate(aprobaciones[id].fechaAprobacion)}</ListGroup.Item>
                                                             <ListGroup.Item><strong>Aprobado por:</strong> {aprobaciones[id].funcionario.nombre}</ListGroup.Item>
                                                         </>
                                                     )}
