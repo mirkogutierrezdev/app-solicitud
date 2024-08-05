@@ -7,6 +7,7 @@ import FeriadoSolView from "./FeriadoSolView";
 import DetalleSolView from "./DetallaSolView";
 import { getDiasWork, getFeriados, getSolicitudesEnTramites } from "../services/services";
 import '../css/SolicitudesPage.css'; // Asegúrate de agregar el archivo CSS
+import Swal from "sweetalert2";
 
 function SolicitudesPage({ data }) {
     const currentYear = new Date().getFullYear();
@@ -61,12 +62,23 @@ function SolicitudesPage({ data }) {
     const handleOptionChange = async (e) => {
         const selectedOption = e.target.value;
         setOption(selectedOption);
-        buscaSolicitudesEnTramites(rut);
-        
-        setActiveButton(!isActiveButton);
+
+        const solicitudesEnTramite = await buscaSolicitudesEnTramites(rut);
+        if (solicitudesEnTramite.length > 0) {
+            Swal.fire({
+                title: "Solicitud en trámite",
+                text: "Ya tienes una solicitud en trámite, no puedes realizar otra solicitud hasta que la actual sea aprobada o rechazada.",
+                icon: "warning",
+                confirmButtonText: "Ok",
+            });
+            return; // Salir de la función si hay solicitudes en trámite
+        }
+
+        setActiveButton(true); // Activar el botón si no hay solicitudes en trámite
         if (selectedOption) {
-            setStartDate(getFormattedCurrentDate());
-            const calculatedMaxEndDate = await calculateMaxEndDate(getFormattedCurrentDate(), remainingDays);
+            const currentDate = getFormattedCurrentDate();
+            setStartDate(currentDate);
+            const calculatedMaxEndDate = await calculateMaxEndDate(currentDate, remainingDays);
             setEndDate(calculatedMaxEndDate);
             setMaxEndDate(calculatedMaxEndDate);
         } else {
@@ -168,14 +180,12 @@ function SolicitudesPage({ data }) {
     }
 
 
-    function resetAllValues() {
-        setStartDate(getFormattedCurrentDate());
-        setEndDate('');
-        setWorkDays(0);
-        setNumDaysToUse(0);
-        setMaxEndDate('');
-        setSupervisor('');
-    }
+    const resetAllValues = () => {
+        setStartDate(null);
+        setEndDate(null);
+        setMaxEndDate(null);
+        setActiveButton(false);
+    };
 
     console.log(entramites);    
 

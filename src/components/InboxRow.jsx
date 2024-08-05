@@ -8,7 +8,7 @@ import '../css/InboxSolicitudes.css';
 //import InboxCollapse from "./InboxCollapse";
 import InboxActions from "./InboxActions";
 import axios from 'axios';
-import InboxCollapse2 from "./InboxCollapse2";
+import InboxCollapse from "./InboxCollapse";
 
 const InboxRow = ({ solicitud ,open, setOpen}) => {
     
@@ -151,10 +151,10 @@ const InboxRow = ({ solicitud ,open, setOpen}) => {
     };
 
     const handleRecibir = async () => {
-        const fechaEntrada = obtenerFechaActual();
+        
         const entrada = {
             solicitudId: solicitud.solicitud.id,
-            fechaEntrada: fechaEntrada,
+            
             rut: data ? data.rut : null
         };
 
@@ -262,7 +262,8 @@ const InboxRow = ({ solicitud ,open, setOpen}) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await saveAprobacion(solicitudDto);
+                   await saveAprobacion(solicitudDto);
+             
                     Swal.fire({
                         text: "Solicitud aprobada con éxito",
                         icon: "success"
@@ -312,7 +313,7 @@ const InboxRow = ({ solicitud ,open, setOpen}) => {
                     isAprobarDisable={isAprobarDisable} setOpen={setOpen} open={open}
                     estadoClass={estadoClass} mostrarPdf={mostrarPdf} />
             </tr>
-            <InboxCollapse2 solicitud={solicitud} open={open} />
+            <InboxCollapse solicitud={solicitud} open={open} />
         </>
     );
 };

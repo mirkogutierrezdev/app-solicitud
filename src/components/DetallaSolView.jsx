@@ -6,8 +6,22 @@ import { saveSolicitud } from "../services/services";
 import Swal from "sweetalert2";
 import '../css/DetalleSolView.css'; // Añade un archivo CSS para estilos personalizados
 
+
+const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+};
+
+
+
 function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveButton, startDate, endDate }) {
     const data = useContext(DataContext);
+
+    
 
 
     const estado = 'PENDIENTE';
@@ -23,7 +37,7 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
 
     const handlerClick = async () => {
         const solicitud = {
-            fechaSol: currentDateString,
+            
             fechaInicio: startDate,
             fechaFin: endDate,
             rut: rut,
@@ -47,7 +61,7 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
             if (result.isConfirmed) {
                 try {
                     const result = await saveSolicitud(solicitud);
-                    console.log('Solicitud guardada:', result);
+                    console.log('Solicitud guardada:', solicitud);
 
                     Swal.fire({
                         text: result.message,
@@ -77,12 +91,12 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Fecha Inicio:</strong> {startDate}
+                            <strong>Fecha Inicio:</strong> {formatDate(startDate)}
                         </Card.Text>
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Fecha Fin:</strong> {endDate}
+                            <strong>Fecha Fin:</strong> {formatDate(endDate)}
                         </Card.Text>
                     </Col>
                 </Row>
