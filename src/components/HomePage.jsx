@@ -4,6 +4,7 @@ import HomeView from './HomeView';
 
 
 function HomePage({ data, loadingData, error }) {
+  
   return (
     <Container className="text-start mt-3">
       <Row className="justify-content-center mt-3">

@@ -61,7 +61,6 @@ function LicenciasView({ licencias }) {
                 <Card className="mb-4">
                     <Card.Body>
                         <h2 className="text-center mb-4">Información de Licencias Médicas</h2>
-
                         <Form.Group className="mb-4">
                             <Form.Label>Filtrar por año:</Form.Label>
                             <Form.Select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} size="sm">
@@ -72,7 +71,6 @@ function LicenciasView({ licencias }) {
                             </Form.Select>
                             <Form.Text muted>Selecciona un año para filtrar las licencias.</Form.Text>
                         </Form.Group>
-
                         <Table striped bordered hover>
                             <thead>
                                 <tr>

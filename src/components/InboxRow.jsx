@@ -10,8 +10,8 @@ import InboxActions from "./InboxActions";
 import axios from 'axios';
 import InboxCollapse from "./InboxCollapse";
 
-const InboxRow = ({ solicitud ,open, setOpen}) => {
-    
+const InboxRow = ({ solicitud, open, setOpen,isCkecked }) => {
+
     const infoFun = useContext(DataContext);
 
     const [dataFunc, setDataFun] = useState({});
@@ -25,10 +25,7 @@ const InboxRow = ({ solicitud ,open, setOpen}) => {
 
     const verificarEstadoBotones = () => {
 
-
-        // Obtener la última derivación de la solicitud
         const ultimaDerivacion = solicitud?.derivaciones?.length > 0 ? solicitud.derivaciones[solicitud.derivaciones.length - 1] : null;
-
 
         // Si la solicitud está rechazada o aprobada, deshabilitar todos los botones
         if (solicitud?.rechazo || solicitud?.aprobacion) {
@@ -151,10 +148,10 @@ const InboxRow = ({ solicitud ,open, setOpen}) => {
     };
 
     const handleRecibir = async () => {
-        
+
         const entrada = {
             solicitudId: solicitud.solicitud.id,
-            
+
             rut: data ? data.rut : null
         };
 
@@ -262,8 +259,8 @@ const InboxRow = ({ solicitud ,open, setOpen}) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                   await saveAprobacion(solicitudDto);
-             
+                    await saveAprobacion(solicitudDto);
+
                     Swal.fire({
                         text: "Solicitud aprobada con éxito",
                         icon: "success"
@@ -298,20 +295,23 @@ const InboxRow = ({ solicitud ,open, setOpen}) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitud, dataDepartamento]);
 
-
     const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto && derivacion.leida === false);
-
     const estadoClass = solicitud?.aprobacion ? "estado-aprobado" : solicitud?.rechazo ? "estado-rechazado" : "";
+
+    console.log(isCkecked)
+
     return (
         <>
-            <tr className={isLeida ? "unread-row" : "read-row"}>
+             <tr className={isLeida ? "unread-row" : "read-row"}>
                 <InboxActions solicitud={solicitud} handleRecibir={handleRecibir}
-                 isRecibirDisabled={isRecibirDisabled}
+                    isRecibirDisabled={isRecibirDisabled}
                     esSubdir={esSubdir} handleGuardarYDerivar={handleGuardarYDerivar}
                     isDerivarDisabled={isDerivarDisabled} handleRechazar={handleRechazar}
                     isRechazarDisable={isRechazarDisable} handlerAprobar={handlerAprobar}
                     isAprobarDisable={isAprobarDisable} setOpen={setOpen} open={open}
-                    estadoClass={estadoClass} mostrarPdf={mostrarPdf} />
+                    estadoClass={estadoClass} mostrarPdf={mostrarPdf}
+                    isCkecked={isCkecked}
+                   />
             </tr>
             <InboxCollapse solicitud={solicitud} open={open} />
         </>

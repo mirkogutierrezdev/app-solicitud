@@ -22,8 +22,6 @@ function CardFuncionario({ nombres, apellidopaterno, apellidomaterno, contrato, 
                         <h5>{capitalize(escalafon)} Grado {grado}</h5>
                         <h5>{capitalize(nombre_departamento)} </h5>
                         <h5>Jefe Directo : {capitalize(jefe_departamento)} </h5>
-
-
                     </Col>
                 </Row>
             </Card.Body>

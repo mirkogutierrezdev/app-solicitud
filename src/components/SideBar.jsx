@@ -5,18 +5,14 @@ import { esJefe } from '../services/services';
 import UnreadContext from '../context/UnreadContext';
 
 const Sidebar = () => {
+
     const { data } = useContext(DataContext);
     const { unreadCount, setDepto } = useContext(UnreadContext);
     const nombres = data ? data.nombres : "";
     const depto = data ? data.departamento.depto : 0;
     const rut = data ? data.rut : 0;
-
-
     const [isJefe, setIsJefe] = useState(false);
     const [show, setShow] = useState(false);
-
-
-
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
@@ -28,6 +24,7 @@ const Sidebar = () => {
             console.error('Error fetching esJefe:', error);
         }
     };
+    
     useEffect(() => {
         if (depto && rut) {
             getIsJefe();

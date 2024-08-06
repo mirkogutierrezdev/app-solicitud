@@ -16,6 +16,7 @@ const formatDate = (dateString) => {
 
 
 const MisSolicitudes = () => {
+
     const [solicitudes, setSolicitudes] = useState([]);
     const [dataFunc, setDataFun] = useState({});
     const [open, setOpen] = useState({});
@@ -56,7 +57,6 @@ const MisSolicitudes = () => {
                 console.error("Error fetching solicitudes, rechazos, or aprobaciones:", error);
             }
         };
-
         fetchData();
     }, [dataFunc]);
 

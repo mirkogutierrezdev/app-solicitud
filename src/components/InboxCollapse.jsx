@@ -17,11 +17,8 @@ const InboxCollapse = ({ solicitud: dataSol, open }) => {
 
     const { solicitud } = dataSol;
     const { fechaInicio, fechaFin,fechaSolicitud } = solicitud;
-
     const { estado } = solicitud;
-
     const { nombre: nombreEstado } = estado;
-
     const [vderivaciones, setVderivaciones] = useState([]);
 
     useEffect(() => {
@@ -38,7 +35,6 @@ const InboxCollapse = ({ solicitud: dataSol, open }) => {
             fetchData();
         }
 
-        // Log para verificar los datos
     }, [solicitud]);
 
     return (

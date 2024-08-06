@@ -47,8 +47,26 @@ export const saveSolicitud = async (solicitud) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching data:', error);
-        return null;
+        let errorBody = {
+            message: 'Unknown error',
+            data: null
+        };
+
+        if (error.response) {
+            // El servidor respondió con un status code fuera del rango 2xx
+            errorBody.message = error.response.statusText;
+            errorBody.data = error.response.data;
+        } else if (error.request) {
+            // La petición fue hecha pero no hubo respuesta
+            errorBody.message = 'No response received';
+            errorBody.data = error.request;
+        } else {
+            // Ocurrió un error al configurar la petición
+            errorBody.message = error.message;
+        }
+
+        console.error('Error fetching data:', errorBody);
+        return errorBody;
     }
 }
 

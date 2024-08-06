@@ -19,25 +19,18 @@ const formatDate = (dateString) => {
 
 
 function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveButton, startDate, endDate }) {
+
     const data = useContext(DataContext);
-
-    
-
-
     const estado = 'PENDIENTE';
-
     const departamento = data.data ? data.data.departamento : "";
     const rut = data.data ? data.data.rut : 0;
-
     const { depto, nombre_departamento } = departamento;
-
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().slice(0, 10);
 
-
     const handlerClick = async () => {
+
         const solicitud = {
-            
             fechaInicio: startDate,
             fechaFin: endDate,
             rut: rut,
@@ -46,7 +39,6 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
             depto: depto,
             nombre_departamento: nombre_departamento,
             fechaDer: currentDateString
-
         };
 
 
@@ -61,17 +53,10 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
             if (result.isConfirmed) {
                 try {
                     const result = await saveSolicitud(solicitud);
-                    console.log('Solicitud guardada:', solicitud);
-
                     Swal.fire({
                         text: result.message,
                         icon: "success"
                     });
-
-                    // Limpiar los campos después de grabar
-
-                    // Aquí puedes agregar más campos que deseas limpiar
-
                 } catch (error) {
                     console.error('Error al guardar la solicitud:', error);
                 }
@@ -117,7 +102,6 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
                         </Card.Text>
                     </Col>
                 </Row>
-
                 <Button onClick={handlerClick} variant="primary" disabled={!isActiveButton || !option} className="mt-3">
                     Derivar
                 </Button>

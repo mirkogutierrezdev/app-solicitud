@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 
 
 function SolicitudesPage({ data }) {
+
     const currentYear = new Date().getFullYear();
     const adm = data ? data.diasAdm : [];
     const feriados = data ? data.feriados : [];
@@ -27,11 +28,8 @@ function SolicitudesPage({ data }) {
     const [isActiveButton, setActiveButton] = useState(false);
     const [dataHolidays, setDataHolidays] = useState([]);
     const [entramites, setEnTramites] = useState([]);
-
     const filteredFeriados = feriados.filter(feriado => feriado.anio === currentYear);
     const { diasPendientes: remainingDays } = filteredFeriados.length > 0 ? filteredFeriados[0] : { totalDias: 0, diasTomados: 0, diasPendientes: 0 };
-
-
     const rut = data ? data.rut : 0;
 
 
@@ -57,9 +55,6 @@ function SolicitudesPage({ data }) {
             return [];
         }
     };
-
-
-
 
     const handleOptionChange = async (e) => {
         const selectedOption = e.target.value;
@@ -147,7 +142,6 @@ function SolicitudesPage({ data }) {
                 count++;
             }
         }
-
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
@@ -188,9 +182,6 @@ function SolicitudesPage({ data }) {
         setMaxEndDate('');
         setActiveButton(false);
     };
-
-
-    console.log(entramites);
 
     return (
         <Container className="mt-5">

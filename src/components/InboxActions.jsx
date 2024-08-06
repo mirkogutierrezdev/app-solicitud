@@ -20,12 +20,21 @@ const InboxActions = ({
     setOpen,
     open,
     estadoClass,
-    mostrarPdf
+    mostrarPdf,
+    isCkecked
+
 }) => {
+
+    console.log(isCkecked)  
 
 
     return (
         <>
+          {isCkecked ? <td>
+                <div className="form-check">
+                    <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked={isCkecked} />
+                </div>
+            </td> : ""} 
             <td>{dataSol?.solicitud?.id}</td>
             <td>{dataSol?.solicitud?.funcionario?.nombre}</td>
             <td>{dataSol?.solicitud?.tipoSolicitud?.nombre}</td>
@@ -51,7 +60,7 @@ const InboxActions = ({
                     <RiLoginBoxLine />
                 </Button>{" "}
                 <Button
-                data-toggle="tooltip" data-placement="top" title="Recharzar"
+                    data-toggle="tooltip" data-placement="top" title="Recharzar"
                     className="mx-2"
                     variant="danger"
                     onClick={handleRechazar}
@@ -60,7 +69,7 @@ const InboxActions = ({
                     <MdOutlineCancel />
                 </Button>
                 <Button
-                data-toggle="tooltip" data-placement="top" title="Aprobar"
+                    data-toggle="tooltip" data-placement="top" title="Aprobar"
                     className={`mx-2 ${esSubdir ? "" : "hidden-button"}`}
                     variant="success"
                     onClick={handlerAprobar}
@@ -71,7 +80,7 @@ const InboxActions = ({
             </td>
             <td>
                 <Button
-                data-toggle="tooltip" data-placement="top" title="Ver Detalles"
+                    data-toggle="tooltip" data-placement="top" title="Ver Detalles"
                     variant="info"
                     onClick={() => setOpen(!open)}
                     aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
@@ -84,7 +93,7 @@ const InboxActions = ({
             <td>
                 {dataSol.aprobacion && dataSol.aprobacion.pdf && (
                     <Button
-                    data-toggle="tooltip" data-placement="top" title="Abrir PDF"
+                        data-toggle="tooltip" data-placement="top" title="Abrir PDF"
 
                         onClick={mostrarPdf}
                         aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}

@@ -6,27 +6,28 @@ const DataContext = createContext(null);
 
 // eslint-disable-next-line react/prop-types
 export const DataProvider = ({ children }) => {
-  const [data, setData] = useState(null);
-  const [noLeidas, setNoLeidas] = useState(0);
+    
+    const [data, setData] = useState(null);
+    const [noLeidas, setNoLeidas] = useState(0);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+    useEffect(() => {
+        fetchData();
+    }, []);
 
-  const fetchData = async () => {
-    try {
-      const result = await getFuncionario();
-      setData(result);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+    const fetchData = async () => {
+        try {
+            const result = await getFuncionario();
+            setData(result);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
 
-  return (
-    <DataContext.Provider value={{ data, noLeidas, setNoLeidas }}>
-      {children}
-    </DataContext.Provider>
-  );
+    return (
+        <DataContext.Provider value={{ data, noLeidas, setNoLeidas }}>
+            {children}
+        </DataContext.Provider>
+    );
 };
 
 export default DataContext;
