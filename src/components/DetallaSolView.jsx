@@ -52,7 +52,8 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const result = await saveSolicitud(solicitud);
+                   const result = await saveSolicitud(solicitud);
+           
                     Swal.fire({
                         text: result.message,
                         icon: "success"

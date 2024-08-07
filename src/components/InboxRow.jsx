@@ -10,7 +10,7 @@ import InboxActions from "./InboxActions";
 import axios from 'axios';
 import InboxCollapse from "./InboxCollapse";
 
-const InboxRow = ({ solicitud, open, setOpen,isCkecked }) => {
+const InboxRow = ({ solicitud, open, setOpen }) => {
 
     const infoFun = useContext(DataContext);
 
@@ -298,8 +298,6 @@ const InboxRow = ({ solicitud, open, setOpen,isCkecked }) => {
     const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto && derivacion.leida === false);
     const estadoClass = solicitud?.aprobacion ? "estado-aprobado" : solicitud?.rechazo ? "estado-rechazado" : "";
 
-    console.log(isCkecked)
-
     return (
         <>
              <tr className={isLeida ? "unread-row" : "read-row"}>
@@ -310,7 +308,6 @@ const InboxRow = ({ solicitud, open, setOpen,isCkecked }) => {
                     isRechazarDisable={isRechazarDisable} handlerAprobar={handlerAprobar}
                     isAprobarDisable={isAprobarDisable} setOpen={setOpen} open={open}
                     estadoClass={estadoClass} mostrarPdf={mostrarPdf}
-                    isCkecked={isCkecked}
                    />
             </tr>
             <InboxCollapse solicitud={solicitud} open={open} />

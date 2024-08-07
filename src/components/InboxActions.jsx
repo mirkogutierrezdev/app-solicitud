@@ -20,26 +20,19 @@ const InboxActions = ({
     setOpen,
     open,
     estadoClass,
-    mostrarPdf,
-    isCkecked
+    mostrarPdf
+
 
 }) => {
-
-    console.log(isCkecked)  
 
 
     return (
         <>
-          {isCkecked ? <td>
-                <div className="form-check">
-                    <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked={isCkecked} />
-                </div>
-            </td> : ""} 
+            <td> <input className="form-check-input" type="checkbox" id="inlineCheckbox1" /></td>
             <td>{dataSol?.solicitud?.id}</td>
             <td>{dataSol?.solicitud?.funcionario?.nombre}</td>
             <td>{dataSol?.solicitud?.tipoSolicitud?.nombre}</td>
             <td><p className={estadoClass}>{dataSol?.solicitud?.estado?.nombre}</p></td>
-
             <td>
                 <Button
                     data-toggle="tooltip" data-placement="top" title="Recibir"

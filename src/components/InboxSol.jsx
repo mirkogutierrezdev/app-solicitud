@@ -18,7 +18,7 @@ const InboxSol = () => {
     const { setDepto } = useContext(UnreadContext);
     const [openId, setOpenId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [isChecked, setChecked] = useState(false);
+    
     const [filter, setFilter] = useState("ALL");
     const itemsPerPage = 5;
 
@@ -37,6 +37,7 @@ const InboxSol = () => {
         if (data && data.departamento) {
             setDepto(data.departamento.depto);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
     const fetchSolicitudes = async () => {
@@ -58,6 +59,7 @@ const InboxSol = () => {
         fetchSolicitudes();
         const intervalId = setInterval(fetchSolicitudes, 5000); // Actualiza cada 5 segundos
         return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [depto, filter]);
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -67,10 +69,6 @@ const InboxSol = () => {
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
-    };
-
-    const handleCheckboxChange = () => {
-        setChecked(!isChecked);
     };
 
     const applyFilter = (solicitudes, filter) => {
@@ -98,8 +96,6 @@ const InboxSol = () => {
         applyFilter(solicitudes, filter);
     };
 
-    console.log(isChecked);
-
     return (
         <Container>
             <h2 className="m-3 text-center">Bandeja de Solicitudes</h2>
@@ -107,22 +103,7 @@ const InboxSol = () => {
                 <Spinner animation="border" />
             ) : (
                 <>
-                    {filter === "PENDIENTE" && (
-                        <div className="form-check">
-                            <input
-                                className="form-check-input"
-                                type="checkbox"
-                                id="flexCheckIndeterminate"
-                                checked={isChecked}
-                                onChange={handleCheckboxChange}
-                                
-                            />
-                            <label className="form-check-label" htmlFor="flexCheckIndeterminate">
-                                Seleccionar Todos
-                            </label>
-                        </div>
-                    )}
-                    <ul className="nav nav-pills m-3">
+                    <ul className="nav nav-pills justify-content-end mb-3">
                         <li className="nav-item">
                             <button className={`nav-link ${filter === "ALL" ? "active" : ""}`} onClick={() => handleFilterChange("ALL")}>Todas</button>
                         </li>
@@ -140,7 +121,7 @@ const InboxSol = () => {
                     <Table striped bordered hover>
                         <thead>
                             <tr>
-                                {isChecked && filter === "PENDIENTE" && <th></th>}
+                                <th>Sel</th>
                                 <th>ID</th>
                                 <th>Funcionario</th>
                                 <th>Tipo de Solicitud</th>
@@ -156,7 +137,7 @@ const InboxSol = () => {
                                     solicitud={sol}
                                     open={openId === sol.solicitud.id}
                                     setOpen={() => handleToggle(sol.solicitud.id)}
-                                    isChecked={isChecked}
+                                    
                                 />
                             ))}
                         </tbody>
