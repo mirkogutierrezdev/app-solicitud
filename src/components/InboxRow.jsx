@@ -10,7 +10,7 @@ import InboxActions from "./InboxActions";
 import axios from 'axios';
 import InboxCollapse from "./InboxCollapse";
 
-const InboxRow = ({ solicitud, open, setOpen }) => {
+const InboxRow = ({ solicitud, open, setOpen,handleSelect ,isChecked}) => {
 
     const infoFun = useContext(DataContext);
 
@@ -308,6 +308,8 @@ const InboxRow = ({ solicitud, open, setOpen }) => {
                     isRechazarDisable={isRechazarDisable} handlerAprobar={handlerAprobar}
                     isAprobarDisable={isAprobarDisable} setOpen={setOpen} open={open}
                     estadoClass={estadoClass} mostrarPdf={mostrarPdf}
+                    handleSelect={handleSelect}
+                    isChecked={isChecked}
                    />
             </tr>
             <InboxCollapse solicitud={solicitud} open={open} />

@@ -18,7 +18,9 @@ const InboxSol = () => {
     const { setDepto } = useContext(UnreadContext);
     const [openId, setOpenId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [isChecked, setIsChecked] = useState(false);
+
     const [filter, setFilter] = useState("ALL");
     const itemsPerPage = 5;
 
@@ -32,13 +34,6 @@ const InboxSol = () => {
             setDepto(data.departamento.depto);
         }
     }, [data, setDepto]);
-
-    useEffect(() => {
-        if (data && data.departamento) {
-            setDepto(data.departamento.depto);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data]);
 
     const fetchSolicitudes = async () => {
         if (depto) {
@@ -59,7 +54,6 @@ const InboxSol = () => {
         fetchSolicitudes();
         const intervalId = setInterval(fetchSolicitudes, 5000); // Actualiza cada 5 segundos
         return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [depto, filter]);
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -72,29 +66,67 @@ const InboxSol = () => {
     };
 
     const applyFilter = (solicitudes, filter) => {
+        let filtered = [];
+
         switch (filter) {
             case "ALL":
-                setFilteredSolicitudes(solicitudes);
+                filtered = [...solicitudes];
                 break;
             case "PENDIENTE":
-                setFilteredSolicitudes(solicitudes.filter((sol) => sol.solicitud.estado.nombre === "PENDIENTE"));
+                filtered = solicitudes.filter((sol) => sol.solicitud.estado.nombre === "PENDIENTE");
                 break;
             case "APROBADA":
-                setFilteredSolicitudes(solicitudes.filter((sol) => sol.solicitud.estado.nombre === "APROBADA"));
+                filtered = solicitudes.filter((sol) => sol.solicitud.estado.nombre === "APROBADA");
                 break;
             case "RECHAZADA":
-                setFilteredSolicitudes(solicitudes.filter((sol) => sol.solicitud.estado.nombre === "RECHAZADA"));
+                filtered = solicitudes.filter((sol) => sol.solicitud.estado.nombre === "RECHAZADA");
                 break;
             default:
-                setFilteredSolicitudes(solicitudes);
+                filtered = [...solicitudes];
                 break;
         }
+
+        // Ordena las solicitudes por ID de mayor a menor
+        filtered.sort((a, b) => b.solicitud.id - a.solicitud.id);
+
+        // Actualiza el estado con la lista filtrada y ordenada
+        setFilteredSolicitudes(filtered);
     };
 
     const handleFilterChange = (filter) => {
         setFilter(filter);
         applyFilter(solicitudes, filter);
     };
+
+    const handleSelect = (id, rut, checked) => {
+        const selectedItem = { id, rut };
+
+        if (checked) {
+            setSelectedItems((prevSelected) => [...prevSelected, selectedItem]);
+        } else {
+            setSelectedItems((prevSelected) =>
+                prevSelected.filter((item) => item.id !== id)
+            );
+        }
+
+    };
+
+    const handleSelectAll = (e) => {
+        const { checked } = e.target;
+        if (checked) {
+            // Seleccionar todos los elementos visibles
+            setSelectedItems(filteredSolicitudes.map((sol) => sol.solicitud.id));
+            setIsChecked(!isChecked);
+        } else {
+            // Deseleccionar todos los elementos
+            setSelectedItems([]);
+            setIsChecked(!isChecked);
+        }
+    };
+
+    console.log(selectedItems); 
+
+    
 
     return (
         <Container>
@@ -121,6 +153,13 @@ const InboxSol = () => {
                     <Table striped bordered hover>
                         <thead>
                             <tr>
+                                <th>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedItems.length === filteredSolicitudes.length && filteredSolicitudes.length > 0}
+                                        onChange={handleSelectAll}
+                                    />
+                                </th>
                                 <th>Sel</th>
                                 <th>ID</th>
                                 <th>Funcionario</th>
@@ -137,7 +176,8 @@ const InboxSol = () => {
                                     solicitud={sol}
                                     open={openId === sol.solicitud.id}
                                     setOpen={() => handleToggle(sol.solicitud.id)}
-                                    
+                                    handleSelect={handleSelect}
+                                    isChecked={isChecked}
                                 />
                             ))}
                         </tbody>

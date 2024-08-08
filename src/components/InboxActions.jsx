@@ -20,15 +20,34 @@ const InboxActions = ({
     setOpen,
     open,
     estadoClass,
-    mostrarPdf
-
-
+    mostrarPdf,
+    handleSelect,
+    isChecked
 }) => {
+    const handleCheckboxChange = (e) => {
+        if (dataSol.solicitud.estado.nombre === "PENDIENTE") {
+            handleSelect(dataSol.solicitud.id, dataSol.solicitud.funcionario.rut, e.target.checked);
+        }
+    };
 
+    // Determina si el checkbox debe estar habilitado
+    const isCheckboxEnabled = dataSol.solicitud.estado.nombre === "PENDIENTE";
+    
+    // Establece el estado checked solo si el checkbox está habilitado
+    const isCheckboxChecked = isCheckboxEnabled ? isChecked : false;
 
     return (
         <>
-            <td> <input className="form-check-input" type="checkbox" id="inlineCheckbox1" /></td>
+            <td>
+                <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`checkbox-${dataSol.solicitud.id}`}
+                    checked={isCheckboxChecked}
+                    disabled={!isCheckboxEnabled}
+                    onChange={handleCheckboxChange}
+                />
+            </td>
             <td>{dataSol?.solicitud?.id}</td>
             <td>{dataSol?.solicitud?.funcionario?.nombre}</td>
             <td>{dataSol?.solicitud?.tipoSolicitud?.nombre}</td>
@@ -44,8 +63,7 @@ const InboxActions = ({
                 </Button>{" "}
                 <Button
                     data-toggle="tooltip" data-placement="top" title="Derivar"
-                    className={`mx-2  ${esSubdir ? "hidden-button" : ""}`}
-
+                    className={`mx-2 ${esSubdir ? "hidden-button" : ""}`}
                     variant="warning"
                     onClick={handleGuardarYDerivar}
                     disabled={isDerivarDisabled}
@@ -53,7 +71,7 @@ const InboxActions = ({
                     <RiLoginBoxLine />
                 </Button>{" "}
                 <Button
-                    data-toggle="tooltip" data-placement="top" title="Recharzar"
+                    data-toggle="tooltip" data-placement="top" title="Rechazar"
                     className="mx-2"
                     variant="danger"
                     onClick={handleRechazar}
@@ -87,7 +105,6 @@ const InboxActions = ({
                 {dataSol.aprobacion && dataSol.aprobacion.pdf && (
                     <Button
                         data-toggle="tooltip" data-placement="top" title="Abrir PDF"
-
                         onClick={mostrarPdf}
                         aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
                         aria-expanded={open}
