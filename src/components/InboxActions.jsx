@@ -22,31 +22,34 @@ const InboxActions = ({
     estadoClass,
     mostrarPdf,
     handleSelect,
-    isChecked
+    isChecked,entradaExistente
+    
 }) => {
     const handleCheckboxChange = (e) => {
-        if (dataSol.solicitud.estado.nombre === "PENDIENTE") {
-            handleSelect(dataSol.solicitud.id, dataSol.solicitud.funcionario.rut, e.target.checked);
-        }
+        handleSelect(dataSol.solicitud.id, dataSol.solicitud.funcionario.rut, e.target.checked);
     };
 
-    // Determina si el checkbox debe estar habilitado
-    const isCheckboxEnabled = dataSol.solicitud.estado.nombre === "PENDIENTE";
-    
-    // Establece el estado checked solo si el checkbox está habilitado
-    const isCheckboxChecked = isCheckboxEnabled ? isChecked : false;
+// Determina si el checkbox debe estar habilitado
+const isCheckboxVisible = dataSol.solicitud.estado.nombre === "PENDIENTE";
+
+// El estado del checkbox se controla comparando si el item ya está seleccionado
+//const isCheckboxChecked = dataSol.solicitud.some(item => item.id === dataSol.solicitud.id);
 
     return (
         <>
             <td>
-                <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id={`checkbox-${dataSol.solicitud.id}`}
-                    checked={isCheckboxChecked}
-                    disabled={!isCheckboxEnabled}
-                    onChange={handleCheckboxChange}
-                />
+                {
+                    isCheckboxVisible && (
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id={`checkbox-${dataSol.solicitud.id}`}
+                            checked={isChecked}
+                            disabled={entradaExistente}
+                            onChange={handleCheckboxChange}
+                        />
+                    )
+                }
             </td>
             <td>{dataSol?.solicitud?.id}</td>
             <td>{dataSol?.solicitud?.funcionario?.nombre}</td>

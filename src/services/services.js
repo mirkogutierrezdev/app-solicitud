@@ -291,3 +291,22 @@ export const getSolicitudesEnTramites = async (rut) => {
         return null;
     }
 }
+
+
+export const saveEntradas = async (entrada) => {
+    const url = `http://localhost:8081/api/entrada/createEntradas`;
+
+     
+
+     try {
+        const response = await axios.post(url, entrada, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    } 
+}

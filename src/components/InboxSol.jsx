@@ -1,10 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { Container, Table, Spinner, Alert, Pagination } from "react-bootstrap";
-import { getSolicitudesInbox } from "../services/services";
+import { Container, Table, Spinner, Alert, Pagination, Button } from "react-bootstrap";
+import { getSolicitudesInbox, saveEntradas } from "../services/services";
 import DataContext from "../context/DataContext";
 import '../css/InboxSolicitudes.css';
 import UnreadContext from "../context/UnreadContext";
 import InboxRow from "./InboxRow";
+import Swal from "sweetalert2";
+
 
 const InboxSol = () => {
     const dataFunc = useContext(DataContext);
@@ -20,6 +22,8 @@ const InboxSol = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedItems, setSelectedItems] = useState([]);
     const [isChecked, setIsChecked] = useState(false);
+    const [isCheckedAll, setIsCheckedAll] = useState(false);
+    
 
     const [filter, setFilter] = useState("ALL");
     const itemsPerPage = 5;
@@ -100,33 +104,83 @@ const InboxSol = () => {
 
     const handleSelect = (id, rut, checked) => {
         const selectedItem = { id, rut };
-
+    
         if (checked) {
-            setSelectedItems((prevSelected) => [...prevSelected, selectedItem]);
+            // Agregar solo si no está ya en el arreglo
+            setSelectedItems((prevSelected) => 
+                prevSelected.some((item) => item.id === id) 
+                ? prevSelected 
+                : [...prevSelected, selectedItem]
+            );
+            setIsChecked(!isChecked);
         } else {
+            // Remover si está presente en el arreglo
             setSelectedItems((prevSelected) =>
                 prevSelected.filter((item) => item.id !== id)
             );
+            setIsChecked(!isChecked);
         }
-
     };
 
     const handleSelectAll = (e) => {
         const { checked } = e.target;
-        if (checked) {
-            // Seleccionar todos los elementos visibles
-            setSelectedItems(filteredSolicitudes.map((sol) => sol.solicitud.id));
-            setIsChecked(!isChecked);
+
+        const ultimaDerivacion = solicitudes?.derivaciones?.length > 0 ? solicitudes.derivaciones[solicitudes.derivaciones.length - 1] : null;
+
+        const entradaExistente = ultimaDerivacion && solicitudes.entradas.some(entrada => entrada.derivacion.id === ultimaDerivacion.id);
+        console.log(ultimaDerivacion);
+
+       /*  if (checked && entradaExistente) {
+            // Seleccionar todos los elementos visibles excepto los que tienen entrada
+            setSelectedItems(filteredSolicitudes
+                .filter((sol) => sol.solicitud.estado.nombre === "PENDIENTE" && !sol.solicitud.entradas.length)
+                .map((sol) => ({ rut: sol.solicitud.funcionario.rut, solicitudId: sol.solicitud.id }))
+            );
+            setIsCheckedAll(!isCheckedAll);
+            setIsChecked(true);
         } else {
             // Deseleccionar todos los elementos
             setSelectedItems([]);
-            setIsChecked(!isChecked);
-        }
+            setIsCheckedAll(!isCheckedAll);
+            setIsChecked(false);
+        } */
     };
 
-    console.log(selectedItems); 
+    const inAll = async () => {
+       
+      Swal.fire({
+        title: '¿Está seguro de recibir todas las solicitudes?',
+        text: "Una vez recibidas no podrá deshacer esta acción",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Recibir',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          saveEntradas(selectedItems)
+          .then(() => {
+            Swal.fire(
+              'Solicitudes recibidas',
+              'Las solicitudes han sido recibidas exitosamente',
+              'success'
+            );
+            setSelectedItems([]);
+          })
+          .catch((error) => {
+            console.error("Error al recibir solicitudes:", error);
+            Swal.fire(
+              'Error',
+              'Ocurrió un error al recibir las solicitudes',
+              'error'
+            );
+          });
+        }
+      });
+    };
 
-    
+
 
     return (
         <Container>
@@ -156,11 +210,11 @@ const InboxSol = () => {
                                 <th>
                                     <input
                                         type="checkbox"
-                                        checked={selectedItems.length === filteredSolicitudes.length && filteredSolicitudes.length > 0}
-                                        onChange={handleSelectAll}
+                                        checked={isCheckedAll}
+                                         
+                                        onChange={(event) => handleSelectAll(event)}
                                     />
                                 </th>
-                                <th>Sel</th>
                                 <th>ID</th>
                                 <th>Funcionario</th>
                                 <th>Tipo de Solicitud</th>
@@ -182,6 +236,9 @@ const InboxSol = () => {
                             ))}
                         </tbody>
                     </Table>
+                    <Button variant="primary" disabled={!isCheckedAll} onClick={inAll}>
+                        Recibir Todo
+                    </Button>
                     <div className="d-flex justify-content-center">
                         <Pagination>
                             {[...Array(totalPages)].map((_, index) => (
