@@ -22,18 +22,26 @@ const InboxActions = ({
     estadoClass,
     mostrarPdf,
     handleSelect,
-    isChecked, entradaExistente
+    isChecked
+    
 
 }) => {
     const handleCheckboxChange = (e) => {
         handleSelect(dataSol.solicitud.id, dataSol.solicitud.funcionario.rut, e.target.checked);
     };
 
+
     // Determina si el checkbox debe estar habilitado
-    const isCheckboxVisible = dataSol.solicitud.estado.nombre === "PENDIENTE" && !entradaExistente;
+    const isCheckboxVisible = dataSol.solicitud.estado.nombre === "PENDIENTE" 
+
+  
+
+    
 
     // El estado del checkbox se controla comparando si el item ya está seleccionado
-    //const isCheckboxChecked = dataSol.solicitud.some(item => item.id === dataSol.solicitud.id);
+    const isCheckboxChecked =isChecked
+
+    
 
     return (
         <>
@@ -45,8 +53,8 @@ const InboxActions = ({
                             type="checkbox"
                             id={`checkbox-${dataSol.solicitud.id}`}
 
-                            checked={isChecked}
-                            disabled={entradaExistente}
+                            checked={isCheckboxChecked}
+                        //    disabled={entradaExistente}
                             onChange={handleCheckboxChange}
                         />
                     )

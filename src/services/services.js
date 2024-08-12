@@ -5,8 +5,8 @@ export const getFuncionario = async () => {
 
    // const url = `http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
      // const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
-    const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
-    // const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
+  //  const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
+     const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
 
     //Direccion de informatica
     //  const url = `http://localhost:8081/api/smc/byRut/18766677`; //Rut de funcionario
@@ -300,6 +300,24 @@ export const saveEntradas = async (entrada) => {
 
      try {
         const response = await axios.post(url, entrada, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    } 
+}
+
+export const saveDerivaciones = async (derivaciones) => {
+    const url = `http://localhost:8081/api/derivacion/createDerivaciones`;
+
+     
+
+     try {
+        const response = await axios.post(url, derivaciones, {
             headers: {
                 'Content-Type': 'application/json'
             }

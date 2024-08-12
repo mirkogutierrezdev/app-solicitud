@@ -297,8 +297,9 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
 
     const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto && derivacion.leida === false);
     const estadoClass = solicitud?.aprobacion ? "estado-aprobado" : solicitud?.rechazo ? "estado-rechazado" : "";
-    const ultimaDerivacion = solicitud?.derivaciones?.length > 0 ? solicitud.derivaciones[solicitud.derivaciones.length - 1] : null;
-    const entradaExistente = ultimaDerivacion && solicitud.entradas.some(entrada => entrada.derivacion.id === ultimaDerivacion.id);
+
+
+    
 
     return (
         <>
@@ -312,7 +313,8 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                     estadoClass={estadoClass} mostrarPdf={mostrarPdf}
                     handleSelect={handleSelect}
                     isChecked={isChecked}
-                    entradaExistente={entradaExistente}
+                    
+                   
                 />
             </tr>
             <InboxCollapse solicitud={solicitud} open={open} />
