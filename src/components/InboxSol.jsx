@@ -23,7 +23,7 @@ const InboxSol = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [isChecked, setIsChecked] = useState(false);
     const [isCheckedAll, setIsCheckedAll] = useState(false);
-    
+
 
     const [filter, setFilter] = useState("ALL");
     const itemsPerPage = 5;
@@ -104,13 +104,13 @@ const InboxSol = () => {
 
     const handleSelect = (id, rut, checked) => {
         const selectedItem = { id, rut };
-    
+
         if (checked) {
             // Agregar solo si no está ya en el arreglo
-            setSelectedItems((prevSelected) => 
-                prevSelected.some((item) => item.id === id) 
-                ? prevSelected 
-                : [...prevSelected, selectedItem]
+            setSelectedItems((prevSelected) =>
+                prevSelected.some((item) => item.id === id)
+                    ? prevSelected
+                    : [...prevSelected, selectedItem]
             );
             setIsChecked(!isChecked);
         } else {
@@ -125,61 +125,61 @@ const InboxSol = () => {
     const handleSelectAll = (e) => {
         const { checked } = e.target;
 
-        const ultimaDerivacion = solicitudes?.derivaciones?.length > 0 ? solicitudes.derivaciones[solicitudes.derivaciones.length - 1] : null;
+        if (checked) {
+            const selectedItems = filteredSolicitudes
+                .filter((sol) =>
+                    sol.solicitud.estado.nombre === "PENDIENTE" &&
+                    sol.entradas.length === 0 // Verifica que no tenga entradas
+                )
+                .map((sol) => ({ rut: sol.solicitud.funcionario.rut, solicitudId: sol.solicitud.id }));
 
-        const entradaExistente = ultimaDerivacion && solicitudes.entradas.some(entrada => entrada.derivacion.id === ultimaDerivacion.id);
-        console.log(ultimaDerivacion);
-
-       /*  if (checked && entradaExistente) {
-            // Seleccionar todos los elementos visibles excepto los que tienen entrada
-            setSelectedItems(filteredSolicitudes
-                .filter((sol) => sol.solicitud.estado.nombre === "PENDIENTE" && !sol.solicitud.entradas.length)
-                .map((sol) => ({ rut: sol.solicitud.funcionario.rut, solicitudId: sol.solicitud.id }))
-            );
-            setIsCheckedAll(!isCheckedAll);
+            setSelectedItems(selectedItems);
+            setIsCheckedAll(true);
             setIsChecked(true);
         } else {
-            // Deseleccionar todos los elementos
             setSelectedItems([]);
-            setIsCheckedAll(!isCheckedAll);
+            setIsCheckedAll(false);
             setIsChecked(false);
-        } */
+        }
+
     };
+
+
 
     const inAll = async () => {
-       
-      Swal.fire({
-        title: '¿Está seguro de recibir todas las solicitudes?',
-        text: "Una vez recibidas no podrá deshacer esta acción",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Recibir',
-        cancelButtonText: 'Cancelar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          saveEntradas(selectedItems)
-          .then(() => {
-            Swal.fire(
-              'Solicitudes recibidas',
-              'Las solicitudes han sido recibidas exitosamente',
-              'success'
-            );
-            setSelectedItems([]);
-          })
-          .catch((error) => {
-            console.error("Error al recibir solicitudes:", error);
-            Swal.fire(
-              'Error',
-              'Ocurrió un error al recibir las solicitudes',
-              'error'
-            );
-          });
-        }
-      });
-    };
 
+        Swal.fire({
+            title: '¿Está seguro de recibir todas las solicitudes?',
+            text: "Una vez recibidas no podrá deshacer esta acción",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Recibir',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveEntradas(selectedItems)
+
+                    .then(() => {
+                        Swal.fire(
+                            'Solicitudes recibidas',
+                            'Las solicitudes han sido recibidas exitosamente',
+                            'success'
+                        );
+                        setSelectedItems([]);
+                    })
+                    .catch((error) => {
+                        console.error("Error al recibir solicitudes:", error);
+                        Swal.fire(
+                            'Error',
+                            'Ocurrió un error al recibir las solicitudes',
+                            'error'
+                        );
+                    });
+            }
+        });
+    };
 
 
     return (
@@ -211,7 +211,7 @@ const InboxSol = () => {
                                     <input
                                         type="checkbox"
                                         checked={isCheckedAll}
-                                         
+
                                         onChange={(event) => handleSelectAll(event)}
                                     />
                                 </th>
@@ -236,7 +236,7 @@ const InboxSol = () => {
                             ))}
                         </tbody>
                     </Table>
-                    <Button variant="primary" disabled={!isCheckedAll} onClick={inAll}>
+                    <Button variant="primary" onClick={inAll}>
                         Recibir Todo
                     </Button>
                     <div className="d-flex justify-content-center">

@@ -10,7 +10,7 @@ import InboxActions from "./InboxActions";
 import axios from 'axios';
 import InboxCollapse from "./InboxCollapse";
 
-const InboxRow = ({ solicitud, open, setOpen,handleSelect ,isChecked}) => {
+const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
 
     const infoFun = useContext(DataContext);
 
@@ -22,7 +22,7 @@ const InboxRow = ({ solicitud, open, setOpen,handleSelect ,isChecked}) => {
     const [isAprobarDisable, setAprobarDisabled] = useState(true);
     const [isRechazarDisable, setRechazarDisabled] = useState(true);
     const [esSubdir, setEsSubdir] = useState(false);
-    
+
     const verificarEstadoBotones = () => {
 
         const ultimaDerivacion = solicitud?.derivaciones?.length > 0 ? solicitud.derivaciones[solicitud.derivaciones.length - 1] : null;
@@ -302,7 +302,7 @@ const InboxRow = ({ solicitud, open, setOpen,handleSelect ,isChecked}) => {
 
     return (
         <>
-             <tr className={isLeida ? "unread-row" : "read-row"}>
+            <tr className={isLeida ? "unread-row" : "read-row"}>
                 <InboxActions solicitud={solicitud} handleRecibir={handleRecibir}
                     isRecibirDisabled={isRecibirDisabled}
                     esSubdir={esSubdir} handleGuardarYDerivar={handleGuardarYDerivar}
@@ -313,7 +313,7 @@ const InboxRow = ({ solicitud, open, setOpen,handleSelect ,isChecked}) => {
                     handleSelect={handleSelect}
                     isChecked={isChecked}
                     entradaExistente={entradaExistente}
-                   />
+                />
             </tr>
             <InboxCollapse solicitud={solicitud} open={open} />
         </>
