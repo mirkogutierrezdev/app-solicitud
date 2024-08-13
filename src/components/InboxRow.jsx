@@ -296,6 +296,12 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
     const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto && derivacion.leida === false);
     const estadoClass = solicitud?.aprobacion ? "estado-aprobado" : solicitud?.rechazo ? "estado-rechazado" : "";
 
+    const hasDerivation = solicitud?.salidas?.derivaciones?.some(derivacion => derivacion.id === solicitud.salidas.derivaciones.id);
+
+    
+
+    console.log("esUltimaDerivacionDeptoActual", hasDerivation);
+
 
 
 
@@ -311,6 +317,8 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                     estadoClass={estadoClass} mostrarPdf={mostrarPdf}
                     handleSelect={handleSelect}
                     isChecked={isChecked}
+                    hasEntries={hasDerivation}
+                    
                     
 
 

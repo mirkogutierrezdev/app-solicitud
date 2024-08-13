@@ -5,6 +5,7 @@ import '../css/InboxSolicitudes.css';
 import { FaCircleCheck } from "react-icons/fa6";
 import { RiInboxArchiveLine, RiLoginBoxLine } from "react-icons/ri";
 import { AiOutlineFilePdf } from "react-icons/ai";
+import { useState } from "react";
 
 const InboxActions = ({
     solicitud: dataSol,
@@ -22,46 +23,47 @@ const InboxActions = ({
     estadoClass,
     mostrarPdf,
     handleSelect,
-    isChecked
-    
-    
+    isChecked,
+    hasEntries
+
+
 
 }) => {
+
+    const [isCheckedPress, setIsCheckedPress] = useState(false);
+
     const handleCheckboxChange = (e) => {
         handleSelect(dataSol.solicitud.id, dataSol.solicitud.funcionario.rut, e.target.checked);
     };
 
 
-    // Determina si el checkbox debe estar habilitado
-    const isCheckboxVisible = dataSol.solicitud.estado.nombre === "PENDIENTE" 
-
-  
-
-    
-
-    // El estado del checkbox se controla comparando si el item ya está seleccionado
-    const isCheckboxChecked =isChecked
-
-    console.log(open)
+    const handlerOnClick = (e) => {
+        setIsCheckedPress(!isCheckedPress);
+        handleCheckboxChange(e);
+    };
 
     
+
 
     return (
         <>
             <td>
+
                 {
-                    isCheckboxVisible && (
+                    !hasEntries && (
                         <input
                             className="form-check-input"
                             type="checkbox"
                             id={`checkbox-${dataSol.solicitud.id}`}
+                            onClick={handlerOnClick}
 
-                            checked={isCheckboxChecked}
-                        //    disabled={entradaExistente}
+                            checked={isChecked ? isChecked : isCheckedPress}
+                            //    disabled={entradaExistente}
                             onChange={handleCheckboxChange}
                         />
                     )
                 }
+
             </td>
             <td>{dataSol?.solicitud?.id}</td>
             <td>{dataSol?.solicitud?.funcionario?.nombre}</td>
@@ -108,7 +110,7 @@ const InboxActions = ({
                 <Button
                     data-toggle="tooltip" data-placement="top" title="Ver Detalles"
                     variant="info"
-                    onClick={()=>setOpen(!open)}
+                    onClick={() => setOpen(!open)}
                     aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
                     aria-expanded={open}
                     className="me-2"

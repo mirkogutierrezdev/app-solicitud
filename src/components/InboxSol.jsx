@@ -7,6 +7,7 @@ import '../css/InboxSolicitudes.css';
 import UnreadContext from "../context/UnreadContext";
 import InboxRow from "./InboxRow";
 import Swal from "sweetalert2";
+import { endOfQuarter, set } from "date-fns";
 
 const InboxSol = () => {
     const dataFunc = useContext(DataContext);
@@ -23,8 +24,8 @@ const InboxSol = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [isCheckedAll, setIsCheckedAll] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
-    
-    
+
+
 
     // Estado para los filtros
     const [filters, setFilters] = useState({
@@ -36,7 +37,7 @@ const InboxSol = () => {
 
     const itemsPerPage = 5;
 
- 
+
 
     useEffect(() => {
         if (data && data.departamento) {
@@ -64,12 +65,12 @@ const InboxSol = () => {
         fetchSolicitudes();
         const intervalId = setInterval(fetchSolicitudes, 5000); // Actualiza cada 5 segundos
         return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [depto]);
 
     useEffect(() => {
         applyFilter(solicitudes);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitudes, filters]);
 
     const applyFilter = (solicitudes) => {
@@ -176,6 +177,7 @@ const InboxSol = () => {
                         applyFilter(nuevasSolicitudes);  // Re-aplica los filtros con la lista actualizada
 
                         setSelectedItems([]);
+                        setIsChecked(false);
                         setIsCheckedAll(false);
                     })
                     .catch((error) => {
@@ -226,7 +228,7 @@ const InboxSol = () => {
             ...item,
             estado: "APROBADA"
         }));
-       Swal.fire({
+        Swal.fire({
             title: '¿Está seguro de aprobar todas las solicitudes?',
             text: "Una vez aprobadas no podrá deshacer esta acción",
             icon: 'warning',
@@ -258,9 +260,9 @@ const InboxSol = () => {
         });
     };
 
-                    
-                        
-                    
+
+
+
 
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -268,6 +270,7 @@ const InboxSol = () => {
     const paginatedItems = (items) => items.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredSolicitudes.length / itemsPerPage);
 
+console.log("filteredSolicitudes",filteredSolicitudes);
 
 
     return (
@@ -313,6 +316,7 @@ const InboxSol = () => {
                                             handleSelect={handleSelect}
                                             isCheckedAll={isCheckedAll}
                                             isChecked={isChecked}
+
                                         />
                                     ))
                                 ) : (
@@ -343,7 +347,7 @@ const InboxSol = () => {
                                 variant="success"
                                 className="mr-2"
                                 onClick={inAll}
-                                disabled={selectedItems.length === 0 || !isCheckedAll}
+                                disabled={selectedItems.length === 0}
                             >
                                 Recibir Todo
                             </Button>
@@ -413,12 +417,12 @@ const InboxSol = () => {
                                 variant="primary"
                                 className="mr-2"
                                 onClick={deriveAll}
-                                disabled={selectedItems.length === 0 || !isCheckedAll}
+                                disabled={selectedItems.length === 0}
                             >
                                 Derivar Todo
                             </Button>
                             <Button variant="success" className="ml-3" onClick={approveAll}>
-                                
+
                                 Aprobar Todo
                             </Button>
                         </div>
