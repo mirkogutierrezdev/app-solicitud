@@ -3,10 +3,10 @@ import axios from 'axios';
 //Función que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async () => {
 
-   // const url = `http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
-     // const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
-  //  const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
-     const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
+    //const url = `http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
+    //const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
+    //const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
+    const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
 
     //Direccion de informatica
     //  const url = `http://localhost:8081/api/smc/byRut/18766677`; //Rut de funcionario
@@ -296,9 +296,9 @@ export const getSolicitudesEnTramites = async (rut) => {
 export const saveEntradas = async (entrada) => {
     const url = `http://localhost:8081/api/entrada/createEntradas`;
 
-     
 
-     try {
+
+    try {
         const response = await axios.post(url, entrada, {
             headers: {
                 'Content-Type': 'application/json'
@@ -308,15 +308,15 @@ export const saveEntradas = async (entrada) => {
     } catch (error) {
         console.error('Error fetching data:', error);
         return null;
-    } 
+    }
 }
 
 export const saveDerivaciones = async (derivaciones) => {
     const url = `http://localhost:8081/api/derivacion/createDerivaciones`;
 
-     
 
-     try {
+
+    try {
         const response = await axios.post(url, derivaciones, {
             headers: {
                 'Content-Type': 'application/json'
@@ -326,5 +326,5 @@ export const saveDerivaciones = async (derivaciones) => {
     } catch (error) {
         console.error('Error fetching data:', error);
         return null;
-    } 
+    }
 }

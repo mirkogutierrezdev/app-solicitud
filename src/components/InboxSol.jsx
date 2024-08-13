@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 import { Container, Table, Spinner, Alert, Pagination, Button, Form, Tabs, Tab } from "react-bootstrap";
 import { getSolicitudesInbox, saveDerivaciones, saveEntradas } from "../services/services";
@@ -21,7 +22,6 @@ const InboxSol = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedItems, setSelectedItems] = useState([]);
     const [isCheckedAll, setIsCheckedAll] = useState(false);
-    //const [canDerive, setCanDerive] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
 
     // Estado para los filtros
@@ -70,7 +70,6 @@ const InboxSol = () => {
         applyFilter(solicitudes);
     }, [solicitudes, filters]);
 
-
     const applyFilter = (solicitudes) => {
         let filtered = solicitudes;
 
@@ -97,7 +96,7 @@ const InboxSol = () => {
     };
 
     const handleFilterChange = (filter) => {
-        setFilters((prevFilters) => {
+        setFilters(() => {
             const newFilters = {
                 ALL: filter === "ALL",
                 PENDIENTE: filter === "PENDIENTE",
@@ -131,7 +130,9 @@ const InboxSol = () => {
         if (checked) {
             const selectedItems = filteredSolicitudes
                 .filter((sol) =>
-                    (sol.solicitud.estado.nombre === "PENDIENTE" && sol.entradas.length === 0 || sol.entradas.length > 0) // Verifica que tenga entradas y no tenga salidas
+                    (sol.solicitud.estado.nombre === "PENDIENTE" && sol.derivaciones.some(deriv => deriv.depto == depto) &&
+                        !sol.entradas.some(entrada => entrada.depto == depto))
+                    || sol.entradas.some(entrada => entrada.depto == depto) // Verifica que tenga entradas y no tenga salidas
                 )
                 .map((sol) => ({ rut: sol.solicitud.funcionario.rut, solicitudId: sol.solicitud.id }));
 
@@ -164,8 +165,15 @@ const InboxSol = () => {
                             'Las solicitudes han sido recibidas exitosamente',
                             'success'
                         );
+
+                        // Filtrar las solicitudes recibidas y actualizar el estado
+                        const nuevasSolicitudes = solicitudes.filter(sol =>
+                            !selectedItems.some(item => item.id === sol.solicitud.id)
+                        );
+                        setSolicitudes(nuevasSolicitudes);
+                        applyFilter(nuevasSolicitudes);  // Re-aplica los filtros con la lista actualizada
+
                         setSelectedItems([]);
-                        //            setCanReceive(false);
                         setIsCheckedAll(false);
                     })
                     .catch((error) => {
@@ -215,8 +223,7 @@ const InboxSol = () => {
     const paginatedItems = (items) => items.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredSolicitudes.length / itemsPerPage);
 
-
-
+    console.log("filteredSolicitudes", filteredSolicitudes);
 
     return (
         <Container>
@@ -238,86 +245,66 @@ const InboxSol = () => {
                                     </th>
                                     <th>ID</th>
                                     <th>Funcionario</th>
-                                    <th>Tipo de Solicitud</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
-                                    <th>Movimiento</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {paginatedItems(filteredSolicitudes
-                                    .filter(sol =>
+                                {filteredSolicitudes.length > 0 ? (
+                                    paginatedItems(filteredSolicitudes.filter(sol =>
                                         sol.solicitud.estado.nombre === "PENDIENTE" &&
-                                        !sol.entradas.some(entrada => entrada.depto === depto)
-                                    )
-                                ).map((sol) => (
-                                    <InboxRow
-                                        key={sol.solicitud.id}
-                                        solicitud={sol}
-                                        open={openId === sol.solicitud.id}
-                                        setOpen={() => handleToggle(sol.solicitud.id)}
-                                        handleSelect={handleSelect}
-                                        isChecked={selectedItems.some(item => item.id === sol.solicitud.id)}
-                                    />
-                                ))}
+                                        sol.derivaciones.some(deriv =>
+                                            deriv.departamento.deptoSmc == depto &&
+                                            !sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == depto)
+                                        )
+                                    )).map((sol) => (
+                                        <InboxRow
+                                            key={sol.solicitud.id}
+                                            solicitud={sol}
+                                            openId={openId}
+                                            depto={depto}
+                                            handleToggle={handleToggle}
+                                            selectedItems={selectedItems}
+                                            handleSelect={handleSelect}
+                                            isCheckedAll={isCheckedAll}
+                                            isChecked={isChecked}
+                                        />
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5">
+                                            <Alert variant="info" className="text-center">No hay solicitudes en la bandeja de Recibir</Alert>
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
-                        </Table>
 
-                        <div className="m-3">
+
+
+                        </Table>
+                        <Pagination>
+                            {[...Array(totalPages)].map((_, index) => (
+                                <Pagination.Item
+                                    key={index + 1}
+                                    active={index + 1 === currentPage}
+                                    onClick={() => setCurrentPage(index + 1)}
+                                >
+                                    {index + 1}
+                                </Pagination.Item>
+                            ))}
+                        </Pagination>
+                        <div className="d-flex justify-content-end">
                             <Button
-                                variant="primary"
-                                className="m-1"
+                                variant="success"
+                                className="mr-2"
                                 onClick={inAll}
+                                disabled={selectedItems.length === 0 || !isCheckedAll}
                             >
                                 Recibir Todo
                             </Button>
                         </div>
-                        <div className="d-flex justify-content-center">
-                            <Pagination>
-                                {[...Array(totalPages)].map((_, index) => (
-                                    <Pagination.Item
-                                        key={index + 1}
-                                        active={index + 1 === currentPage}
-                                        onClick={() => setCurrentPage(index + 1)}
-                                    >
-                                        {index + 1}
-                                    </Pagination.Item>
-                                ))}
-                            </Pagination>
-                        </div>
                     </Tab>
                     <Tab eventKey="derivar" title="Derivar">
-                        <Form className="m-3 d-flex flex-wrap">
-                            <Form.Check
-                                type="radio"
-                                label="Todas"
-                                checked={filters.ALL}
-                                onChange={() => handleFilterChange("ALL")}
-                                className="me-3"
-                            />
-                            <Form.Check
-                                type="radio"
-                                label="Pendientes"
-                                checked={filters.PENDIENTE}
-                                onChange={() => handleFilterChange("PENDIENTE")}
-                                className="me-3"
-                            />
-                            <Form.Check
-                                type="radio"
-                                label="Aprobadas"
-                                checked={filters.APROBADA}
-                                onChange={() => handleFilterChange("APROBADA")}
-                                className="me-3"
-                            />
-                            <Form.Check
-                                type="radio"
-                                label="Rechazadas"
-                                checked={filters.RECHAZADA}
-                                onChange={() => handleFilterChange("RECHAZADA")}
-                                className="me-3"
-                            />
-                        </Form>
-
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
@@ -330,53 +317,65 @@ const InboxSol = () => {
                                     </th>
                                     <th>ID</th>
                                     <th>Funcionario</th>
-                                    <th>Tipo de Solicitud</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
-                                    <th>Movimiento</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {paginatedItems(filteredSolicitudes
-                                    .filter(sol => (sol.solicitud.estado.nombre !== "PENDIENTE" || (sol.entradas.length > 0 && sol.salidas.length === 0)))
-                                ).map((sol) => (
-                                    <InboxRow
-                                        key={sol.solicitud.id}
-                                        solicitud={sol}
-                                        open={openId === sol.solicitud.id}
-                                        setOpen={() => handleToggle(sol.solicitud.id)}
-                                        handleSelect={handleSelect}
-                                        isChecked={isChecked}
-                                    />
-                                ))}
+                                {filteredSolicitudes.length > 0 ? (
+                                    paginatedItems(filteredSolicitudes.filter(sol =>
+                                        sol.derivaciones.some(deriv =>
+                                            deriv.departamento.deptoSmc == depto &&
+                                            sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == depto) &&
+                                            sol.salidas.some(salida => salida.derivacion.id != deriv.id)
+                                        )
+                                    )).map((sol) => (
+                                        <InboxRow
+                                            key={sol.solicitud.id}
+                                            solicitud={sol}
+                                            openId={openId}
+                                            depto={depto}
+                                            handleToggle={handleToggle}
+                                            selectedItems={selectedItems}
+                                            handleSelect={handleSelect}
+                                            isCheckedAll={isCheckedAll}
+                                            isChecked={isChecked}
+                                        />
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5">
+                                            <Alert variant="info" className="text-center">No hay solicitudes en la bandeja de Derivar</Alert>
+                                        </td>
+                                    </tr>
+                                )}
+
                             </tbody>
                         </Table>
-                        <div className="m-3">
+                        <Pagination>
+                            {[...Array(totalPages)].map((_, index) => (
+                                <Pagination.Item
+                                    key={index + 1}
+                                    active={index + 1 === currentPage}
+                                    onClick={() => setCurrentPage(index + 1)}
+                                >
+                                    {index + 1}
+                                </Pagination.Item>
+                            ))}
+                        </Pagination>
+                        <div className="d-flex justify-content-end">
                             <Button
                                 variant="primary"
-                                className="m-1"
+                                className="mr-2"
                                 onClick={deriveAll}
+                                disabled={selectedItems.length === 0 || !isCheckedAll}
                             >
                                 Derivar Todo
                             </Button>
                         </div>
-                        <div className="d-flex justify-content-center">
-                            <Pagination>
-                                {[...Array(totalPages)].map((_, index) => (
-                                    <Pagination.Item
-                                        key={index + 1}
-                                        active={index + 1 === currentPage}
-                                        onClick={() => setCurrentPage(index + 1)}
-                                    >
-                                        {index + 1}
-                                    </Pagination.Item>
-                                ))}
-                            </Pagination>
-                        </div>
                     </Tab>
                 </Tabs>
             )}
-            {error && <Alert variant="danger">{error}</Alert>}
         </Container>
     );
 };

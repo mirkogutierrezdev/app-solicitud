@@ -115,7 +115,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
 
         const derivacion = {
             depto: dataDepartamento.depto,
-            idSolicitud: solicitud.solicitud.id,
+            solicitudId: solicitud.solicitud.id,
             estado: "PENDIENTE",
             fechaDerivacion: fechaDerivacion,
             rut: data.rut
@@ -299,7 +299,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
     const estadoClass = solicitud?.aprobacion ? "estado-aprobado" : solicitud?.rechazo ? "estado-rechazado" : "";
 
 
-    
+
 
     return (
         <>
@@ -313,8 +313,8 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                     estadoClass={estadoClass} mostrarPdf={mostrarPdf}
                     handleSelect={handleSelect}
                     isChecked={isChecked}
-                    
-                   
+
+
                 />
             </tr>
             <InboxCollapse solicitud={solicitud} open={open} />
