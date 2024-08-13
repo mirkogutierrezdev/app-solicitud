@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 import { Container, Table, Spinner, Alert, Pagination, Button, Form, Tabs, Tab } from "react-bootstrap";
-import { getSolicitudesInbox, saveDerivaciones, saveEntradas } from "../services/services";
+import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones } from "../services/services";
 import DataContext from "../context/DataContext";
 import '../css/InboxSolicitudes.css';
 import UnreadContext from "../context/UnreadContext";
@@ -18,11 +18,13 @@ const InboxSol = () => {
     const [loading, setLoading] = useState(true);
     const [depto, setLocalDepto] = useState(null);
     const { setDepto } = useContext(UnreadContext);
-    const [openId, setOpenId] = useState(null);
+    const [open, setOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedItems, setSelectedItems] = useState([]);
     const [isCheckedAll, setIsCheckedAll] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
+    
+    
 
     // Estado para los filtros
     const [filters, setFilters] = useState({
@@ -34,9 +36,7 @@ const InboxSol = () => {
 
     const itemsPerPage = 5;
 
-    const handleToggle = (id) => {
-        setOpenId(openId === id ? null : id);
-    };
+ 
 
     useEffect(() => {
         if (data && data.departamento) {
@@ -64,10 +64,12 @@ const InboxSol = () => {
         fetchSolicitudes();
         const intervalId = setInterval(fetchSolicitudes, 5000); // Actualiza cada 5 segundos
         return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [depto]);
 
     useEffect(() => {
         applyFilter(solicitudes);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitudes, filters]);
 
     const applyFilter = (solicitudes) => {
@@ -130,9 +132,9 @@ const InboxSol = () => {
         if (checked) {
             const selectedItems = filteredSolicitudes
                 .filter((sol) =>
-                    (sol.solicitud.estado.nombre === "PENDIENTE" && sol.derivaciones.some(deriv => deriv.depto == depto) &&
-                        !sol.entradas.some(entrada => entrada.depto == depto))
-                    || sol.entradas.some(entrada => entrada.depto == depto) // Verifica que tenga entradas y no tenga salidas
+                    (sol.solicitud.estado.nombre === "PENDIENTE" && sol.derivaciones.some(deriv => deriv.departamento.deptoSmc == depto) &&
+                        !sol.entradas.some(entrada => entrada.derivacion.departamento.deptoSmc == depto))
+                    || sol.entradas.some(entrada => entrada.derivacion.departamento.deptoSmc == depto) // Verifica que tenga entradas y no tenga salidas
                 )
                 .map((sol) => ({ rut: sol.solicitud.funcionario.rut, solicitudId: sol.solicitud.id }));
 
@@ -218,12 +220,55 @@ const InboxSol = () => {
         });
     };
 
+    const approveAll = () => {
+
+        const aprobaciones = selectedItems.map(item => ({
+            ...item,
+            estado: "APROBADA"
+        }));
+       Swal.fire({
+            title: '¿Está seguro de aprobar todas las solicitudes?',
+            text: "Una vez aprobadas no podrá deshacer esta acción",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aprobar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveAprobaciones(aprobaciones)
+                    .then(() => {
+                        Swal.fire(
+                            'Solicitudes aprobadas',
+                            'Las solicitudes han sido aprobadas exitosamente',
+                            'success'
+                        );
+                    }
+                    )
+                    .catch((error) => {
+                        console.error("Error al aprobar solicitudes:", error);
+                        Swal.fire(
+                            'Error',
+                            'Ocurrió un error al aprobar las solicitudes',
+                            'error'
+                        );
+                    });
+            }
+        });
+    };
+
+                    
+                        
+                    
+
+
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const paginatedItems = (items) => items.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredSolicitudes.length / itemsPerPage);
 
-    console.log("filteredSolicitudes", filteredSolicitudes);
+
 
     return (
         <Container>
@@ -261,9 +306,9 @@ const InboxSol = () => {
                                         <InboxRow
                                             key={sol.solicitud.id}
                                             solicitud={sol}
-                                            openId={openId}
+                                            open={open}
                                             depto={depto}
-                                            handleToggle={handleToggle}
+                                            setOpen={setOpen}
                                             selectedItems={selectedItems}
                                             handleSelect={handleSelect}
                                             isCheckedAll={isCheckedAll}
@@ -304,7 +349,7 @@ const InboxSol = () => {
                             </Button>
                         </div>
                     </Tab>
-                    <Tab eventKey="derivar" title="Derivar">
+                    <Tab eventKey="derivar" title="Entrada">
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
@@ -326,16 +371,16 @@ const InboxSol = () => {
                                     paginatedItems(filteredSolicitudes.filter(sol =>
                                         sol.derivaciones.some(deriv =>
                                             deriv.departamento.deptoSmc == depto &&
-                                            sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == depto) &&
-                                            sol.salidas.some(salida => salida.derivacion.id != deriv.id)
+                                            sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == depto)/* &&
+                                            !sol.salidas.some(salida => salida.derivacion.id === deriv.id)*/
                                         )
                                     )).map((sol) => (
                                         <InboxRow
                                             key={sol.solicitud.id}
                                             solicitud={sol}
-                                            openId={openId}
+                                            open={open}
                                             depto={depto}
-                                            handleToggle={handleToggle}
+                                            setOpen={setOpen}
                                             selectedItems={selectedItems}
                                             handleSelect={handleSelect}
                                             isCheckedAll={isCheckedAll}
@@ -371,6 +416,10 @@ const InboxSol = () => {
                                 disabled={selectedItems.length === 0 || !isCheckedAll}
                             >
                                 Derivar Todo
+                            </Button>
+                            <Button variant="success" className="ml-3" onClick={approveAll}>
+                                
+                                Aprobar Todo
                             </Button>
                         </div>
                     </Tab>

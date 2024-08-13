@@ -241,12 +241,10 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
     }
 
     const handlerAprobar = async () => {
-        const fechaActual = obtenerFechaActual();
 
         const solicitudDto = {
-            idSolicitud: solicitud.solicitud.id,
-            rutFuncionario: data.rut,
-            fechaAprobacion: fechaActual,
+            solicitudId: solicitud.solicitud.id,
+            rut: data.rut,
             estado: "APROBADA"
         };
 
@@ -267,7 +265,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                     });
 
                     // Generar el PDF y abrirlo en una nueva pestaña
-                    const response = await axios.get(`http://localhost:8081/api/aprobaciones/pdf/${solicitudDto.idSolicitud}`, {
+                    const response = await axios.get(`http://localhost:8081/api/aprobaciones/pdf/${solicitudDto.solicitudId}`, {
                         responseType: 'blob',
                     });
 
@@ -313,6 +311,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                     estadoClass={estadoClass} mostrarPdf={mostrarPdf}
                     handleSelect={handleSelect}
                     isChecked={isChecked}
+                    
 
 
                 />

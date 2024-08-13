@@ -24,6 +24,7 @@ const InboxActions = ({
     handleSelect,
     isChecked
     
+    
 
 }) => {
     const handleCheckboxChange = (e) => {
@@ -40,6 +41,8 @@ const InboxActions = ({
 
     // El estado del checkbox se controla comparando si el item ya está seleccionado
     const isCheckboxChecked =isChecked
+
+    console.log(open)
 
     
 
@@ -105,7 +108,7 @@ const InboxActions = ({
                 <Button
                     data-toggle="tooltip" data-placement="top" title="Ver Detalles"
                     variant="info"
-                    onClick={() => setOpen(!open)}
+                    onClick={()=>setOpen(!open)}
                     aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
                     aria-expanded={open}
                     className="me-2"
