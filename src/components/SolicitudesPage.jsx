@@ -19,7 +19,8 @@ function SolicitudesPage({ data }) {
     const depto = data ? data.departamento : [];
     const { jefe_departamento } = depto;
     const [option, setOption] = useState('');
-    const [optionAdm, setOptionAdm] = useState('');
+    const [optionAdmIni, setOptionAdmIni] = useState('');
+    const [optionAdmFin,setOptionAdmFin] = useState('');    
     const [startDate, setStartDate] = useState(getFormattedCurrentDate());
     const [endDate, setEndDate] = useState('');
     const [workDays, setWorkDays] = useState(0);
@@ -88,20 +89,26 @@ function SolicitudesPage({ data }) {
         } else if (selectedOption === "Administrativo") {
             calculatedMaxEndDate = await calculateMaxEndDate(currentDate, remainingDaysAdm);
         }
-
         setEndDate(calculatedMaxEndDate);
         setMaxEndDate(calculatedMaxEndDate);
     };
 
 
-    const handleOptionChangeAdmn = async (e) => {
-
-        const { maximo, usados, saldo } = adm;
-
+    const handleOptionChangeAdmnIni = async (e) => {
+        const { saldo } = adm;
         const selectedOption = e.target.value;
+        setOptionAdmIni(selectedOption);
+        setActiveButton(true);
+        const currentDate = getFormattedCurrentDate();
+        setStartDate(currentDate);
+        const calculatedMaxEndDate = await calculateMaxEndDate(currentDate, saldo);
+        setMaxEndDate(calculatedMaxEndDate);
+    }
 
-        setOptionAdm(selectedOption);
-
+    const handleOptionChangeAdmnFin = async (e) => {
+        const { saldo } = adm;
+        const selectedOption = e.target.value;
+        setOptionAdmFin(selectedOption);
         setActiveButton(true);
         const currentDate = getFormattedCurrentDate();
         setStartDate(currentDate);
@@ -117,18 +124,14 @@ function SolicitudesPage({ data }) {
             const calculatedMaxEndDate = await calculateMaxEndDate(e.target.value, remainingDays);
             setMaxEndDate(calculatedMaxEndDate);
             setEndDate(calculatedMaxEndDate);
-
-
         }
 
         if (option === "Administrativo") {
-            setStartDate(e.target.value);
             setStartDate(e.target.value);
             const calculatedMaxEndDate = await calculateMaxEndDate(e.target.value, remainingDaysAdm);
             setMaxEndDate(calculatedMaxEndDate);
             setEndDate(calculatedMaxEndDate);
         }
-
     };
 
     const handleEndDateChange = (e) => {
@@ -140,17 +143,42 @@ function SolicitudesPage({ data }) {
             const validaDias = async () => {
                 try {
                     const dias = await getDiasWork(startDate, endDate);
-                    //  const entramites = await getSolicitudesEnTramites(startDate, endDate);
-                    setWorkDays(dias);
-                    if (option === "Feriado Legal") {
-                        setNumDaysToUse(remainingDays - dias);
-                        setSupervisor(jefe_departamento);
+                    let diasTotales = dias;
 
+                    // Cálculo de días administrativos
+                    if (option === "Administrativo") {
+                        if (startDate === endDate) {
+                            // Misma fecha
+                            if (optionAdmIni === "mañana" && optionAdmFin === "mañana") {
+                                diasTotales = 0.5;
+                            } else if (optionAdmIni === "mañana" && optionAdmFin === "tarde") {
+                                diasTotales = 1;
+                            } else if (optionAdmIni === "tarde" && optionAdmFin === "tarde") {
+                                diasTotales = 0.5;
+                            }
+                        } else {
+                            // Diferentes fechas
+                            if (optionAdmIni === "mañana" && optionAdmFin === "mañana") {
+                                diasTotales = dias - 0.5;
+                            } else if (optionAdmIni === "mañana" && optionAdmFin === "tarde") {
+                                diasTotales = dias;
+                            } else if (optionAdmIni === "tarde" && optionAdmFin === "mañana") {
+                                diasTotales = dias - 1;
+                            } else if (optionAdmIni === "tarde" && optionAdmFin === "tarde") {
+                                diasTotales = dias - 0.5;
+                            }
+                        }
+                    }
+
+                    setWorkDays(diasTotales);
+
+                    if (option === "Feriado Legal") {
+                        setNumDaysToUse(remainingDays - diasTotales);
+                        setSupervisor(jefe_departamento);
                     }
                     if (option === "Administrativo") {
-                        setNumDaysToUse(remainingDaysAdm - dias);
+                        setNumDaysToUse(remainingDaysAdm - diasTotales);
                         setSupervisor(jefe_departamento);
-
                     }
 
                 } catch (error) {
@@ -159,7 +187,7 @@ function SolicitudesPage({ data }) {
             };
             validaDias();
         }
-    }, [startDate, endDate, remainingDays, jefe_departamento]);
+    }, [startDate, endDate, optionAdmIni, optionAdmFin, remainingDays, jefe_departamento]);
 
     function getFormattedCurrentDate() {
         const date = new Date();
@@ -258,23 +286,38 @@ function SolicitudesPage({ data }) {
                     <Card className="shadow-sm">
                         <Card.Body>
                             <Row className="align-items-center mb-3">
-                                <Col md={3}>
-                                    <Form.Group controlId="formSelectOption">
+                                <Col md={option === "Administrativo" ? 2 : 3}>
+                                    <Form.Group controlId="formSelectOption1">
                                         <Form.Label className="h5 custom-font-size">Tipo de solicitud</Form.Label>
                                         <Form.Control
                                             as="select"
                                             value={option}
                                             onChange={handleOptionChange}
-                                            className="p-2 custom-font-size"
-                                        >
+                                            className="p-2 custom-font-size">
                                             <option value="">Seleccione una opción</option>
                                             <option value="Feriado Legal">Feriado legal</option>
                                             <option value="Administrativo">Dia administrativo</option>
                                         </Form.Control>
                                     </Form.Group>
                                 </Col>
-
-                                <Col md={3}>
+                                {option === "Administrativo" ?
+                                    <Col md={option === "Administrativo" ? 2 : 3}>
+                                        <Form.Group controlId="formSelectOption2">
+                                            <Form.Label className="h5 custom-font-size">Duracion</Form.Label>
+                                            <Form.Control
+                                                as="select"
+                                                value={optionAdmIni}
+                                                onChange={handleOptionChangeAdmnIni}
+                                                className="p-2 custom-font-size">
+                                                <option value="">Seleccione una opción</option>
+                                                <option value="mañana">Mañana</option>
+                                                <option value="tarde">Tarde</option>
+                                                <option value="dia">Todo el día</option>
+                                            </Form.Control>
+                                        </Form.Group>
+                                    </Col> : <>
+                                    </>}
+                                <Col md={option === "Administrativo" ? 2 : 3}>
                                     <Form.Group controlId="formStartDate">
                                         <Form.Label className="h5 custom-font-size">Fecha de inicio</Form.Label>
                                         <Form.Control
@@ -287,7 +330,7 @@ function SolicitudesPage({ data }) {
                                         />
                                     </Form.Group>
                                 </Col>
-                                <Col md={3}>
+                                <Col md={option === "Administrativo" ? 2 : 3}>
                                     <Form.Group controlId="formEndDate">
                                         <Form.Label className="h5 custom-font-size">Fecha de término</Form.Label>
                                         <Form.Control
@@ -302,13 +345,13 @@ function SolicitudesPage({ data }) {
                                     </Form.Group>
                                 </Col>
                                 {option === "Administrativo" ?
-                                    <Col md={3}>
-                                        <Form.Group controlId="formSelectOption">
+                                    <Col md={option === "Adminitrativo" ? 2 : 3}>
+                                        <Form.Group controlId="formSelectOption3">
                                             <Form.Label className="h5 custom-font-size">Duracion</Form.Label>
                                             <Form.Control
                                                 as="select"
-                                                value={optionAdm}
-                                                onChange={handleOptionChangeAdmn}
+                                                value={optionAdmFin}
+                                                onChange={handleOptionChangeAdmnFin}
                                                 className="p-2 custom-font-size"
                                             >
                                                 <option value="">Seleccione una opción</option>

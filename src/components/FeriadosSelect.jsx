@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Col, Form } from "react-bootstrap";
 
-export const FerriadosSelect = ({ option,
+export const FeriadosSelect = ({ option,
 
     startDate,
     handleStartDateChange,
@@ -50,4 +50,4 @@ export const FerriadosSelect = ({ option,
     )
 }
 
-export default FerriadosSelect;
+export default FeriadosSelect;

@@ -9,12 +9,35 @@ export const AdmSelect = ({
     handleEndDateChange,
     maxEndDate,
     option,
-    optionAdm, handleOptionChangeAdmn
+    optionAdmIni, 
+    optionAdmFin, 
+    handleOptionChangeAdmnIni,
+    handleOptionChangeAdmnFin
 }) => {
+
+    
+        console.log(startDate)
+    
 
     return (
         <>
-            <Col md={3}>
+        <Col md={2}>
+                <Form.Group controlId="formSelectOption">
+                    <Form.Label className="h5 custom-font-size">Duracion</Form.Label>
+                    <Form.Control
+                        as="select"
+                        disabled={!option}
+                        value={optionAdmIni}
+                        onChange={handleOptionChangeAdmnIni}
+                        className="p-2 custom-font-size">
+                        <option value="">Seleccione una opción</option>
+                        <option value="mañana">Mañana</option>
+                        <option value="tarde">Tarde</option>
+                        <option value="dia">Todo el día</option>
+                    </Form.Control>
+                </Form.Group>
+            </Col>
+            <Col md={2}>
                 <Form.Group controlId="formStartDate">
                     <Form.Label className="h5 custom-font-size">Fecha de inicio</Form.Label>
                     <Form.Control
@@ -27,7 +50,24 @@ export const AdmSelect = ({
                     />
                 </Form.Group>
             </Col>
-            <Col md={3}>
+            <Col md={2}>
+                <Form.Group controlId="formSelectOption">
+                    <Form.Label className="h5 custom-font-size">Duracion</Form.Label>
+                    <Form.Control
+                        as="select"
+                        value={optionAdmFin}
+                        onChange={handleOptionChangeAdmnFin}
+                        className="p-2 custom-font-size"
+                        disabled={!option}
+                        >
+                        <option value="">Seleccione una opción</option>
+                        <option value="mañana">Mañana</option>
+                        <option value="tarde">Tarde</option>
+                        <option value="dia">Todo el día</option>
+                    </Form.Control>
+                </Form.Group>
+            </Col>
+            <Col md={2}>
                 <Form.Group controlId="formEndDate">
                     <Form.Label className="h5 custom-font-size">Fecha de término</Form.Label>
                     <Form.Control
@@ -41,24 +81,7 @@ export const AdmSelect = ({
                     />
                 </Form.Group>
             </Col>
-
-
-            <Col md={3}>
-                <Form.Group controlId="formSelectOption">
-                    <Form.Label className="h5 custom-font-size">Duracion</Form.Label>
-                    <Form.Control
-                        as="select"
-                        value={optionAdm}
-                        onChange={handleOptionChangeAdmn}
-                        className="p-2 custom-font-size"
-                    >
-                        <option value="">Seleccione una opción</option>
-                        <option value="mañana">Mañana</option>
-                        <option value="tarde">Tarde</option>
-                        <option value="dia">Todo el día</option>
-                    </Form.Control>
-                </Form.Group>
-            </Col>
+           
         </>
 
 

@@ -270,7 +270,6 @@ const InboxSol = () => {
     const paginatedItems = (items) => items.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredSolicitudes.length / itemsPerPage);
 
-console.log("filteredSolicitudes",filteredSolicitudes);
 
 
     return (

@@ -298,13 +298,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
 
     const hasDerivation = solicitud?.salidas?.derivaciones?.some(derivacion => derivacion.id === solicitud.salidas.derivaciones.id);
 
-    
-
-    console.log("esUltimaDerivacionDeptoActual", hasDerivation);
-
-
-
-
     return (
         <>
             <tr className={isLeida ? "unread-row" : "read-row"}>
