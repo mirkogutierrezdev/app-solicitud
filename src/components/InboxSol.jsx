@@ -25,7 +25,7 @@ const InboxSol = () => {
     const [isCheckedAll, setIsCheckedAll] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
 
-
+console.log(solicitudes);
 
     // Estado para los filtros
     const [filters, setFilters] = useState({
@@ -292,6 +292,7 @@ const InboxSol = () => {
                                     </th>
                                     <th>ID</th>
                                     <th>Funcionario</th>
+                                    <th>Tipo solicitud</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>

@@ -13,6 +13,22 @@ const formatDate = (dateString) => {
     return `${day}-${month}-${year}`;
 };
 
+function formatDateString(dateString) {
+    if (!dateString) return '';
+
+    // Convierte la cadena de fecha a un objeto Date
+    const date = new Date(dateString);
+
+    // Extrae el día, mes y año
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear();
+
+    // Devuelve la fecha en el formato deseado
+    return `${day}-${month}-${year}`;
+}
+
+
 const InboxCollapse = ({ solicitud: dataSol, open }) => {
 
     const { solicitud } = dataSol;
@@ -54,10 +70,10 @@ const InboxCollapse = ({ solicitud: dataSol, open }) => {
                                             <strong>Estado : </strong> {nombreEstado}<br />
                                         </Col>
                                         <Col>
-                                            <strong>Desde : </strong> {formatDate(fechaInicio)}<br />
+                                            <strong>Desde : </strong> {formatDateString(fechaInicio)}<br />
                                         </Col>
                                         <Col>
-                                            <strong>Hasta : </strong>{formatDate(fechaFin)}<br />
+                                            <strong>Hasta : </strong>{formatDateString(fechaFin)}<br />
                                         </Col>
                                     </Row>
                                 </Card.Text>

@@ -17,8 +17,32 @@ const formatDate = (dateString) => {
 };
 
 
+function formatDateString(dateString) {
+    if (!dateString) return '';
 
-function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveButton, startDate, endDate }) {
+    // Convierte la cadena de fecha a un objeto Date
+    const date = new Date(dateString);
+
+    // Extrae el día, mes y año
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear();
+
+    // Devuelve la fecha en el formato deseado
+    return `${day}-${month}-${year}`;
+}
+
+
+function DetalleSolView({
+    option,
+    workDays,
+    numDaysToUse,
+    supervisor,
+    isActiveButton,
+    startDate,
+    endDate,
+    optionAdmIni,
+    optionAdmFin }) {
 
     const data = useContext(DataContext);
     const estado = 'PENDIENTE';
@@ -28,6 +52,35 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().slice(0, 10);
 
+    if (optionAdmIni === "mañana") {
+        startDate = startDate + "T" + "12:00:00";
+    }
+
+    if (optionAdmIni === "tarde") {
+        startDate = startDate + "T" + "17:30:00";
+    }
+
+    if(optionAdmIni  == "dia"){
+        startDate = startDate + "T" + "00:00:00";
+    }
+
+    if (optionAdmFin === "mañana") {
+        endDate = endDate + "T" + "12:00:00"
+    }
+
+    if (optionAdmFin === "tarde") {
+        endDate = endDate + "T" + "17:30:00"
+    }
+
+    if(optionAdmFin  == "dia"){
+        endDate = endDate + "T" + "00:00:00";
+    }
+
+    if(option === "Feriado Legal"){
+
+        startDate = startDate + "T" + "00:00:00";
+        endDate = endDate + "T" + "00:00:00";
+    }
     const handlerClick = async () => {
 
         const solicitud = {
@@ -38,7 +91,8 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
             estado: estado,
             depto: depto,
             nombre_departamento: nombre_departamento,
-            fechaDer: currentDateString
+            fechaDer: currentDateString,
+            diasUsar : numDaysToUse
         };
 
 
@@ -52,8 +106,8 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                   const result = await saveSolicitud(solicitud);
-           
+                    const result = await saveSolicitud(solicitud);
+                    console.log(solicitud);
                     Swal.fire({
                         text: result.message,
                         icon: "success"
@@ -77,12 +131,12 @@ function DetalleSolView({ option, workDays, numDaysToUse, supervisor, isActiveBu
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Fecha Inicio:</strong> {formatDate(startDate)}
+                            <strong>Fecha Inicio:</strong> {option === "Administrativo " ? formatDateString(startDate): formatDate(startDate) }
                         </Card.Text>
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Fecha Fin:</strong> {formatDate(endDate)}
+                            <strong>Fecha Fin:</strong> {option === "Administrativo " ? formatDateString(endDate): formatDate(endDate)}
                         </Card.Text>
                     </Col>
                 </Row>

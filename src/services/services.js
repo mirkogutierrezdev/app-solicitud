@@ -4,9 +4,9 @@ import axios from 'axios';
 export const getFuncionario = async () => {
 
     //const url = `http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
-    //const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
-    const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
-    //const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
+    const url = `http://localhost:8081/api/smc/byRut/19280310`; //Rut de funcionario
+   // const url = `http://localhost:8081/api/smc/byRut/10067570`; //Rut jefe departamento
+   // const url = `http://localhost:8081/api/smc/byRut/10735521`; //Rut Subdirector
 
     //Direccion de informatica
       //const url = `http://localhost:8081/api/smc/byRut/18740165`; //Rut de funcionario

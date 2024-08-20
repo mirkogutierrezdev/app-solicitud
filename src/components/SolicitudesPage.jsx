@@ -20,7 +20,7 @@ function SolicitudesPage({ data }) {
     const { jefe_departamento } = depto;
     const [option, setOption] = useState('');
     const [optionAdmIni, setOptionAdmIni] = useState('');
-    const [optionAdmFin,setOptionAdmFin] = useState('');    
+    const [optionAdmFin, setOptionAdmFin] = useState('');
     const [startDate, setStartDate] = useState(getFormattedCurrentDate());
     const [endDate, setEndDate] = useState('');
     const [workDays, setWorkDays] = useState(0);
@@ -68,6 +68,8 @@ function SolicitudesPage({ data }) {
             return;
         }
 
+        
+
         const solicitudesEnTramite = await buscaSolicitudesEnTramites(rut);
         if (solicitudesEnTramite.length > 0) {
             Swal.fire({
@@ -78,6 +80,9 @@ function SolicitudesPage({ data }) {
             });
             return; // Salir de la función si hay solicitudes en trámite
         }
+       
+        setOptionAdmIni("mañana");
+        setOptionAdmFin("mañana");
 
         setActiveButton(true); // Activar el botón si no hay solicitudes en trámite
         const currentDate = getFormattedCurrentDate();
@@ -134,6 +139,26 @@ function SolicitudesPage({ data }) {
         }
     };
 
+    const validateRemaingDaysAdm = (diasTotales) => {
+
+        
+        if (diasTotales > remainingDaysAdm) {
+
+            return true;
+        }
+        return false;
+    }
+
+    const validateRemaingDays = (diasTotales) => {
+
+        if (diasTotales > remainingDays) {
+
+            return true;
+        }
+        return false;
+    }
+
+
     const handleEndDateChange = (e) => {
         setEndDate(e.target.value);
     };
@@ -144,6 +169,7 @@ function SolicitudesPage({ data }) {
                 try {
                     const dias = await getDiasWork(startDate, endDate);
                     let diasTotales = dias;
+
 
                     // Cálculo de días administrativos
                     if (option === "Administrativo") {
@@ -168,7 +194,38 @@ function SolicitudesPage({ data }) {
                                 diasTotales = dias - 0.5;
                             }
                         }
+
+                        if (validateRemaingDaysAdm(diasTotales)) {
+                            Swal.fire({
+                                title: "Saldo días pendientes",
+                                text: "Días solicitados superan el saldo de día",
+                                icon: "warning",
+                                confirmButtonText: "Ok"
+                            });
+                            const calculatedMaxEndDate = await calculateMaxEndDate(startDate, remainingDaysAdm);
+                            setEndDate(calculatedMaxEndDate);
+                        }
+
                     }
+
+                    if (option === "Feriado Legal") {
+
+
+                        if (validateRemaingDays(diasTotales)) {
+                            Swal.fire({
+                                title: "Saldo días pendientes",
+                                text: "Días solicitados superan el saldo de día",
+                                icon: "warning",
+                                confirmButtonText: "Ok"
+                            });
+                            const calculatedMaxEndDate = await calculateMaxEndDate(startDate, remainingDays);
+                            setEndDate(calculatedMaxEndDate);
+
+                        }
+                    }
+
+
+
 
                     setWorkDays(diasTotales);
 
@@ -187,7 +244,7 @@ function SolicitudesPage({ data }) {
             };
             validaDias();
         }
-    }, [startDate, endDate, optionAdmIni, optionAdmFin, remainingDays, jefe_departamento]);
+    }, [startDate, endDate, optionAdmIni, optionAdmFin, remainingDays, jefe_departamento, option, remainingDaysAdm]);
 
     function getFormattedCurrentDate() {
         const date = new Date();
@@ -371,6 +428,9 @@ function SolicitudesPage({ data }) {
                                 supervisor={supervisor}
                                 isActiveButton={isActiveButton}
                                 option={option}
+                                optionAdmIni={optionAdmIni}
+                                optionAdmFin={optionAdmFin}
+                        
                             />
                         </Card.Body>
                     </Card>
