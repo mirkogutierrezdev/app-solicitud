@@ -5,11 +5,9 @@ import { Col, Container, Form, Row, Card } from "react-bootstrap";
 import AdmSolView from "./AdmSolView";
 import FeriadoSolView from "./FeriadoSolView";
 import DetalleSolView from "./DetallaSolView";
-import { getDiasWork, getFeriados, getSolicitudesEnTramites } from "../services/services";
+import { getDiasWork,  getFeriados, getSolicitudesEnTramites } from "../services/services";
 import '../css/SolicitudesPage.css'; // Asegúrate de agregar el archivo CSS
 import Swal from "sweetalert2";
-
-
 
 function SolicitudesPage({ data }) {
 
@@ -34,6 +32,8 @@ function SolicitudesPage({ data }) {
     const { diasPendientes: remainingDays } = filteredFeriados.length > 0 ? filteredFeriados[0] : { totalDias: 0, diasTomados: 0, diasPendientes: 0 };
     const { saldo: remainingDaysAdm } = adm;
     const rut = data ? data.rut : 0;
+
+
 
 
     const getDataHolidays = async (fechaInicio, fechaTermino) => {
@@ -62,16 +62,17 @@ function SolicitudesPage({ data }) {
     const handleOptionChange = async (e) => {
         const selectedOption = e.target.value;
         setOption(selectedOption);
-
+    
         if (selectedOption === "") {
             resetAllValues();
             return;
         }
-
-        
-
+    
         const solicitudesEnTramite = await buscaSolicitudesEnTramites(rut);
-        if (solicitudesEnTramite.length > 0) {
+    
+        if (solicitudesEnTramite.length > 0 && 
+            solicitudesEnTramite.some(sol => sol.tipoSolicitud.nombre.toLowerCase() === selectedOption.toLowerCase())) {
+    
             Swal.fire({
                 title: "Solicitud en trámite",
                 text: "Ya tienes una solicitud en trámite, no puedes realizar otra solicitud hasta que la actual sea aprobada o rechazada.",
@@ -80,14 +81,14 @@ function SolicitudesPage({ data }) {
             });
             return; // Salir de la función si hay solicitudes en trámite
         }
-       
+    
         setOptionAdmIni("mañana");
         setOptionAdmFin("mañana");
-
+    
         setActiveButton(true); // Activar el botón si no hay solicitudes en trámite
         const currentDate = getFormattedCurrentDate();
         setStartDate(currentDate);
-
+    
         let calculatedMaxEndDate;
         if (selectedOption === "Feriado Legal") {
             calculatedMaxEndDate = await calculateMaxEndDate(currentDate, remainingDays);
@@ -97,6 +98,7 @@ function SolicitudesPage({ data }) {
         setEndDate(calculatedMaxEndDate);
         setMaxEndDate(calculatedMaxEndDate);
     };
+    
 
 
     const handleOptionChangeAdmnIni = async (e) => {
@@ -141,9 +143,7 @@ function SolicitudesPage({ data }) {
 
     const validateRemaingDaysAdm = (diasTotales) => {
 
-        
         if (diasTotales > remainingDaysAdm) {
-
             return true;
         }
         return false;
@@ -152,12 +152,10 @@ function SolicitudesPage({ data }) {
     const validateRemaingDays = (diasTotales) => {
 
         if (diasTotales > remainingDays) {
-
             return true;
         }
         return false;
     }
-
 
     const handleEndDateChange = (e) => {
         setEndDate(e.target.value);
@@ -169,7 +167,6 @@ function SolicitudesPage({ data }) {
                 try {
                     const dias = await getDiasWork(startDate, endDate);
                     let diasTotales = dias;
-
 
                     // Cálculo de días administrativos
                     if (option === "Administrativo") {
@@ -205,11 +202,9 @@ function SolicitudesPage({ data }) {
                             const calculatedMaxEndDate = await calculateMaxEndDate(startDate, remainingDaysAdm);
                             setEndDate(calculatedMaxEndDate);
                         }
-
                     }
 
                     if (option === "Feriado Legal") {
-
 
                         if (validateRemaingDays(diasTotales)) {
                             Swal.fire({
@@ -220,12 +215,8 @@ function SolicitudesPage({ data }) {
                             });
                             const calculatedMaxEndDate = await calculateMaxEndDate(startDate, remainingDays);
                             setEndDate(calculatedMaxEndDate);
-
                         }
                     }
-
-
-
 
                     setWorkDays(diasTotales);
 
@@ -430,7 +421,6 @@ function SolicitudesPage({ data }) {
                                 option={option}
                                 optionAdmIni={optionAdmIni}
                                 optionAdmFin={optionAdmFin}
-                        
                             />
                         </Card.Body>
                     </Card>

@@ -7,16 +7,6 @@ import Swal from "sweetalert2";
 import '../css/DetalleSolView.css'; // Añade un archivo CSS para estilos personalizados
 
 
-const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-};
-
-
 function formatDateString(dateString) {
     if (!dateString) return '';
 
@@ -52,36 +42,43 @@ function DetalleSolView({
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().slice(0, 10);
 
-    if (optionAdmIni === "mañana") {
-        startDate = startDate + "T" + "12:00:00";
-    }
 
-    if (optionAdmIni === "tarde") {
-        startDate = startDate + "T" + "17:30:00";
-    }
-
-    if(optionAdmIni  == "dia"){
-        startDate = startDate + "T" + "00:00:00";
-    }
-
-    if (optionAdmFin === "mañana") {
-        endDate = endDate + "T" + "12:00:00"
-    }
-
-    if (optionAdmFin === "tarde") {
-        endDate = endDate + "T" + "17:30:00"
-    }
-
-    if(optionAdmFin  == "dia"){
-        endDate = endDate + "T" + "00:00:00";
-    }
-
-    if(option === "Feriado Legal"){
-
-        startDate = startDate + "T" + "00:00:00";
-        endDate = endDate + "T" + "00:00:00";
-    }
     const handlerClick = async () => {
+
+        if(option === "Administrativo"){
+            
+        if (optionAdmIni === "mañana") {
+            startDate = startDate + "T" + "12:00:00";
+        }
+    
+        if (optionAdmIni === "tarde") {
+            startDate = startDate + "T" + "17:30:00";
+        }
+    
+        if(optionAdmIni  == "dia"){
+            startDate = startDate + "T" + "00:00:00";
+        }
+    
+        if (optionAdmFin === "mañana") {
+            endDate = endDate + "T" + "12:00:00"
+        }
+    
+        if (optionAdmFin === "tarde") {
+            endDate = endDate + "T" + "17:30:00"
+        }
+    
+        if(optionAdmFin  == "dia"){
+            endDate = endDate + "T" + "00:00:00";
+        }
+    
+
+        }
+
+        if(option === "Feriado Legal"){
+    
+            startDate = startDate + "T" + "00:00:00" ;
+            endDate = endDate + "T" + "00:00:00";
+        }
 
         const solicitud = {
             fechaInicio: startDate,
@@ -92,7 +89,8 @@ function DetalleSolView({
             depto: depto,
             nombre_departamento: nombre_departamento,
             fechaDer: currentDateString,
-            diasUsar : numDaysToUse
+            duracion:workDays
+            
         };
 
 
@@ -107,7 +105,6 @@ function DetalleSolView({
             if (result.isConfirmed) {
                 try {
                     const result = await saveSolicitud(solicitud);
-                    console.log(solicitud);
                     Swal.fire({
                         text: result.message,
                         icon: "success"
@@ -118,6 +115,7 @@ function DetalleSolView({
             }
         });
     };
+
 
     return (
         <Card className="detalle-sol-card">
@@ -131,12 +129,12 @@ function DetalleSolView({
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Fecha Inicio:</strong> {option === "Administrativo " ? formatDateString(startDate): formatDate(startDate) }
+                            <strong>Fecha Inicio:</strong> { formatDateString(startDate) }
                         </Card.Text>
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Fecha Fin:</strong> {option === "Administrativo " ? formatDateString(endDate): formatDate(endDate)}
+                            <strong>Fecha Fin:</strong> { formatDateString(endDate)}
                         </Card.Text>
                     </Col>
                 </Row>

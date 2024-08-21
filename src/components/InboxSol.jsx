@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 import { Container, Table, Spinner, Alert, Pagination, Button, Form, Tabs, Tab } from "react-bootstrap";
-import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones } from "../services/services";
+import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones, getEsSub } from "../services/services";
 import DataContext from "../context/DataContext";
 import '../css/InboxSolicitudes.css';
 import UnreadContext from "../context/UnreadContext";
@@ -25,7 +25,22 @@ const InboxSol = () => {
     const [isCheckedAll, setIsCheckedAll] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
 
-console.log(solicitudes);
+    const [esSubdir, setEsSubdir] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (depto) {
+                    const dataSol = await getEsSub(depto);
+                    setEsSubdir(dataSol);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchData();
+    }, [depto, esSubdir]);
+
 
     // Estado para los filtros
     const [filters, setFilters] = useState({
@@ -111,22 +126,24 @@ console.log(solicitudes);
         });
     };
 
-    const handleSelect = (id, rut, checked) => {
-        const selectedItem = { id, rut };
-
+    const handleSelect = (solicitudId, rut, checked) => {
+        const selectedItem = { solicitudId, rut };
+    
         if (checked) {
             setSelectedItems((prevSelected) =>
-                prevSelected.some((item) => item.id === id)
+                prevSelected.some((item) => item.solicitudId === solicitudId)
                     ? prevSelected
                     : [...prevSelected, selectedItem]
             );
         } else {
             setSelectedItems((prevSelected) =>
-                prevSelected.filter((item) => item.id !== id)
+                prevSelected.filter((item) => item.solicitudId !== solicitudId)
             );
         }
+    
+        console.log(selectedItem);
     };
-
+    
     const handleSelectAll = (e) => {
         const { checked } = e.target;
 
@@ -146,7 +163,10 @@ console.log(solicitudes);
             setSelectedItems([]);
             setIsChecked(false);
             setIsCheckedAll(false);
+            
         }
+
+ 
     };
 
     const inAll = () => {
@@ -394,7 +414,7 @@ console.log(solicitudes);
                                 ) : (
                                     <tr>
                                         <td colSpan="5">
-                                            <Alert variant="info" className="text-center">No hay solicitudes en la bandeja de Derivar</Alert>
+                                            <Alert variant="info" className="text-center">No hay solicitudes en la bandeja de Entrada</Alert>
                                         </td>
                                     </tr>
                                 )}
@@ -413,18 +433,19 @@ console.log(solicitudes);
                             ))}
                         </Pagination>
                         <div className="d-flex justify-content-end">
-                            <Button
+                           { !esSubdir && <Button
                                 variant="primary"
                                 className="mr-2"
                                 onClick={deriveAll}
                                 disabled={selectedItems.length === 0}
                             >
                                 Derivar Todo
-                            </Button>
+                            </Button>}
+                            {esSubdir &&
                             <Button variant="success" className="ml-3" onClick={approveAll}>
 
                                 Aprobar Todo
-                            </Button>
+                            </Button>}
                         </div>
                     </Tab>
                 </Tabs>
