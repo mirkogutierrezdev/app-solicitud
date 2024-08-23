@@ -25,9 +25,6 @@ const InboxActions = ({
     handleSelect,
     isChecked,
     hasEntries
-
-
-
 }) => {
 
     const [isCheckedPress, setIsCheckedPress] = useState(false);
@@ -36,19 +33,14 @@ const InboxActions = ({
         handleSelect(dataSol.solicitud.id, dataSol.solicitud.funcionario.rut, e.target.checked);
     };
 
-
     const handlerOnClick = (e) => {
         setIsCheckedPress(!isCheckedPress);
         handleCheckboxChange(e);
     };
 
-    
-
-
     return (
         <>
             <td>
-
                 {
                     !hasEntries && (
                         <input
@@ -63,7 +55,6 @@ const InboxActions = ({
                         />
                     )
                 }
-
             </td>
             <td>{dataSol?.solicitud?.id}</td>
             <td>{dataSol?.solicitud?.funcionario?.nombre}</td>

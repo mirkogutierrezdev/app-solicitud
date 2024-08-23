@@ -7,7 +7,6 @@ import '../css/InboxSolicitudes.css';
 import UnreadContext from "../context/UnreadContext";
 import InboxRow from "./InboxRow";
 import Swal from "sweetalert2";
-import { endOfQuarter, set } from "date-fns";
 
 const InboxSol = () => {
     const dataFunc = useContext(DataContext);
@@ -41,7 +40,6 @@ const InboxSol = () => {
         fetchData();
     }, [depto, esSubdir]);
 
-
     // Estado para los filtros
     const [filters, setFilters] = useState({
         ALL: false,
@@ -51,8 +49,6 @@ const InboxSol = () => {
     });
 
     const itemsPerPage = 5;
-
-
 
     useEffect(() => {
         if (data && data.departamento) {
@@ -128,7 +124,7 @@ const InboxSol = () => {
 
     const handleSelect = (solicitudId, rut, checked) => {
         const selectedItem = { solicitudId, rut };
-    
+
         if (checked) {
             setSelectedItems((prevSelected) =>
                 prevSelected.some((item) => item.solicitudId === solicitudId)
@@ -140,10 +136,8 @@ const InboxSol = () => {
                 prevSelected.filter((item) => item.solicitudId !== solicitudId)
             );
         }
-    
-        console.log(selectedItem);
     };
-    
+
     const handleSelectAll = (e) => {
         const { checked } = e.target;
 
@@ -163,10 +157,7 @@ const InboxSol = () => {
             setSelectedItems([]);
             setIsChecked(false);
             setIsCheckedAll(false);
-            
         }
-
- 
     };
 
     const inAll = () => {
@@ -188,14 +179,12 @@ const InboxSol = () => {
                             'Las solicitudes han sido recibidas exitosamente',
                             'success'
                         );
-
                         // Filtrar las solicitudes recibidas y actualizar el estado
                         const nuevasSolicitudes = solicitudes.filter(sol =>
                             !selectedItems.some(item => item.id === sol.solicitud.id)
                         );
                         setSolicitudes(nuevasSolicitudes);
                         applyFilter(nuevasSolicitudes);  // Re-aplica los filtros con la lista actualizada
-
                         setSelectedItems([]);
                         setIsChecked(false);
                         setIsCheckedAll(false);
@@ -218,7 +207,6 @@ const InboxSol = () => {
             ...item,
             depto: data.departamento.depto
         }));
-
         Swal.fire({
             title: '¿Está seguro de derivar todas las solicitudes?',
             text: "Una vez derivadas no podrá deshacer esta acción",
@@ -280,17 +268,10 @@ const InboxSol = () => {
         });
     };
 
-
-
-
-
-
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const paginatedItems = (items) => items.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredSolicitudes.length / itemsPerPage);
-
-
 
     return (
         <Container>
@@ -336,7 +317,6 @@ const InboxSol = () => {
                                             handleSelect={handleSelect}
                                             isCheckedAll={isCheckedAll}
                                             isChecked={isChecked}
-
                                         />
                                     ))
                                 ) : (
@@ -347,9 +327,6 @@ const InboxSol = () => {
                                     </tr>
                                 )}
                             </tbody>
-
-
-
                         </Table>
                         <Pagination>
                             {[...Array(totalPages)].map((_, index) => (
@@ -367,7 +344,15 @@ const InboxSol = () => {
                                 variant="success"
                                 className="mr-2"
                                 onClick={inAll}
-                                disabled={selectedItems.length === 0}
+                                disabled={
+                                    selectedItems.length === 0 ||
+                                    filteredSolicitudes.every(sol =>
+                                        sol.derivaciones.some(deriv =>
+                                            deriv.departamento.deptoSmc === depto &&
+                                            sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc === depto)
+                                        )
+                                    )
+                                }
                             >
                                 Recibir Todo
                             </Button>
@@ -418,7 +403,6 @@ const InboxSol = () => {
                                         </td>
                                     </tr>
                                 )}
-
                             </tbody>
                         </Table>
                         <Pagination>
@@ -433,7 +417,7 @@ const InboxSol = () => {
                             ))}
                         </Pagination>
                         <div className="d-flex justify-content-end">
-                           { !esSubdir && <Button
+                            {!esSubdir && <Button
                                 variant="primary"
                                 className="mr-2"
                                 onClick={deriveAll}
@@ -442,10 +426,9 @@ const InboxSol = () => {
                                 Derivar Todo
                             </Button>}
                             {esSubdir &&
-                            <Button variant="success" className="ml-3" onClick={approveAll}>
-
-                                Aprobar Todo
-                            </Button>}
+                                <Button variant="success" className="ml-3" onClick={approveAll}>
+                                    Aprobar Todo
+                                </Button>}
                         </div>
                     </Tab>
                 </Tabs>

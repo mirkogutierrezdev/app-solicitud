@@ -85,7 +85,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                 console.error("Error fetching data:", error);
             }
         };
-
         fetchData();
     }, [dataDepartamento.depto]);
 
@@ -111,6 +110,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
     };
 
     const handleGuardarYDerivar = async () => {
+
         const fechaDerivacion = obtenerFechaActual();
 
         const derivacion = {
@@ -120,7 +120,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
             fechaDerivacion: fechaDerivacion,
             rut: data.rut
         };
-
         Swal.fire({
             title: '¿Está seguro de derivar la solicitud?',
             showDenyButton: true,
@@ -154,7 +153,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
 
             rut: data ? data.rut : null
         };
-
         Swal.fire({
             title: '¿Está seguro de recibir la solicitud?',
             showDenyButton: true,
@@ -192,7 +190,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
             estado: "RECHAZADA",
             motivo: ""
         };
-
         Swal.fire({
             title: '¿Está seguro de rechazar la solicitud?',
             input: 'textarea',
@@ -206,7 +203,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
             if (result.isConfirmed) {
                 const motivo = result.value; // Obtener el motivo del input
                 solicitudDto.motivo = motivo;
-
                 try {
                     await saveRechazo(solicitudDto);
                     Swal.fire({
@@ -230,11 +226,9 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
             responseType: 'blob',
         });
 
-
         const file = new Blob([response.data], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL); // Abre una nueva pestaña para previsualizar el PDF
-
         // Limpieza de la URL del objeto Blob después de un tiempo para evitar fugas de memoria
         setTimeout(() => URL.revokeObjectURL(fileURL), 100);
 
@@ -247,7 +241,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
             rut: data.rut,
             estado: "APROBADA"
         };
-
         Swal.fire({
             title: '¿Está seguro de aprobar la solicitud?',
             showDenyButton: true,
@@ -258,12 +251,10 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
             if (result.isConfirmed) {
                 try {
                     await saveAprobacion(solicitudDto);
-
                     Swal.fire({
                         text: "Solicitud aprobada con éxito",
                         icon: "success"
                     });
-
                     // Generar el PDF y abrirlo en una nueva pestaña
                     const response = await axios.get(`http://localhost:8081/api/aprobaciones/pdf/${solicitudDto.solicitudId}`, {
                         responseType: 'blob',
@@ -311,10 +302,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                     handleSelect={handleSelect}
                     isChecked={isChecked}
                     hasEntries={hasDerivation}
-                    
-                    
-
-
                 />
             </tr>
             <InboxCollapse solicitud={solicitud} open={open} />
