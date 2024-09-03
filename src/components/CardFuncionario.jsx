@@ -14,7 +14,7 @@ function CardFuncionario({ nombres, apellidopaterno, apellidomaterno, contrato, 
             <Card.Body>
                 <Row className="align-items-center">
                     <Col md={4} className="text-center">
-                        <Image src="/src/img/yo.jpg" roundedCircle fluid style={{ width: '120px', height: '120px' }} />
+                        <Image src="/src/img/usuario.png" roundedCircle fluid style={{ width: '120px', height: '120px' }} />
                     </Col>
                     <Col md={8}>
                         <h3>{capitalize(nombres)} {capitalize(apellidopaterno)} {capitalize(apellidomaterno)}</h3>

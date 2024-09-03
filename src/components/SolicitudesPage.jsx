@@ -360,7 +360,6 @@ function SolicitudesPage({ data }) {
                                                 <option value="">Seleccione una opción</option>
                                                 <option value="mañana">Mañana</option>
                                                 <option value="tarde">Tarde</option>
-                                                <option value="dia">Todo el día</option>
                                             </Form.Control>
                                         </Form.Group>
                                     </Col> : <>
@@ -405,7 +404,6 @@ function SolicitudesPage({ data }) {
                                                 <option value="">Seleccione una opción</option>
                                                 <option value="mañana">Mañana</option>
                                                 <option value="tarde">Tarde</option>
-                                                <option value="dia">Todo el día</option>
                                             </Form.Control>
                                         </Form.Group>
                                     </Col> : <>

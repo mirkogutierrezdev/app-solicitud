@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 //Función que extrae todas las solicitudes de la base de datos de Smc
-export const getFuncionario = async () => {
+export const getFuncionario = async (rut) => {
+
+      rut = 15721809
 
    // const url = `http://localhost:8081/api/smc/byRut/13933050`; //Rut de funcionario
    //const url = `http://localhost:8081/api/smc/byRut/15721809`; //Rut de funcionario
@@ -14,7 +16,7 @@ export const getFuncionario = async () => {
   //  const url = `http://localhost:8081/api/smc/byRut/15721809`; //Rut de funcionario
     //const url = `http://localhost:8081/api/smc/byRut/18740165`; //Rut de funcionario
    //  const url = `http://localhost:8081/api/smc/byRut/13890844`; //Rut jefe de departamento
-       const url = `http://localhost:8081/api/smc/byRut/10397956`; //Rut Director
+       const url = `http://localhost:8081/api/smc/byRut/${rut}`; //Rut Director
 
     try {
         const response = await axios.get(url);

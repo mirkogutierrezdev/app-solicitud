@@ -42,7 +42,7 @@ const Sidebar = () => {
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
                     <div style={{ width: '50px', height: '50px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto' }}>
                         <a href='/' style={{ textDecoration: 'none', color: 'white', position: 'relative' }}>
-                            <img src="/src/img/yo.jpg" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <img src="/src/img/usuario.png" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </a>
                     </div>
                     <p style={{ marginTop: '5px', marginBottom: '0', fontSize: '12px' }}>{nombres}</p>
@@ -71,7 +71,7 @@ const Sidebar = () => {
                 <OffcanvasBody>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ width: '150px', height: '150px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto' }}>
-                            <img src="/src/img/yo.jpg" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <img src="/src/img/usuario.png" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
                         <p style={{ marginTop: '10px', marginBottom: '0', fontSize: '20px' }}>{nombres}</p>
                     </div>
