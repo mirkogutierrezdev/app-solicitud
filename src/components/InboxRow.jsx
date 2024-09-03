@@ -181,6 +181,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
     };
 
     const handleRechazar = async () => {
+
         const fechaActual = obtenerFechaActual();
 
         const solicitudDto = {
@@ -222,6 +223,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
     };
 
     const mostrarPdf = async () => {
+
         const response = await axios.get(`http://localhost:8081/api/aprobaciones/pdf/${solicitud.solicitud.id}`, {
             responseType: 'blob',
         });
@@ -231,7 +233,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
         window.open(fileURL); // Abre una nueva pestaña para previsualizar el PDF
         // Limpieza de la URL del objeto Blob después de un tiempo para evitar fugas de memoria
         setTimeout(() => URL.revokeObjectURL(fileURL), 100);
-
     }
 
     const handlerAprobar = async () => {
