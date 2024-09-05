@@ -18,6 +18,7 @@ function App() {
     const [loadingData, setLoadingData] = useState(true);
 
     const loadData = async () => {
+        
         setError(null);
         setLoadingData(true);
         try {

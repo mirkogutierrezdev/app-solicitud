@@ -12,7 +12,7 @@ function AusenciasView({ ausencias }) {
 
     useEffect(() => {
         if (ausencias) {
-            const initialFiltered = ausencias.filter(a => new Date(a.fecha_inicio).getFullYear().toString() === currentYear);
+            const initialFiltered = ausencias.filter(a => new Date(a.fechaInicio).getFullYear().toString() === currentYear);
             setFilteredAusencias(initialFiltered);
         }
     }, [ausencias, currentYear]);
@@ -35,7 +35,7 @@ function AusenciasView({ ausencias }) {
             filtered = filtered.filter(a => a.descripcion === descripcion);
         }
         if (selectedYear !== 'all') {
-            filtered = filtered.filter(a => new Date(a.fecha_inicio).getFullYear().toString() === selectedYear);
+            filtered = filtered.filter(a => new Date(a.fechaInicio).getFullYear().toString() === selectedYear);
         }
         setFilteredAusencias(filtered);
         setCurrentPage(1);
@@ -45,7 +45,7 @@ function AusenciasView({ ausencias }) {
         setSelectedYear(year);
         let filtered = ausencias;
         if (year !== 'all') {
-            filtered = filtered.filter(a => new Date(a.fecha_inicio).getFullYear().toString() === year);
+            filtered = filtered.filter(a => new Date(a.fechaInicio).getFullYear().toString() === year);
         }
         setFilteredAusencias(filtered);
         setCurrentPage(1);
@@ -61,7 +61,7 @@ function AusenciasView({ ausencias }) {
     );
 
     const uniqueDescriptions = [...new Set(ausencias.map(a => a.descripcion))];
-    const uniqueYears = [...new Set(ausencias.map(a => new Date(a.fecha_inicio).getFullYear().toString()))].sort().reverse();
+    const uniqueYears = [...new Set(ausencias.map(a => new Date(a.fechaInicio).getFullYear().toString()))].sort().reverse();
 
     if (!ausencias) {
         return null; // O manejar un estado de carga aquí si es necesario
@@ -125,9 +125,9 @@ function AusenciasView({ ausencias }) {
                         {paginatedAusencias.map((ausencia, index) => (
                             <tr key={index}>
                                 <td>{ausencia.descripcion}</td>
-                                <td>{formatDate(ausencia.fecha_inicio)}</td>
-                                <td>{formatDate(ausencia.fecha_termino)}</td>
-                                <td>{ausencia.dias_ausencia}</td>
+                                <td>{formatDate(ausencia.fechaInicio)}</td>
+                                <td>{formatDate(ausencia.fechaTermino)}</td>
+                                <td>{ausencia.diasAusencia}</td>
                             </tr>
                         ))}
                     </tbody>

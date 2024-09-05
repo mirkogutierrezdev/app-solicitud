@@ -3,11 +3,13 @@ import { Card, Col, Row, Image } from "react-bootstrap";
 
 function CardFuncionario({ nombres, apellidopaterno, apellidomaterno, contrato, departamento }) {
     const { escalafon, grado, nombrecontrato } = contrato;
-    const { nombre_departamento, jefe_departamento } = departamento;
+    const { nombreDepartamento, jefeDepartamento } = departamento;
 
     const capitalize = (str) => {
+        if (!str) return ""; // Verifica si str es null o undefined
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     };
+
 
     return (
         <Card className="rounded mb-4">
@@ -20,8 +22,8 @@ function CardFuncionario({ nombres, apellidopaterno, apellidomaterno, contrato, 
                         <h3>{capitalize(nombres)} {capitalize(apellidopaterno)} {capitalize(apellidomaterno)}</h3>
                         <h5>{capitalize(nombrecontrato)}</h5>
                         <h5>{capitalize(escalafon)} Grado {grado}</h5>
-                        <h5>{capitalize(nombre_departamento)} </h5>
-                        <h5>Jefe Directo : {capitalize(jefe_departamento)} </h5>
+                        <h5>{capitalize(nombreDepartamento)} </h5>
+                        <h5>Jefe Directo : {capitalize(jefeDepartamento)} </h5>
                     </Col>
                 </Row>
             </Card.Body>

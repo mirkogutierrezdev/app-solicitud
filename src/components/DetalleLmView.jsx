@@ -2,18 +2,18 @@
 import { Card, Col, Row } from "react-bootstrap";
 
 function DetalleLmView({ detalle }) {
-    const {
-        diasPago,
-        numlic,
-        imponiblePromedio,
-        liquidoPromedio,
-        imposicionesPromedio,
-        saludPromedio,
-        subSalud,
-        subImposiciones,
-        subLiquido
-    } = detalle;
 
+    const {
+        diasPago = 0,
+        numlic = 0,
+        imponiblePromedio = 0,
+        liquidoPromedio = 0,
+        imposicionesPromedio = 0,
+        saludPromedio = 0,
+        subSalud = 0,
+        subImposiciones = 0,
+        subLiquido = 0
+    } = detalle;
 
     return (
         <Card className="shadow rounded mb-4">
@@ -62,7 +62,9 @@ function DetalleLmView({ detalle }) {
 
 export default DetalleLmView;
 
-
 function formatNumberWithCommas(number) {
+    if (number == null) {
+        return "0";
+    }
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }

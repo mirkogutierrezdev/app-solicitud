@@ -1,0 +1,38 @@
+.custom-button {
+    background-image: url('/src/img/logo-claveunica.svg'); /* Ruta de la imagen */
+    background-size: cover; /* Asegura que la imagen cubra todo el botón */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    width: 100px; /* Ancho del botón */
+    height: 70px; /* Alto del botón */
+    border: none; /* Elimina el borde del botón */
+    padding: 0; /* Elimina el padding interno */
+}
+
+.custom-button:hover {
+    opacity: 0.8; /* Efecto hover, opcional */
+}
+
+.welcome-title {
+    font-size: 2.75rem; /* Tamaño de fuente más grande */
+    color: #160303; /* Color azul brillante para el título */
+    font-weight: 600; /* Peso de fuente semi-negrita */
+    margin-bottom: 2rem; /* Mayor margen debajo del título */
+    text-transform: uppercase; /* Convierte el texto a mayúsculas */
+    letter-spacing: 2px; /* Espaciado entre letras */
+    border-bottom: 3px solid #010408; /* Línea debajo del título */
+    display: inline-block; /* Para alinear la línea con el texto */
+    padding-bottom: 10px; /* Espacio adicional debajo del texto */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+}
+
+
+.logo-container {
+    text-align: center; /* Centra el contenido dentro del contenedor */
+}
+
+.logo-img {
+    max-width: 100%; /* Asegura que el logo no se desborde del contenedor */
+    height: auto; /* Mantiene la relación de aspecto del logo */
+    max-height: 100px; /* Limita la altura máxima del logo */
+}

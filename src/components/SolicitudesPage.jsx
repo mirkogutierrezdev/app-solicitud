@@ -15,7 +15,7 @@ function SolicitudesPage({ data }) {
     const adm = data ? data.diasAdm : [];
     const feriados = data ? data.feriados : [];
     const depto = data ? data.departamento : [];
-    const { jefe_departamento } = depto;
+    const { jefeDepartamento  } = depto;
     const [option, setOption] = useState('');
     const [optionAdmIni, setOptionAdmIni] = useState('');
     const [optionAdmFin, setOptionAdmFin] = useState('');
@@ -222,11 +222,11 @@ function SolicitudesPage({ data }) {
 
                     if (option === "Feriado Legal") {
                         setNumDaysToUse(remainingDays - diasTotales);
-                        setSupervisor(jefe_departamento);
+                        setSupervisor(jefeDepartamento);
                     }
                     if (option === "Administrativo") {
                         setNumDaysToUse(remainingDaysAdm - diasTotales);
-                        setSupervisor(jefe_departamento);
+                        setSupervisor(jefeDepartamento);
                     }
 
                 } catch (error) {
@@ -235,7 +235,7 @@ function SolicitudesPage({ data }) {
             };
             validaDias();
         }
-    }, [startDate, endDate, optionAdmIni, optionAdmFin, remainingDays, jefe_departamento, option, remainingDaysAdm]);
+    }, [startDate, endDate, optionAdmIni, optionAdmFin, remainingDays, jefeDepartamento, option, remainingDaysAdm]);
 
     function getFormattedCurrentDate() {
         const date = new Date();

@@ -38,7 +38,7 @@ function DetalleSolView({
     const estado = 'PENDIENTE';
     const departamento = data.data ? data.data.departamento : "";
     const rut = data.data ? data.data.rut : 0;
-    const { depto, nombre_departamento } = departamento;
+    const { depto,  nombreDepartamento } = departamento;
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().slice(0, 10);
 
@@ -87,7 +87,7 @@ function DetalleSolView({
             tipoSolicitud: option,
             estado: estado,
             depto: depto,
-            nombre_departamento: nombre_departamento,
+            nombreDepartamento: nombreDepartamento,
             fechaDer: currentDateString,
             duracion:workDays
             
