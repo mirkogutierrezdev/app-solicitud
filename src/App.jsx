@@ -10,6 +10,7 @@ import SolicitudesPage from './components/SolicitudesPage';
 import InboxSol from './components/InboxSol';
 import GrabarDepto from './components/GrabarDepto';
 import MisSolitudes from './components/MisSolicitudes';
+import { DecretoPage } from './components/DecretoPage';
 /* import MySolicitudesView from './components/MySolicitudesView'; */
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
                 <Route path="/licencias" element={<LicenciasPage data={data} loadingLicencias={loadingData} error={error} />} />
                 <Route path="/feriados" element={<FeriadosPage data={data} loadingLicencias={loadingData} error={error} />} />
                 <Route path="/solicitudes" element={<SolicitudesPage data={data} />} />
+                <Route path="/decretos" element={<DecretoPage  />} />
             </Routes>
         </Router>
     );

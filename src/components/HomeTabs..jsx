@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Navbar, Nav, Button, Col, Row, Dropdown } from 'react-bootstrap';
 import '../css/HomeTab.css'; // Importa el archivo CSS creado
 import { useContext, useEffect, useState } from 'react';
@@ -29,8 +30,6 @@ function HomeTabs() {
         }
     }, [depto, rut, setDepto]);
 
-    console.log(isJefe);
-
     return (
         <Row className="justify-content-center">
             <Col md={10}>
@@ -52,6 +51,7 @@ function HomeTabs() {
                                 <Dropdown.Menu>
                                     <Dropdown.Item href="/solicitudes">Solicitar</Dropdown.Item>
                                     <Dropdown.Item href="/missolicitudes">Mis solicitudes</Dropdown.Item>
+                                    <Dropdown.Item href="/decretos">Generación de Decretos</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
 

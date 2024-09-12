@@ -1,0 +1,13 @@
+.custom-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #080808;
+}
+
+.custom-font-size {
+    font-size: 1rem; /* Tamaño de fuente ajustado */
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
