@@ -1,8 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Col, Container, Form, Row, Button, Table } from "react-bootstrap";
 import '../css/DecretoPage.css'; // Importa un archivo CSS adicional para personalización
+import { getDeptos } from "../services/services";
 
 export const DecretoPage = () => {
+    const [deptos, setDeptos] = useState([]);
+
+const getDepartamentos = async () => {
+    const response = await getDeptos(); // Asumo que tu función se llama fetchDepartamentos
+    if (response) {
+        setDeptos(response);
+    }
+};
+
+useEffect(() => {
+    getDepartamentos();
+}, []); // Pasa un array vacío como dependencia para que solo se ejecute una vez al montar
+
+// Para asegurarte de que el valor de deptos se imprime correctamente, hazlo fuera del efecto
+useEffect(() => {
+    console.log(deptos);
+}, [deptos]); // Esto se ejecuta cada vez que deptos cambia
+
+
 
     const [option, setOption] = useState('');
     const [resultados, setResultados] = useState([]); // Array para almacenar los resultados de la búsqueda
@@ -82,8 +102,11 @@ export const DecretoPage = () => {
                             onChange={handleOptionChangeDireccion}
                             className="form-select-sm p-2 custom-font-size">
                             <option value="">Seleccione una opción</option>
-                            <option value="Informatica">Dirección de Informática</option>
-                            <option value="Dideco">Dideco</option>
+                            {deptos.map((depto, index) => (
+                                <option key={index} value={depto.nombre}>
+                                    {depto.nombreDepartamento}
+                                </option>
+                            ))}
                         </Form.Control>
                     </Form.Group>
                 </Col>
