@@ -2,8 +2,14 @@
 import { Col, Container, Row } from "react-bootstrap"
 import FeriadosView from "./FeriadosView"
 import DiasAdmView from "./DiasAdmView";
+import { useContext } from "react";
+import DataContext from "../context/DataContext";
 
-function FeriadosPage({ data }) {
+function FeriadosPage() {
+
+    const { data  } = useContext(DataContext);
+
+    
 
     const feriados = data ? data.feriados : [];
     const adm = data ? data.diasAdm : [];

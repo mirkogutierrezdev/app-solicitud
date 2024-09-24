@@ -1,9 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useParams } from 'react-router-dom';
 import AusenciasPage from './components/AusenciasPage';
 import LicenciasPage from './components/LicenciasPage';
-import { getFuncionario } from './services/services';
 import HomePage from './components/HomePage';
 import FeriadosPage from './components/FeriadosPage';
 import SolicitudesPage from './components/SolicitudesPage';
@@ -11,46 +9,35 @@ import InboxSol from './components/InboxSol';
 import GrabarDepto from './components/GrabarDepto';
 import MisSolitudes from './components/MisSolicitudes';
 import { DecretoPage } from './components/DecretoPage';
-/* import MySolicitudesView from './components/MySolicitudesView'; */
+import { useContext, useEffect } from 'react';
+import DataContext from './context/DataContext';
 
-function App() {
-    const [data, setData] = useState(null);
-    const [error, setError] = useState(null);
-    const [loadingData, setLoadingData] = useState(true);
-
-    const loadData = async () => {
-        
-        setError(null);
-        setLoadingData(true);
-        try {
-            const fetchedData = await getFuncionario();
-            setData(fetchedData);
-        } catch (error) {
-            setError('Error al traer la información');
-        } finally {
-            setLoadingData(false);
-        }
-    };
+const DataWrapper = ({ children }) => {
+    const { rut } = useParams();  // Rescatamos el rut desde la URL
+    const { setRut, fetchFuncionarioData } = useContext(DataContext); // Obtenemos setRut y fetchFuncionarioData del contexto
 
     useEffect(() => {
-        loadData();
-
+        setRut(rut);  // Actualizamos el RUT en el contexto
+        fetchFuncionarioData(rut);  // Obtenemos los datos del funcionario basado en el RUT
+        console.log(rut);
     }, []);
 
+    return children;
+};
+
+function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/inboxSol" element={<InboxSol />} />
-                <Route path="/" element={<HomePage data={data} loadingData={loadingData} error={error} />} />
-                <Route path="/missolicitudes" element={<MisSolitudes  />} />
-                {/*    <Route path="/mysolicitudes" element={<MySolicitudesView />} /> */}
-                <Route path="/grabar" element={<GrabarDepto />} />
-
-                <Route path="/ausencias" element={<AusenciasPage data={data} loadingAusencias={loadingData} error={error} />} />
-                <Route path="/licencias" element={<LicenciasPage data={data} loadingLicencias={loadingData} error={error} />} />
-                <Route path="/feriados" element={<FeriadosPage data={data} loadingLicencias={loadingData} error={error} />} />
-                <Route path="/solicitudes" element={<SolicitudesPage data={data} />} />
-                <Route path="/decretos" element={<DecretoPage  />} />
+                <Route path="/:rut/inboxSol" element={<DataWrapper><InboxSol /></DataWrapper>} />
+                <Route path="/:rut" element={<DataWrapper><HomePage /></DataWrapper>} />
+                <Route path="/:rut/missolicitudes" element={<DataWrapper><MisSolitudes /></DataWrapper>} />
+                <Route path="/grabar" element={<DataWrapper><GrabarDepto /></DataWrapper>} />
+                <Route path="/:rut/ausencias" element={<DataWrapper><AusenciasPage /></DataWrapper>} />
+                <Route path="/:rut/licencias" element={<DataWrapper><LicenciasPage /></DataWrapper>} />
+                <Route path="/:rut/feriados" element={<DataWrapper><FeriadosPage /></DataWrapper>} />
+                <Route path="/:rut/solicitudes" element={<DataWrapper><SolicitudesPage /></DataWrapper>} />
+                <Route path="/decretos" element={<DataWrapper><DecretoPage /></DataWrapper>} />
             </Routes>
         </Router>
     );

@@ -1,15 +1,19 @@
 /* eslint-disable react/prop-types */
 import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import LicenciasView from './LicenciasView';
+import { useContext } from 'react';
+import DataContext from '../context/DataContext';
 
-function LicenciasPage({ data, loadingLicencias, error }) {
+function LicenciasPage() {
+
+    const { data, loadingData, error } = useContext(DataContext);
     const licencias = data ? data.licencias : [];
 
     return (
         <Container className="mt-3">
             <Row>
                 <Col md={12}>
-                    {loadingLicencias ? (
+                    {loadingData ? (
                         <div className="d-flex justify-content-center align-items-center">
                             <Spinner animation="border" role="status">
                                 <span className="visually-hidden">Loading...</span>

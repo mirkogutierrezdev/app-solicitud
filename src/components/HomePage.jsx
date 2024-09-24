@@ -1,10 +1,14 @@
-/* eslint-disable react/prop-types */
+import { useContext } from 'react'; // Importamos useContext
 import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import HomeView from './HomeView';
+import DataContext from '../context/DataContext'; // Importamos el DataContext
 
+function HomePage() {
+  // Usamos useContext para acceder a los valores del contexto
+  const { data, loadingData, error } = useContext(DataContext);
 
-function HomePage({ data, loadingData, error }) {
   
+
   return (
     <Container className="text-start mt-3">
       <Row className="justify-content-center mt-3">

@@ -9,23 +9,20 @@ import InboxRow from "./InboxRow";
 import Swal from "sweetalert2";
 
 const InboxSol = () => {
-    const dataFunc = useContext(DataContext);
-    const { data } = dataFunc;
+    const { data, rut, fetchFuncionarioData } = useContext(DataContext); // Acceso al RUT y los datos del funcionario
+    const { setDepto } = useContext(UnreadContext); // Para manejar el departamento en UnreadContext
 
     const [solicitudes, setSolicitudes] = useState([]);
     const [filteredSolicitudes, setFilteredSolicitudes] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [depto, setLocalDepto] = useState(null);
-    const { setDepto } = useContext(UnreadContext);
+    const [depto, setLocalDepto] = useState(null); // Estado local para el departamento
     const [open, setOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedItems, setSelectedItems] = useState([]);
     const [isCheckedAll, setIsCheckedAll] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
-
     const [esSubdir, setEsSubdir] = useState(false);
-
     useEffect(() => {
         const fetchData = async () => {
             try {

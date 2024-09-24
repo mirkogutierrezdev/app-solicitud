@@ -3,7 +3,7 @@ import axios from 'axios';
 //Función que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async (rut) => {
 
-    rut = 13933050
+    //rut = 13933050
 
     // const url = `http://localhost:8082/api/smc/byRut/13933050`; //Rut de funcionario
     //const url = `http://localhost:8082/api/smc/byRut/15721809`; //Rut de funcionario

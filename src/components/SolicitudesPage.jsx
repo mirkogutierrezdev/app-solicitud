@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Col, Container, Form, Row, Card } from "react-bootstrap";
 import AdmSolView from "./AdmSolView";
 import FeriadoSolView from "./FeriadoSolView";
@@ -9,8 +9,11 @@ import DetalleSolView from "./DetallaSolView";
 import { getDiasWork,  getFeriados, getSolicitudesEnTramites } from "../services/services";
 import '../css/SolicitudesPage.css'; // Asegúrate de agregar el archivo CSS
 import Swal from "sweetalert2";
+import DataContext from "../context/DataContext";
 
-function SolicitudesPage({ data }) {
+function SolicitudesPage() {
+
+    const { data  } = useContext(DataContext);
 
     const currentYear = new Date().getFullYear();
     const adm = data ? data.diasAdm : [];
