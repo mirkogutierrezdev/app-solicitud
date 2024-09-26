@@ -25,7 +25,7 @@ const MisSolicitudes = () => {
     const infoFun = useContext(DataContext);
 
     useEffect(() => {
-        if (infoFun && infoFun.data) {
+        if (infoFun.data) {
             setDataFun(infoFun);
         }
     }, [infoFun]);
@@ -33,7 +33,7 @@ const MisSolicitudes = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (dataFunc && dataFunc.data && dataFunc.data.rut) {
+                if (dataFunc.data.rut) {
                     const dataSol = await getSolicitudesByRut(dataFunc.data.rut);
                     setSolicitudes(dataSol);
 

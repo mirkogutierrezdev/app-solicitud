@@ -11,22 +11,25 @@ function LicenciasPage() {
 
     return (
         <Container className="mt-3">
-            <Row>
-                <Col md={12}>
-                    {loadingData ? (
-                        <div className="d-flex justify-content-center align-items-center">
-                            <Spinner animation="border" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                            </Spinner>
-                        </div>
-                    ) : error ? (
-                        <Alert variant="danger">{error}</Alert>
-                    ) : (
-                        <LicenciasView licencias={licencias} />
-                    )}
-                </Col>
-            </Row>
-        </Container>
+        <Row>
+          <Col md={12}>
+            {loadingData && (
+              <div className="d-flex justify-content-center align-items-center">
+                <Spinner animation="border">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            )}
+            {!loadingData && error && (
+              <Alert variant="danger">{error}</Alert>
+            )}
+            {!loadingData && !error && (
+              <LicenciasView licencias={licencias} />
+            )}
+          </Col>
+        </Row>
+      </Container>
+      
     );
 }
 

@@ -29,7 +29,7 @@ function SolicitudesPage() {
     const [numDaysToUse, setNumDaysToUse] = useState(0);
     const [maxEndDate, setMaxEndDate] = useState('');
     const [supervisor, setSupervisor] = useState('');
-    const [isActiveButton, setActiveButton] = useState(false);
+    const [isActiveButton, setIsActiveButton] = useState(false);
     const [dataHolidays, setDataHolidays] = useState([]);
     const [entramites, setEnTramites] = useState([]);
     const filteredFeriados = feriados.filter(feriado => feriado.anio === currentYear);
@@ -89,7 +89,7 @@ function SolicitudesPage() {
         setOptionAdmIni("mañana");
         setOptionAdmFin("mañana");
     
-        setActiveButton(true); // Activar el botón si no hay solicitudes en trámite
+        setIsActiveButton(true); // Activar el botón si no hay solicitudes en trámite
         const currentDate = getFormattedCurrentDate();
         setStartDate(currentDate);
     
@@ -109,7 +109,7 @@ function SolicitudesPage() {
         const { saldo } = adm;
         const selectedOption = e.target.value;
         setOptionAdmIni(selectedOption);
-        setActiveButton(true);
+        setIsActiveButton(true);
         const currentDate = getFormattedCurrentDate();
         setStartDate(currentDate);
         const calculatedMaxEndDate = await calculateMaxEndDate(currentDate, saldo);
@@ -120,7 +120,7 @@ function SolicitudesPage() {
         const { saldo } = adm;
         const selectedOption = e.target.value;
         setOptionAdmFin(selectedOption);
-        setActiveButton(true);
+        setIsActiveButton(true);
         const currentDate = getFormattedCurrentDate();
         setStartDate(currentDate);
         const calculatedMaxEndDate = await calculateMaxEndDate(currentDate, saldo);
@@ -309,7 +309,7 @@ function SolicitudesPage() {
         setStartDate('');
         setEndDate('');
         setMaxEndDate('');
-        setActiveButton(false);
+        setIsActiveButton(false);
     };
 
     return (

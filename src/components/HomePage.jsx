@@ -11,24 +11,30 @@ function HomePage() {
 
   return (
     <Container className="text-start mt-3">
-      <Row className="justify-content-center mt-3">
-        <Col md={10}>
-          {loadingData ? (
-            <div className="d-flex justify-content-center align-items-center">
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </div>
-          ) : error ? (
-            <Alert variant="danger">{error}</Alert>
-          ) : data ? (
-            <HomeView funcionario={data} />
-          ) : (
-            <Alert variant="warning">Funcionario no registra información o no tiene un contrato vigente</Alert>
-          )}
-        </Col>
-      </Row>
-    </Container>
+    <Row className="justify-content-center mt-3">
+      <Col md={10}>
+        {loadingData && (
+          <div className="d-flex justify-content-center align-items-center">
+            <Spinner animation="border" >
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
+        )}
+        {!loadingData && error && (
+          <Alert variant="danger">{error}</Alert>
+        )}
+        {!loadingData && !error && data && (
+          <HomeView funcionario={data} />
+        )}
+        {!loadingData && !error && !data && (
+          <Alert variant="warning">
+            Funcionario no registra información o no tiene un contrato vigente
+          </Alert>
+        )}
+      </Col>
+    </Row>
+  </Container>
+  
   );
 }
 

@@ -1,26 +1,24 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
+
 import { useContext, useEffect, useState } from "react";
 import { getEsSub, saveAprobacion, saveDerivacion, saveEntrada, saveRechazo } from "../services/services";
 import DataContext from "../context/DataContext";
 import Swal from 'sweetalert2';
 import '../css/InboxSolicitudes.css';
-//import InboxCollapse from "./InboxCollapse";
 import InboxActions from "./InboxActions";
-import axios from 'axios';
 import InboxCollapse from "./InboxCollapse";
 
 const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
 
     const infoFun = useContext(DataContext);
 
-    const [dataFunc, setDataFun] = useState({});
+    const [dataFunc, setDataFunc] = useState({});
     const { data } = dataFunc || {};
     const [dataDepartamento, setDataDepartamento] = useState({});
-    const [isRecibirDisabled, setRecibirDisabled] = useState(true);
-    const [isDerivarDisabled, setDerivarDisabled] = useState(true);
-    const [isAprobarDisable, setAprobarDisabled] = useState(true);
-    const [isRechazarDisable, setRechazarDisabled] = useState(true);
+    const [isRecibirDisabled, setIsRecibirDisabled] = useState(true);
+    const [isDerivarDisabled, setIsDerivarDisabled] = useState(true);
+    const [isAprobarDisabled, setIsAprobarDisabled] = useState(true);
+    const [isRechazarDisabled, setIsRechazarDisabled] = useState(true);
     const [esSubdir, setEsSubdir] = useState(false);
 
     const verificarEstadoBotones = () => {
@@ -29,10 +27,10 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
 
         // Si la solicitud está rechazada o aprobada, deshabilitar todos los botones
         if (solicitud?.rechazo || solicitud?.aprobacion) {
-            setRecibirDisabled(true);
-            setDerivarDisabled(true);
-            setRechazarDisabled(true);
-            setAprobarDisabled(true);
+            setIsRecibirDisabled(true);
+            setIsDerivarDisabled(true);
+            setIsRechazarDisabled(true);
+            setIsAprobarDisabled(true);
             return;
         }
 
@@ -42,37 +40,37 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
 
         // Condición para recibir
         if (esUltimaDerivacionDeptoActual && !entradaExistente) {
-            setRecibirDisabled(false);
+            setIsRecibirDisabled(false);
         } else {
-            setRecibirDisabled(true);
+            setIsRecibirDisabled(true);
         }
 
         // Condición para derivar
         if (esUltimaDerivacionDeptoActual && entradaExistente) {
-            setDerivarDisabled(false);
+            setIsDerivarDisabled(false);
         } else {
-            setDerivarDisabled(true);
+            setIsDerivarDisabled(true);
         }
 
         // Condición para rechazar
         if (esUltimaDerivacionDeptoActual && entradaExistente) {
-            setRechazarDisabled(false);
+            setIsRechazarDisabled(false);
         } else {
-            setRechazarDisabled(true);
+            setIsRechazarDisabled(true);
         }
 
         // Condición para aprobar
         if (esUltimaDerivacionDeptoActual && entradaExistente) {
-            setAprobarDisabled(false);
+            setIsAprobarDisabled(false);
         } else {
-            setAprobarDisabled(true);
+            setIsAprobarDisabled(true);
         }
     };
 
     useEffect(() => {
         verificarEstadoBotones();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [verificarEstadoBotones]);
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -89,15 +87,15 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
     }, [dataDepartamento.depto]);
 
     useEffect(() => {
-        if (infoFun && infoFun.data) {
-            setDataFun(infoFun);
+        if (infoFun?.data) {
+            setDataFunc(infoFun);
             setDataDepartamento(infoFun.data.departamento || {});
         }
     }, [infoFun]);
 
     useEffect(() => {
         if (esSubdir) {
-            setAprobarDisabled(false);
+            setIsAprobarDisabled(false);
         }
     }, [esSubdir]);
 
@@ -134,7 +132,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                         text: "Solicitud derivada con éxito",
                         icon: "success"
                     });
-                    setDerivarDisabled(true); // Deshabilitar el botón después de derivar con éxito
+                    setIsDerivarDisabled(true); // Deshabilitar el botón después de derivar con éxito
                 } catch (error) {
                     Swal.fire({
                         text: "Error al derivar la solicitud",
@@ -167,7 +165,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                         text: "Solicitud recibida con éxito",
                         icon: "success"
                     });
-                    setRecibirDisabled(true); // Deshabilitar el botón después de recibir con éxito
+                    setIsRecibirDisabled(true); // Deshabilitar el botón después de recibir con éxito
                     verificarEstadoBotones(); // Verificar el estado de los botones después de recibir
                 } catch (error) {
                     Swal.fire({
@@ -210,7 +208,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                         text: "Solicitud rechazada con éxito",
                         icon: "success"
                     });
-                    setAprobarDisabled(true); // Deshabilitar el botón después de aprobar con éxito
+                    setIsAprobarDisabled(true); // Deshabilitar el botón después de aprobar con éxito
                 } catch (error) {
                     Swal.fire({
                         text: "Error al rechazar la solicitud",
@@ -222,18 +220,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
         });
     };
 
-    const mostrarPdf = async () => {
-
-        const response = await axios.get(`http://localhost:8081/api/aprobaciones/pdf/${solicitud.solicitud.id}`, {
-            responseType: 'blob',
-        });
-
-        const file = new Blob([response.data], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        window.open(fileURL); // Abre una nueva pestaña para previsualizar el PDF
-        // Limpieza de la URL del objeto Blob después de un tiempo para evitar fugas de memoria
-        setTimeout(() => URL.revokeObjectURL(fileURL), 100);
-    }
 
     const handlerAprobar = async () => {
 
@@ -256,19 +242,9 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                         text: "Solicitud aprobada con éxito",
                         icon: "success"
                     });
-                    // Generar el PDF y abrirlo en una nueva pestaña
-                    const response = await axios.get(`http://localhost:8081/api/aprobaciones/pdf/${solicitudDto.solicitudId}`, {
-                        responseType: 'blob',
-                    });
 
-                    const file = new Blob([response.data], { type: 'application/pdf' });
-                    const fileURL = URL.createObjectURL(file);
-                    window.open(fileURL); // Abre una nueva pestaña para previsualizar el PDF
 
-                    // Limpieza de la URL del objeto Blob después de un tiempo para evitar fugas de memoria
-                    setTimeout(() => URL.revokeObjectURL(fileURL), 100);
-
-                    setAprobarDisabled(true); // Deshabilitar el botón después de aprobar con éxito
+                    setIsAprobarDisabled(true); // Deshabilitar el botón después de aprobar con éxito
                 } catch (error) {
                     Swal.fire({
                         text: "Error al aprobar la solicitud",
@@ -286,7 +262,13 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
     }, [solicitud, dataDepartamento]);
 
     const isLeida = solicitud?.derivaciones?.some(derivacion => derivacion.departamento.deptoSmc == dataDepartamento.depto && derivacion.leida === false);
-    const estadoClass = solicitud?.aprobacion ? "estado-aprobado" : solicitud?.rechazo ? "estado-rechazado" : "";
+    let estadoClass = "";
+
+    if (solicitud?.aprobacion) {
+        estadoClass = "estado-aprobado";
+    } else if (solicitud?.rechazo) {
+        estadoClass = "estado-rechazado";
+    }
 
     const hasDerivation = solicitud?.salidas?.derivaciones?.some(derivacion => derivacion.id === solicitud.salidas.derivaciones.id);
 
@@ -297,9 +279,9 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                     isRecibirDisabled={isRecibirDisabled}
                     esSubdir={esSubdir} handleGuardarYDerivar={handleGuardarYDerivar}
                     isDerivarDisabled={isDerivarDisabled} handleRechazar={handleRechazar}
-                    isRechazarDisable={isRechazarDisable} handlerAprobar={handlerAprobar}
-                    isAprobarDisable={isAprobarDisable} setOpen={setOpen} open={open}
-                    estadoClass={estadoClass} mostrarPdf={mostrarPdf}
+                    isRechazarDisable={isRechazarDisabled} handlerAprobar={handlerAprobar}
+                    isAprobarDisable={isAprobarDisabled} setOpen={setOpen} open={open}
+                    estadoClass={estadoClass}
                     handleSelect={handleSelect}
                     isChecked={isChecked}
                     hasEntries={hasDerivation}

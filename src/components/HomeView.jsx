@@ -1,8 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Container, Row, Col, Alert } from 'react-bootstrap';
 import CardFuncionario from './CardFuncionario';
-//import CardContrato from './CardContrato';
-//import CardDepartamento from './CardDepartamento';
 
 function HomeView({ funcionario }) {
     if (!funcionario) {

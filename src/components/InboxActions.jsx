@@ -4,7 +4,6 @@ import { MdOutlineCancel, MdRemoveRedEye } from "react-icons/md";
 import '../css/InboxSolicitudes.css';
 import { FaCircleCheck } from "react-icons/fa6";
 import { RiInboxArchiveLine, RiLoginBoxLine } from "react-icons/ri";
-import { AiOutlineFilePdf } from "react-icons/ai";
 import { useState } from "react";
 
 const InboxActions = ({
@@ -21,7 +20,6 @@ const InboxActions = ({
     setOpen,
     open,
     estadoClass,
-    mostrarPdf,
     handleSelect,
     isChecked,
     hasEntries
@@ -49,7 +47,7 @@ const InboxActions = ({
                             id={`checkbox-${dataSol.solicitud.id}`}
                             onClick={handlerOnClick}
 
-                            checked={isChecked ? isChecked : isCheckedPress}
+                            checked={isChecked || isCheckedPress}
                             //    disabled={entradaExistente}
                             onChange={handleCheckboxChange}
                         />
@@ -109,18 +107,7 @@ const InboxActions = ({
                     {open ? "Ocultar" : "Ver"} <MdRemoveRedEye />
                 </Button>
             </td>
-            <td>
-                {dataSol.aprobacion && dataSol.aprobacion.pdf && (
-                    <Button
-                        data-toggle="tooltip" data-placement="top" title="Abrir PDF"
-                        onClick={mostrarPdf}
-                        aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
-                        aria-expanded={open}
-                    >
-                        <AiOutlineFilePdf />
-                    </Button>
-                )}
-            </td>
+           
         </>
     );
 }

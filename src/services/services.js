@@ -351,7 +351,7 @@ export const saveAprobaciones = async (aprobaciones) => {
 }
 
 
-export const getDeptos = async ()=>{
+export const getDeptos = async () => {
 
     const url = `http://localhost:8082/api/smc/departamentos/list`;
 

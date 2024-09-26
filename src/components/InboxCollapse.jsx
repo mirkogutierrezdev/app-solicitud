@@ -47,7 +47,7 @@ const InboxCollapse = ({ solicitud: dataSol, open }) => {
             }
         };
 
-        if (solicitud && solicitud.id) {
+        if (solicitud.id) {
             fetchData();
         }
 
