@@ -19,7 +19,6 @@ const DataWrapper = ({ children }) => {
     useEffect(() => {
         setRut(rut);  // Actualizamos el RUT en el contexto
         fetchFuncionarioData(rut);  // Obtenemos los datos del funcionario basado en el RUT
-        console.log(rut);
     }, []);
 
     return children;

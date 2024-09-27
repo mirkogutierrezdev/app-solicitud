@@ -68,7 +68,7 @@ const InboxActions = ({
                     <RiInboxArchiveLine />
                 </Button>{" "}
                 <Button
-                    data-toggle="tooltip" data-placement="top" title="Derivar"
+                    data-toggle="tooltip" data-placement="top" title="Visar y Derivar"
                     className={`mx-2 ${esSubdir ? "hidden-button" : ""}`}
                     variant="warning"
                     onClick={handleGuardarYDerivar}
@@ -92,7 +92,7 @@ const InboxActions = ({
                     onClick={handlerAprobar}
                     disabled={isAprobarDisable}
                 >
-                    Aprobar <FaCircleCheck />
+                    Aprobar/Firmar <FaCircleCheck />
                 </Button>
             </td>
             <td>

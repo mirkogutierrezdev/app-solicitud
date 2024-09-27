@@ -33,10 +33,10 @@ const MisSolicitudes = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (dataFunc.data.rut) {
+                if (dataFunc && dataFunc.data && dataFunc.data.rut) {
                     const dataSol = await getSolicitudesByRut(dataFunc.data.rut);
                     setSolicitudes(dataSol);
-
+    
                     // Obtener rechazos y aprobaciones para cada solicitud
                     const rechazosTemp = {};
                     const aprobacionTemp = {};
@@ -59,7 +59,7 @@ const MisSolicitudes = () => {
         };
         fetchData();
     }, [dataFunc]);
-
+    
     const handleToggle = (id) => {
         setOpen((prevState) => ({
             ...prevState,

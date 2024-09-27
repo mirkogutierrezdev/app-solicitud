@@ -1,25 +1,23 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import { useState, useEffect, useContext } from "react";
-import { Col, Container, Form, Row, Card } from "react-bootstrap";
+import { Col, Container, Row, Card } from "react-bootstrap";
 import AdmSolView from "./AdmSolView";
 import FeriadoSolView from "./FeriadoSolView";
 import DetalleSolView from "./DetallaSolView";
-import { getDiasWork,  getFeriados, getSolicitudesEnTramites } from "../services/services";
+import { getDiasWork, getFeriados, getSolicitudesEnTramites } from "../services/services";
 import '../css/SolicitudesPage.css'; // Asegúrate de agregar el archivo CSS
 import Swal from "sweetalert2";
 import DataContext from "../context/DataContext";
+import PropTypes from 'prop-types';
+import SolicitudForm from "./SolicitudForm";
 
 function SolicitudesPage() {
-
-    const { data  } = useContext(DataContext);
+    const { data } = useContext(DataContext);
 
     const currentYear = new Date().getFullYear();
     const adm = data ? data.diasAdm : [];
     const feriados = data ? data.feriados : [];
     const depto = data ? data.departamento : [];
-    const { jefeDepartamento  } = depto;
+    const { jefeDepartamento } = depto;
     const [option, setOption] = useState('');
     const [optionAdmIni, setOptionAdmIni] = useState('');
     const [optionAdmFin, setOptionAdmFin] = useState('');
@@ -28,22 +26,15 @@ function SolicitudesPage() {
     const [workDays, setWorkDays] = useState(0);
     const [numDaysToUse, setNumDaysToUse] = useState(0);
     const [maxEndDate, setMaxEndDate] = useState('');
-    const [supervisor, setSupervisor] = useState('');
     const [isActiveButton, setIsActiveButton] = useState(false);
-    const [dataHolidays, setDataHolidays] = useState([]);
-    const [entramites, setEnTramites] = useState([]);
     const filteredFeriados = feriados.filter(feriado => feriado.anio === currentYear);
-    const { diasPendientes: remainingDays } = filteredFeriados.length > 0 ? filteredFeriados[0] : { totalDias: 0, diasTomados: 0, diasPendientes: 0 };
+    const { diasPendientes: remainingDays } = filteredFeriados.length > 0 ? filteredFeriados[0] : { diasPendientes: 0 };
     const { saldo: remainingDaysAdm } = adm;
     const rut = data ? data.rut : 0;
-
-
-
 
     const getDataHolidays = async (fechaInicio, fechaTermino) => {
         try {
             const dataHolidays = await getFeriados(fechaInicio, fechaTermino);
-            setDataHolidays(dataHolidays);
             return dataHolidays;
         } catch (error) {
             console.log(error);
@@ -51,11 +42,9 @@ function SolicitudesPage() {
         }
     };
 
-
     const buscaSolicitudesEnTramites = async (rut) => {
         try {
             const dataSolicitudes = await getSolicitudesEnTramites(rut);
-            setEnTramites(dataSolicitudes);
             return dataSolicitudes;
         } catch (error) {
             console.log(error);
@@ -65,16 +54,19 @@ function SolicitudesPage() {
 
     const handleOptionChange = async (e) => {
         const selectedOption = e.target.value;
+    
+        // Reset all values related to the previous option
+        resetAllValues();
+    
         setOption(selectedOption);
     
         if (selectedOption === "") {
-            resetAllValues();
             return;
         }
     
         const solicitudesEnTramite = await buscaSolicitudesEnTramites(rut);
     
-        if (solicitudesEnTramite.length > 0 && 
+        if (solicitudesEnTramite.length > 0 &&
             solicitudesEnTramite.some(sol => sol.tipoSolicitud.nombre.toLowerCase() === selectedOption.toLowerCase())) {
     
             Swal.fire({
@@ -83,13 +75,15 @@ function SolicitudesPage() {
                 icon: "warning",
                 confirmButtonText: "Ok",
             });
-            return; // Salir de la función si hay solicitudes en trámite
+            return;
         }
     
+        // Setting the administrative options to default if necessary
         setOptionAdmIni("mañana");
         setOptionAdmFin("mañana");
     
-        setIsActiveButton(true); // Activar el botón si no hay solicitudes en trámite
+        setIsActiveButton(true);
+    
         const currentDate = getFormattedCurrentDate();
         setStartDate(currentDate);
     
@@ -99,67 +93,45 @@ function SolicitudesPage() {
         } else if (selectedOption === "Administrativo") {
             calculatedMaxEndDate = await calculateMaxEndDate(currentDate, remainingDaysAdm);
         }
+    
         setEndDate(calculatedMaxEndDate);
         setMaxEndDate(calculatedMaxEndDate);
     };
     
 
-
     const handleOptionChangeAdmnIni = async (e) => {
         const { saldo } = adm;
         const selectedOption = e.target.value;
         setOptionAdmIni(selectedOption);
-        setIsActiveButton(true);
         const currentDate = getFormattedCurrentDate();
-        setStartDate(currentDate);
         const calculatedMaxEndDate = await calculateMaxEndDate(currentDate, saldo);
         setMaxEndDate(calculatedMaxEndDate);
-    }
+    };
 
     const handleOptionChangeAdmnFin = async (e) => {
         const { saldo } = adm;
         const selectedOption = e.target.value;
         setOptionAdmFin(selectedOption);
-        setIsActiveButton(true);
         const currentDate = getFormattedCurrentDate();
-        setStartDate(currentDate);
         const calculatedMaxEndDate = await calculateMaxEndDate(currentDate, saldo);
         setMaxEndDate(calculatedMaxEndDate);
-    }
-
+    };
 
     const handleStartDateChange = async (e) => {
+        const selectedDate = e.target.value;
 
         if (option === "Feriado Legal") {
-            setStartDate(e.target.value);
-            const calculatedMaxEndDate = await calculateMaxEndDate(e.target.value, remainingDays);
+            const calculatedMaxEndDate = await calculateMaxEndDate(selectedDate, remainingDays);
+            setStartDate(selectedDate);
             setMaxEndDate(calculatedMaxEndDate);
             setEndDate(calculatedMaxEndDate);
-        }
-
-        if (option === "Administrativo") {
-            setStartDate(e.target.value);
-            const calculatedMaxEndDate = await calculateMaxEndDate(e.target.value, remainingDaysAdm);
+        } else if (option === "Administrativo") {
+            const calculatedMaxEndDate = await calculateMaxEndDate(selectedDate, remainingDaysAdm);
+            setStartDate(selectedDate);
             setMaxEndDate(calculatedMaxEndDate);
             setEndDate(calculatedMaxEndDate);
         }
     };
-
-    const validateRemaingDaysAdm = (diasTotales) => {
-
-        if (diasTotales > remainingDaysAdm) {
-            return true;
-        }
-        return false;
-    }
-
-    const validateRemaingDays = (diasTotales) => {
-
-        if (diasTotales > remainingDays) {
-            return true;
-        }
-        return false;
-    }
 
     const handleEndDateChange = (e) => {
         setEndDate(e.target.value);
@@ -172,77 +144,47 @@ function SolicitudesPage() {
                     const dias = await getDiasWork(startDate, endDate);
                     let diasTotales = dias;
 
-                    // Cálculo de días administrativos
                     if (option === "Administrativo") {
                         if (startDate === endDate) {
-                            // Misma fecha
-                            if (optionAdmIni === "mañana" && optionAdmFin === "mañana") {
-                                diasTotales = 0.5;
-                            } else if (optionAdmIni === "mañana" && optionAdmFin === "tarde") {
-                                diasTotales = 1;
-                            } else if (optionAdmIni === "tarde" && optionAdmFin === "tarde") {
-                                diasTotales = 0.5;
-                            }
+                            diasTotales = (optionAdmIni === "mañana" && optionAdmFin === "mañana") || (optionAdmIni === "tarde" && optionAdmFin === "tarde") ? 0.5 : 1;
                         } else {
-                            // Diferentes fechas
-                            if (optionAdmIni === "mañana" && optionAdmFin === "mañana") {
-                                diasTotales = dias - 0.5;
-                            } else if (optionAdmIni === "mañana" && optionAdmFin === "tarde") {
-                                diasTotales = dias;
-                            } else if (optionAdmIni === "tarde" && optionAdmFin === "mañana") {
-                                diasTotales = dias - 1;
-                            } else if (optionAdmIni === "tarde" && optionAdmFin === "tarde") {
-                                diasTotales = dias - 0.5;
-                            }
+                            diasTotales -= (optionAdmIni === "mañana" && optionAdmFin === "mañana") || (optionAdmIni === "tarde" && optionAdmFin === "tarde") ? 0.5 : 0;
                         }
 
-                        if (validateRemaingDaysAdm(diasTotales)) {
+                        if (diasTotales > remainingDaysAdm) {
                             Swal.fire({
                                 title: "Saldo días pendientes",
                                 text: "Días solicitados superan el saldo de día",
                                 icon: "warning",
-                                confirmButtonText: "Ok"
+                                confirmButtonText: "Ok",
                             });
                             const calculatedMaxEndDate = await calculateMaxEndDate(startDate, remainingDaysAdm);
                             setEndDate(calculatedMaxEndDate);
                         }
-                    }
-
-                    if (option === "Feriado Legal") {
-
-                        if (validateRemaingDays(diasTotales)) {
-                            Swal.fire({
-                                title: "Saldo días pendientes",
-                                text: "Días solicitados superan el saldo de día",
-                                icon: "warning",
-                                confirmButtonText: "Ok"
-                            });
-                            const calculatedMaxEndDate = await calculateMaxEndDate(startDate, remainingDays);
-                            setEndDate(calculatedMaxEndDate);
-                        }
+                    } else if (option === "Feriado Legal" && diasTotales > remainingDays) {
+                        Swal.fire({
+                            title: "Saldo días pendientes",
+                            text: "Días solicitados superan el saldo de día",
+                            icon: "warning",
+                            confirmButtonText: "Ok",
+                        });
+                        const calculatedMaxEndDate = await calculateMaxEndDate(startDate, remainingDays);
+                        setEndDate(calculatedMaxEndDate);
                     }
 
                     setWorkDays(diasTotales);
-
-                    if (option === "Feriado Legal") {
-                        setNumDaysToUse(remainingDays - diasTotales);
-                        setSupervisor(jefeDepartamento);
-                    }
-                    if (option === "Administrativo") {
-                        setNumDaysToUse(remainingDaysAdm - diasTotales);
-                        setSupervisor(jefeDepartamento);
-                    }
-
+                    setNumDaysToUse(option === "Feriado Legal" ? remainingDays - diasTotales : remainingDaysAdm - diasTotales);
                 } catch (error) {
                     console.log(error);
                 }
             };
             validaDias();
         }
-    }, [startDate, endDate, optionAdmIni, optionAdmFin, remainingDays, jefeDepartamento, option, remainingDaysAdm]);
+    }, [startDate, endDate, optionAdmIni, optionAdmFin, remainingDays, remainingDaysAdm, option]);
 
-    function getFormattedCurrentDate() {
+    function calculateFirstDayOfMonth() {
         const date = new Date();
+        date.setDate(1);
         date.setHours(0, 0, 0, 0);
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -250,9 +192,8 @@ function SolicitudesPage() {
         return `${year}-${month}-${day}`;
     }
 
-    function calculateFirstDayOfMonth() {
+    function getFormattedCurrentDate() {
         const date = new Date();
-        date.setDate(1); // Establece el día del mes al primero
         date.setHours(0, 0, 0, 0);
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -267,42 +208,29 @@ function SolicitudesPage() {
 
         while (count < diasPendientes) {
             date.setDate(date.getDate() + 1);
-            if (date.getDay() !== 0 && date.getDay() !== 6 && !isHoliday(date, feriados)) { // 0 = Sunday, 6 = Saturday
+            if (date.getDay() !== 0 && date.getDay() !== 6 && !isHoliday(date, feriados)) {
                 count++;
             }
         }
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        return formatDate(date);
     }
-
 
     function calculateMaxPossibleEndDate(startDate, diasPendientes) {
         let date = new Date(startDate);
-        date.setDate(date.getDate() + diasPendientes * 2); // Aproximadamente el doble para cubrir feriados y fines de semana
+        date.setDate(date.getDate() + diasPendientes * 2);
+        return formatDate(date);
+    }
+
+    function isHoliday(date, feriados) {
+        const normalizedDate = formatDate(date);
+        return feriados.some(feriado => formatDate(new Date(feriado.feriado)) === normalizedDate);
+    }
+
+    function formatDate(date) {
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
-    }
-
-    function isHoliday(date, feriados) {
-        // Normaliza la fecha a un formato común (año-mes-día)
-        const normalizeDate = (d) => {
-            const year = d.getFullYear();
-            const month = (d.getMonth() + 1).toString().padStart(2, '0');
-            const day = d.getDate().toString().padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
-
-        const normalizedDate = normalizeDate(date);
-
-        return feriados.some(feriado => {
-            const feriadoDate = new Date(feriado.feriado);
-            const normalizedFeriadoDate = normalizeDate(feriadoDate);
-            return normalizedDate === normalizedFeriadoDate;
-        });
     }
 
     const resetAllValues = () => {
@@ -337,88 +265,31 @@ function SolicitudesPage() {
                 <Col>
                     <Card className="shadow-sm">
                         <Card.Body>
-                            <Row className="align-items-center mb-3">
-                                <Col md={option === "Administrativo" ? 2 : 3}>
-                                    <Form.Group controlId="formSelectOption1">
-                                        <Form.Label className="h5 custom-font-size">Tipo de solicitud</Form.Label>
-                                        <Form.Control
-                                            as="select"
-                                            value={option}
-                                            onChange={handleOptionChange}
-                                            className="p-2 custom-font-size">
-                                            <option value="">Seleccione una opción</option>
-                                            <option value="Feriado Legal">Feriado legal</option>
-                                            <option value="Administrativo">Dia administrativo</option>
-                                        </Form.Control>
-                                    </Form.Group>
-                                </Col>
-                                {option === "Administrativo" ?
-                                    <Col md={option === "Administrativo" ? 2 : 3}>
-                                        <Form.Group controlId="formSelectOption2">
-                                            <Form.Label className="h5 custom-font-size">Duracion</Form.Label>
-                                            <Form.Control
-                                                as="select"
-                                                value={optionAdmIni}
-                                                onChange={handleOptionChangeAdmnIni}
-                                                className="p-2 custom-font-size">
-                                                <option value="">Seleccione una opción</option>
-                                                <option value="mañana">Mañana</option>
-                                                <option value="tarde">Tarde</option>
-                                            </Form.Control>
-                                        </Form.Group>
-                                    </Col> : <>
-                                    </>}
-                                <Col md={option === "Administrativo" ? 2 : 3}>
-                                    <Form.Group controlId="formStartDate">
-                                        <Form.Label className="h5 custom-font-size">Fecha de inicio</Form.Label>
-                                        <Form.Control
-                                            type="date"
-                                            value={startDate}
-                                            onChange={handleStartDateChange}
-                                            className="p-2 custom-font-size"
-                                            min={calculateFirstDayOfMonth()}
-                                            disabled={!option}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={option === "Administrativo" ? 2 : 3}>
-                                    <Form.Group controlId="formEndDate">
-                                        <Form.Label className="h5 custom-font-size">Fecha de término</Form.Label>
-                                        <Form.Control
-                                            type="date"
-                                            value={endDate}
-                                            onChange={handleEndDateChange}
-                                            className="p-2 custom-font-size"
-                                            min={startDate}
-                                            max={maxEndDate}
-                                            disabled={!option}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                {option === "Administrativo" ?
-                                    <Col md={option === "Adminitrativo" ? 2 : 3}>
-                                        <Form.Group controlId="formSelectOption3">
-                                            <Form.Label className="h5 custom-font-size">Duracion</Form.Label>
-                                            <Form.Control
-                                                as="select"
-                                                value={optionAdmFin}
-                                                onChange={handleOptionChangeAdmnFin}
-                                                className="p-2 custom-font-size"
-                                            >
-                                                <option value="">Seleccione una opción</option>
-                                                <option value="mañana">Mañana</option>
-                                                <option value="tarde">Tarde</option>
-                                            </Form.Control>
-                                        </Form.Group>
-                                    </Col> : <>
-                                    </>}
-                            </Row>
+                            <SolicitudForm
+                                option={option}
+                                setOption={setOption}
+                                optionAdmIni={optionAdmIni}
+                                setOptionAdmIni={setOptionAdmIni}
+                                optionAdmFin={optionAdmFin}
+                                setOptionAdmFin={setOptionAdmFin}
+                                startDate={startDate}
+                                setStartDate={setStartDate}
+                                endDate={endDate}
+                                setEndDate={setEndDate}
+                                maxEndDate={maxEndDate}
+                                calculateFirstDayOfMonth={calculateFirstDayOfMonth}
+                                handleOptionChange={handleOptionChange}
+                                handleOptionChangeAdmnIni={handleOptionChangeAdmnIni}
+                                handleOptionChangeAdmnFin={handleOptionChangeAdmnFin}
+                                handleStartDateChange={handleStartDateChange}
+                                handleEndDateChange={handleEndDateChange}
+                            />
                             <DetalleSolView
                                 startDate={startDate}
                                 endDate={endDate}
                                 numDaysToUse={numDaysToUse}
                                 workDays={workDays}
-                                supervisor={supervisor}
+                                supervisor={jefeDepartamento}
                                 isActiveButton={isActiveButton}
                                 option={option}
                                 optionAdmIni={optionAdmIni}
@@ -431,5 +302,16 @@ function SolicitudesPage() {
         </Container>
     );
 }
+
+SolicitudesPage.propTypes = {
+    data: PropTypes.shape({
+        diasAdm: PropTypes.array.isRequired,
+        feriados: PropTypes.array.isRequired,
+        departamento: PropTypes.shape({
+            jefeDepartamento: PropTypes.string
+        }),
+        rut: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    })
+};
 
 export default SolicitudesPage;
