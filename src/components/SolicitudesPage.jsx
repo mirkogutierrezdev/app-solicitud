@@ -4,7 +4,7 @@ import AdmSolView from "./AdmSolView";
 import FeriadoSolView from "./FeriadoSolView";
 import DetalleSolView from "./DetallaSolView";
 import { getDiasWork, getFeriados, getSolicitudesEnTramites } from "../services/services";
-import '../css/SolicitudesPage.css'; // Asegúrate de agregar el archivo CSS
+import '../css/SolicitudesPage.css'; 
 import Swal from "sweetalert2";
 import DataContext from "../context/DataContext";
 import PropTypes from 'prop-types';
@@ -77,8 +77,21 @@ function SolicitudesPage() {
             });
             return;
         }
+
+        // **Validación de saldo de días**
+        if ((selectedOption === "Feriado Legal" && remainingDays <= 0) ||
+            (selectedOption === "Administrativo" && remainingDaysAdm <= 0)) {
+            Swal.fire({
+                title: "Saldo insuficiente",
+                text: "No tienes suficientes días pendientes para realizar esta solicitud.",
+                icon: "warning",
+                confirmButtonText: "Ok"
+            });
+            resetAllValues();
+            return;
+        }
     
-        // Setting the administrative options to default if necessary
+        // Set default administrative options
         setOptionAdmIni("mañana");
         setOptionAdmFin("mañana");
     
@@ -97,7 +110,6 @@ function SolicitudesPage() {
         setEndDate(calculatedMaxEndDate);
         setMaxEndDate(calculatedMaxEndDate);
     };
-    
 
     const handleOptionChangeAdmnIni = async (e) => {
         const { saldo } = adm;
@@ -201,36 +213,59 @@ function SolicitudesPage() {
         return `${year}-${month}-${day}`;
     }
 
-    async function calculateMaxEndDate(startDate, diasPendientes) {
+ const  calculateMaxEndDate = async (startDate, diasPendientes)=> {
         let date = new Date(startDate);
         let count = 0;
         const feriados = await getDataHolidays(startDate, calculateMaxPossibleEndDate(startDate, diasPendientes));
-
+    
+        console.log(feriados);
+    
+        // Contar solo días hábiles (no fines de semana y no feriados)
         while (count < diasPendientes) {
             date.setDate(date.getDate() + 1);
-            if (date.getDay() !== 0 && date.getDay() !== 6 && !isHoliday(date, feriados)) {
+            
+            // Si no es fin de semana y no es feriado, cuenta como día hábil
+            if (!esFinDeSemana(date) && !isHoliday(date, feriados)) {
                 count++;
+                console.log("Día hábil contado: ", formatDate(date));
             }
         }
+    
+        // Después de contar todos los días hábiles, verificamos si cae en fin de semana o feriado
+        while (esFinDeSemana(date) || isHoliday(date, feriados)) {
+            console.log("Fecha cae en fin de semana o feriado, avanzando: ", formatDate(date));
+            date.setDate(date.getDate() + 1); // Avanza hasta el siguiente día hábil
+        }
+    
+        console.log("Fecha final calculada: ", date);
         return formatDate(date);
     }
-
-    function calculateMaxPossibleEndDate(startDate, diasPendientes) {
-        let date = new Date(startDate);
-        date.setDate(date.getDate() + diasPendientes * 2);
-        return formatDate(date);
+    
+    // Función para verificar si la fecha es fin de semana
+    function esFinDeSemana(date) {
+        return date.getDay() === 0 || date.getDay() === 6; // 0 es domingo, 6 es sábado
     }
-
+    
+    // Función para verificar si la fecha es un feriado
     function isHoliday(date, feriados) {
         const normalizedDate = formatDate(date);
-        return feriados.some(feriado => formatDate(new Date(feriado.feriado)) === normalizedDate);
+        return feriados.some(feriado => feriado.feriado === normalizedDate);
     }
-
+    
+    // Función para formatear la fecha en formato YYYY-MM-DD
     function formatDate(date) {
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
+    }
+  
+
+
+    function calculateMaxPossibleEndDate(startDate, diasPendientes) {
+        let date = new Date(startDate);
+        date.setDate(date.getDate() + diasPendientes * 2);
+        return formatDate(date);
     }
 
     const resetAllValues = () => {

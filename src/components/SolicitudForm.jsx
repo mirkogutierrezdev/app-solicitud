@@ -40,31 +40,33 @@ function SolicitudForm({
       </Col>
       {option === "Administrativo" && (
         <Col md={2}>
-            <Form.Group controlId="formSelectOption2">
-              <Form.Label className="h5 custom-font-size">Duración</Form.Label>
-              <Form.Control
-                as="select"
-                value={optionAdmIni}
-                onChange={handleOptionChangeAdmnIni}
-                className="p-2 custom-font-size"
-              >
-                <option value="">Seleccione una opción</option>
-                <option value="mañana">Mañana</option>
-                <option value="tarde">Tarde</option>
-              </Form.Control>
-            </Form.Group>
-          </Col>
+          <Form.Group controlId="formSelectOption2">
+            <Form.Label className="h5 custom-font-size">Duración</Form.Label>
+            <Form.Control
+              as="select"
+              value={optionAdmIni}
+              onChange={handleOptionChangeAdmnIni}
+              className="p-2 custom-font-size"
+            >
+              <option value="">Seleccione una opción</option>
+              <option value="mañana">Mañana</option>
+              <option value="tarde">Tarde</option>
+            </Form.Control>
+          </Form.Group>
+        </Col>
       )}
       <Col md={option === "Administrativo" ? 2 : 3}>
         <Form.Group controlId="formStartDate">
           <Form.Label className="h5 custom-font-size">Fecha de inicio</Form.Label>
           <Form.Control
             type="date"
-            value={startDate}
+            value={option !== "" ? startDate : ""}  // Solo asignar el valor si hay una opción seleccionada
             onChange={handleStartDateChange}
             className="p-2 custom-font-size"
             min={calculateFirstDayOfMonth()}
-            disabled={!option}
+            // Deshabilita el campo si no hay opción seleccionada
+            disabled={option === ""}
+            onKeyDown={(e) => e.preventDefault()}  // Prevenir la edición con teclado
           />
         </Form.Group>
       </Col>
@@ -73,12 +75,14 @@ function SolicitudForm({
           <Form.Label className="h5 custom-font-size">Fecha de término</Form.Label>
           <Form.Control
             type="date"
-            value={endDate}
+            value={option !== "" ? endDate : ""}  // Solo asignar el valor si hay una opción seleccionada
             onChange={handleEndDateChange}
             className="p-2 custom-font-size"
             min={startDate}
             max={maxEndDate}
-            disabled={!option}
+            // Deshabilita el campo si no hay opción seleccionada
+            disabled={option === ""}
+            onKeyDown={(e) => e.preventDefault()}  // Prevenir la edición con teclado
           />
         </Form.Group>
       </Col>

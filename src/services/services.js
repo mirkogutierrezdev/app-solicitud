@@ -5,18 +5,18 @@ export const getFuncionario = async (rut) => {
 
     //rut = 13933050
 
-    // const url = `http://192.168.10.44:8082/api/smc/byRut/13933050`; //Rut de funcionario
-    //const url = `http://192.168.10.44:8082/api/smc/byRut/15721809`; //Rut de funcionario
-    //  const url = `http://192.168.10.44:8082/api/smc/byRut/19280310`; //Rut de funcionario
-    // const url = `http://192.168.10.44:8082/api/smc/byRut/10067570`; //Rut jefe departamento
-    // const url = `http://192.168.10.44:8082/api/smc/byRut/10735521`; //Rut Subdirector
+    // const url = `http://localhost:8082/api/smc/byRut/13933050`; //Rut de funcionario
+    //const url = `http://localhost:8082/api/smc/byRut/15721809`; //Rut de funcionario
+    //  const url = `http://localhost:8082/api/smc/byRut/19280310`; //Rut de funcionario
+    // const url = `http://localhost:8082/api/smc/byRut/10067570`; //Rut jefe departamento
+    // const url = `http://localhost:8082/api/smc/byRut/10735521`; //Rut Subdirector
 
     //Direccion de informatica
 
-    //  const url = `http://192.168.10.44:8082/api/smc/byRut/15721809`; //Rut de funcionario
-    //const url = `http://192.168.10.44:8082/api/smc/byRut/18740165`; //Rut de funcionario
-    //  const url = `http://192.168.10.44:8082/api/smc/byRut/13890844`; //Rut jefe de departamento
-    const url = `http://192.168.10.44:8082/api/smc/byRut/${rut}`; //Rut Director
+    //  const url = `http://localhost:8082/api/smc/byRut/15721809`; //Rut de funcionario
+    //const url = `http://localhost:8082/api/smc/byRut/18740165`; //Rut de funcionario
+    //  const url = `http://localhost:8082/api/smc/byRut/13890844`; //Rut jefe de departamento
+    const url = `http://localhost:8082/api/smc/byRut/${rut}`; //Rut Director
 
     try {
         const response = await axios.get(url);
@@ -29,7 +29,7 @@ export const getFuncionario = async (rut) => {
 
 //Calcula los días hábiles entre dos fechas
 export const getDiasWork = async (fechaIni, fechaTermino) => {
-    const url = `http://192.168.10.44:8082/api/utils/calcular?fechaInicio=${fechaIni}&fechaTermino=${fechaTermino}`;
+    const url = `http://localhost:8082/api/utils/calcular?fechaInicio=${fechaIni}&fechaTermino=${fechaTermino}`;
 
     try {
         const response = await axios.get(url);
@@ -42,7 +42,7 @@ export const getDiasWork = async (fechaIni, fechaTermino) => {
 
 //Guarda solicitud en la base de datos 
 export const saveSolicitud = async (solicitud) => {
-    const url = `http://192.168.10.44:8082/api/solicitud/create`;
+    const url = `http://localhost:8082/api/solicitud/create`;
 
     try {
         const response = await axios.post(url, solicitud, {
@@ -77,7 +77,7 @@ export const saveSolicitud = async (solicitud) => {
 
 //Graba la entrada en la base de datos 
 export const saveEntrada = async (entrada) => {
-    const url = `http://192.168.10.44:8082/api/entrada/create`;
+    const url = `http://localhost:8082/api/entrada/create`;
 
     try {
         const response = await axios.post(url, entrada, {
@@ -94,7 +94,7 @@ export const saveEntrada = async (entrada) => {
 
 //Graba derivación en la base de datos 
 export const saveDerivacion = async (derivacion) => {
-    const url = `http://192.168.10.44:8082/api/derivacion/create`;
+    const url = `http://localhost:8082/api/derivacion/create`;
 
     try {
         const response = await axios.post(url, derivacion, {
@@ -111,7 +111,7 @@ export const saveDerivacion = async (derivacion) => {
 
 //Extrae las solicitudes del buzón de cada departamento 
 export const getSolicitudesInbox = async (depto) => {
-    const url = `http://192.168.10.44:8082/api/solicitud/departamento/${depto}`;
+    const url = `http://localhost:8082/api/solicitud/departamento/${depto}`;
 
     try {
         const response = await axios.get(url);
@@ -124,7 +124,7 @@ export const getSolicitudesInbox = async (depto) => {
 
 //Extrae lista de departamentos
 export const getDepto = async () => {
-    const url = `http://192.168.10.44:8080/api/departamentos/list`;
+    const url = `http://localhost:8080/api/departamentos/list`;
 
     try {
         const response = await axios.get(url);
@@ -137,7 +137,7 @@ export const getDepto = async () => {
 
 //Graba tabla de departamentos
 export const postDepto = async (departamentos) => {
-    const url = `http://192.168.10.44:8082/api/departamentos/create`;
+    const url = `http://localhost:8082/api/departamentos/create`;
 
     try {
         const response = await axios.post(url, departamentos, {
@@ -154,7 +154,7 @@ export const postDepto = async (departamentos) => {
 
 //Consulta si el funcionario es Jefe de departamento
 export const esJefe = async (depto, rut) => {
-    const url = `http://192.168.10.44:8082/api/departamentos/esjefe/${depto}/${rut}`;
+    const url = `http://localhost:8082/api/departamentos/esjefe/${depto}/${rut}`;
 
     try {
         const response = await axios.get(url);
@@ -167,7 +167,7 @@ export const esJefe = async (depto, rut) => {
 
 //Graba aprobación en la base de datos
 export const saveAprobacion = async (solicitud) => {
-    const url = `http://192.168.10.44:8082/api/aprobaciones/create`;
+    const url = `http://localhost:8082/api/aprobaciones/create`;
 
     try {
         const response = await axios.post(url, solicitud, {
@@ -184,7 +184,7 @@ export const saveAprobacion = async (solicitud) => {
 
 //Graba rechazo en la base de datos
 export const saveRechazo = async (solicitud) => {
-    const url = `http://192.168.10.44:8082/api/rechazos/create`;
+    const url = `http://localhost:8082/api/rechazos/create`;
 
     try {
         const response = await axios.post(url, solicitud, {
@@ -201,7 +201,7 @@ export const saveRechazo = async (solicitud) => {
 
 //Consulta si departamento es Subdirección 
 export const getEsSub = async (depto) => {
-    const url = `http://192.168.10.44:8082/api/departamentos/esSub/${depto}`;
+    const url = `http://localhost:8082/api/departamentos/esSub/${depto}`;
 
     try {
         const response = await axios.get(url);
@@ -213,7 +213,7 @@ export const getEsSub = async (depto) => {
 }
 
 export const getSolicitudesByRut = async (rut) => {
-    const url = `http://192.168.10.44:8082/api/solicitud/byRut/${rut}`;
+    const url = `http://localhost:8082/api/solicitud/byRut/${rut}`;
 
     try {
         const response = await axios.get(url);
@@ -225,7 +225,7 @@ export const getSolicitudesByRut = async (rut) => {
 }
 
 export const getRechazosBySolicitud = async (solicitudId) => {
-    const url = `http://192.168.10.44:8082/api/rechazos/bySolicitud/${solicitudId}`;
+    const url = `http://localhost:8082/api/rechazos/bySolicitud/${solicitudId}`;
 
     try {
         const response = await axios.get(url);
@@ -237,7 +237,7 @@ export const getRechazosBySolicitud = async (solicitudId) => {
 }
 
 export const getAprobacionesBySolicitud = async (solicitudId) => {
-    const url = `http://192.168.10.44:8082/api/aprobaciones/bySolicitud/${solicitudId}`;
+    const url = `http://localhost:8082/api/aprobaciones/bySolicitud/${solicitudId}`;
 
     try {
         const response = await axios.get(url);
@@ -249,7 +249,7 @@ export const getAprobacionesBySolicitud = async (solicitudId) => {
 }
 
 export const getPdf = async (solicitudId) => {
-    const url = `http://192.168.10.44:8082/api/pdf/solicitudes/${solicitudId}`;
+    const url = `http://localhost:8082/api/pdf/solicitudes/${solicitudId}`;
 
     try {
         const response = await axios.get(url);
@@ -261,7 +261,7 @@ export const getPdf = async (solicitudId) => {
 }
 
 export const getFeriados = async (fechaInicio, fechaTermino) => {
-    const url = `http://192.168.10.44:8082/api/utils/feriados/obtener?fechaInicio=${fechaInicio}&fechaTermino=${fechaTermino}`;
+    const url = `http://localhost:8082/api/utils/feriados/obtener?fechaInicio=${fechaInicio}&fechaTermino=${fechaTermino}`;
 
     try {
         const response = await axios.get(url);
@@ -274,7 +274,7 @@ export const getFeriados = async (fechaInicio, fechaTermino) => {
 
 
 export const getVderivaciones = async (solicitudId) => {
-    const url = `http://192.168.10.44:8082/api/derivacion/solicitud/${solicitudId}`;
+    const url = `http://localhost:8082/api/derivacion/solicitud/${solicitudId}`;
 
     try {
         const response = await axios.get(url);
@@ -286,7 +286,7 @@ export const getVderivaciones = async (solicitudId) => {
 }
 
 export const getSolicitudesEnTramites = async (rut) => {
-    const url = `http://192.168.10.44:8082/api/solicitud/entramite/${rut}`;
+    const url = `http://localhost:8082/api/solicitud/entramite/${rut}`;
 
     try {
         const response = await axios.get(url);
@@ -299,7 +299,7 @@ export const getSolicitudesEnTramites = async (rut) => {
 
 
 export const saveEntradas = async (entrada) => {
-    const url = `http://192.168.10.44:8082/api/entrada/createEntradas`;
+    const url = `http://localhost:8082/api/entrada/createEntradas`;
 
 
 
@@ -317,7 +317,7 @@ export const saveEntradas = async (entrada) => {
 }
 
 export const saveDerivaciones = async (derivaciones) => {
-    const url = `http://192.168.10.44:8082/api/derivacion/createDerivaciones`;
+    const url = `http://localhost:8082/api/derivacion/createDerivaciones`;
 
 
 
@@ -335,7 +335,7 @@ export const saveDerivaciones = async (derivaciones) => {
 }
 
 export const saveAprobaciones = async (aprobaciones) => {
-    const url = `http://192.168.10.44:8082/api/aprobaciones/createAprobaciones`;
+    const url = `http://localhost:8082/api/aprobaciones/createAprobaciones`;
 
     try {
         const response = await axios.post(url, aprobaciones, {
@@ -353,7 +353,7 @@ export const saveAprobaciones = async (aprobaciones) => {
 
 export const getDeptos = async () => {
 
-    const url = `http://192.168.10.44:8082/api/smc/departamentos/list`;
+    const url = `http://localhost:8082/api/smc/departamentos/list`;
 
     try {
         const response = await axios.get(url);

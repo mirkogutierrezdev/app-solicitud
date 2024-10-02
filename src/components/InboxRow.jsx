@@ -186,13 +186,13 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
             idSolicitud: solicitud.solicitud.id,
             rutFuncionario: data.rut,
             fechaAprobacion: fechaActual,
-            estado: "RECHAZADA",
+            estado: "POSTERGADA",
             motivo: ""
         };
         Swal.fire({
-            title: '¿Está seguro de rechazar la solicitud?',
+            title: '¿Está seguro de postergar la solicitud?',
             input: 'textarea',
-            inputLabel: 'Motivo del rechazo',
+            inputLabel: 'Motivo de la postergación',
             inputPlaceholder: 'Ingrese el motivo aquí...',
             showDenyButton: true,
             confirmButtonText: `Sí, estoy seguro`,
