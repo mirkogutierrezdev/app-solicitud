@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
-import { Container, Table, Spinner, Alert, Pagination, Button, Form, Tabs, Tab } from "react-bootstrap";
+import { Container, Table, Spinner, Alert, Pagination, Button,  Tabs, Tab } from "react-bootstrap";
 import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones, getEsSub } from "../services/services";
 import DataContext from "../context/DataContext";
 import '../css/InboxSolicitudes.css';
@@ -9,14 +9,14 @@ import InboxRow from "./InboxRow";
 import Swal from "sweetalert2";
 
 const InboxSol = () => {
-    const { data, rut, fetchFuncionarioData } = useContext(DataContext); // Acceso al RUT y los datos del funcionario
+    const { data,  } = useContext(DataContext); // Acceso al RUT y los datos del funcionario
     const { setDepto } = useContext(UnreadContext); // Para manejar el departamento en UnreadContext
 
     const [solicitudes, setSolicitudes] = useState([]);
     const [filteredSolicitudes, setFilteredSolicitudes] = useState([]);
-    const [error, setError] = useState(null);
+    const [setErrors] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [depto, setLocalDepto] = useState(null); // Estado local para el departamento
+    const [localDepto, setLocalDepto] = useState(null); // Estado local para el departamento
     const [open, setOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -26,8 +26,8 @@ const InboxSol = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (depto) {
-                    const dataSol = await getEsSub(depto);
+                if (localDepto) {
+                    const dataSol = await getEsSub(localDepto);
                     setEsSubdir(dataSol);
                 }
             } catch (error) {
@@ -35,10 +35,10 @@ const InboxSol = () => {
             }
         };
         fetchData();
-    }, [depto, esSubdir]);
+    }, [localDepto, esSubdir]);
 
     // Estado para los filtros
-    const [filters, setFilters] = useState({
+    const [filters] = useState({
         ALL: false,
         PENDIENTE: false,
         APROBADA: false,
@@ -48,22 +48,24 @@ const InboxSol = () => {
     const itemsPerPage = 5;
 
     useEffect(() => {
-        if (data && data.departamento) {
+        if (data )
+            if(data.departamento) {
             setLocalDepto(data.departamento.depto);
             setDepto(data.departamento.depto);
         }
+    
     }, [data, setDepto]);
 
     const fetchSolicitudes = async () => {
-        if (depto) {
+        if (localDepto) {
             try {
-                const dataSol = await getSolicitudesInbox(depto);
+                const dataSol = await getSolicitudesInbox(localDepto);
                 setSolicitudes(dataSol);
                 setLoading(false);
                 applyFilter(dataSol); // Aplicar el filtro después de obtener los datos
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setError(error.message);
+                setErrors(error.message);
                 setLoading(false);
             }
         }
@@ -74,7 +76,7 @@ const InboxSol = () => {
         const intervalId = setInterval(fetchSolicitudes, 5000); // Actualiza cada 5 segundos
         return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [depto]);
+    }, [localDepto]);
 
     useEffect(() => {
         applyFilter(solicitudes);
@@ -106,18 +108,7 @@ const InboxSol = () => {
         setFilteredSolicitudes(filtered);
     };
 
-    const handleFilterChange = (filter) => {
-        setFilters(() => {
-            const newFilters = {
-                ALL: filter === "ALL",
-                PENDIENTE: filter === "PENDIENTE",
-                APROBADA: filter === "APROBADA",
-                RECHAZADA: filter === "RECHAZADA"
-            };
-            applyFilter(solicitudes);
-            return newFilters;
-        });
-    };
+    
 
     const handleSelect = (solicitudId, rut, checked) => {
         const selectedItem = { solicitudId, rut };
@@ -141,9 +132,9 @@ const InboxSol = () => {
         if (checked) {
             const selectedItems = filteredSolicitudes
                 .filter((sol) =>
-                    (sol.solicitud.estado.nombre === "PENDIENTE" && sol.derivaciones.some(deriv => deriv.departamento.deptoSmc == depto) &&
-                        !sol.entradas.some(entrada => entrada.derivacion.departamento.deptoSmc == depto))
-                    || sol.entradas.some(entrada => entrada.derivacion.departamento.deptoSmc == depto) // Verifica que tenga entradas y no tenga salidas
+                    (sol.solicitud.estado.nombre === "PENDIENTE" && sol.derivaciones.some(deriv => deriv.departamento.deptoSmc == localDepto) &&
+                        !sol.entradas.some(entrada => entrada.derivacion.departamento.deptoSmc == localDepto))
+                    || sol.entradas.some(entrada => entrada.derivacion.departamento.deptoSmc == localDepto) // Verifica que tenga entradas y no tenga salidas
                 )
                 .map((sol) => ({ rut: sol.solicitud.funcionario.rut, solicitudId: sol.solicitud.id }));
 
@@ -300,15 +291,15 @@ const InboxSol = () => {
                                     paginatedItems(filteredSolicitudes.filter(sol =>
                                         sol.solicitud.estado.nombre === "PENDIENTE" &&
                                         sol.derivaciones.some(deriv =>
-                                            deriv.departamento.deptoSmc == depto &&
-                                            !sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == depto)
+                                            deriv.departamento.deptoSmc == localDepto &&
+                                            !sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == localDepto)
                                         )
                                     )).map((sol) => (
                                         <InboxRow
                                             key={sol.solicitud.id}
                                             solicitud={sol}
                                             open={open}
-                                            depto={depto}
+                                            depto={localDepto}
                                             setOpen={setOpen}
                                             selectedItems={selectedItems}
                                             handleSelect={handleSelect}
@@ -345,8 +336,8 @@ const InboxSol = () => {
                                     selectedItems.length === 0 ||
                                     filteredSolicitudes.every(sol =>
                                         sol.derivaciones.some(deriv =>
-                                            deriv.departamento.deptoSmc === depto &&
-                                            sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc === depto)
+                                            deriv.departamento.deptoSmc === localDepto &&
+                                            sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc === localDepto)
                                         )
                                     )
                                 }
@@ -376,8 +367,8 @@ const InboxSol = () => {
                                 {filteredSolicitudes.length > 0 ? (
                                     paginatedItems(filteredSolicitudes.filter(sol =>
                                         sol.derivaciones.some(deriv =>
-                                            deriv.departamento.deptoSmc == depto &&
-                                            sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == depto)/* &&
+                                            deriv.departamento.deptoSmc == localDepto &&
+                                            sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == localDepto)/* &&
                                             !sol.salidas.some(salida => salida.derivacion.id === deriv.id)*/
                                         )
                                     )).map((sol) => (
@@ -385,7 +376,7 @@ const InboxSol = () => {
                                             key={sol.solicitud.id}
                                             solicitud={sol}
                                             open={open}
-                                            depto={depto}
+                                            depto={localDepto}
                                             setOpen={setOpen}
                                             selectedItems={selectedItems}
                                             handleSelect={handleSelect}

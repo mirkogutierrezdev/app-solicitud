@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import { Button } from "react-bootstrap";
-import { MdOutlineCancel, MdRemoveRedEye } from "react-icons/md";
+import { MdOutlineCancel, MdRemoveRedEye,  MdOpenInNew } from "react-icons/md";
 import '../css/InboxSolicitudes.css';
 import { FaCircleCheck } from "react-icons/fa6";
 import { RiInboxArchiveLine, RiLoginBoxLine } from "react-icons/ri";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const InboxActions = ({
     solicitud: dataSol,
@@ -26,6 +26,7 @@ const InboxActions = ({
 }) => {
 
     const [isCheckedPress, setIsCheckedPress] = useState(false);
+    const [url, setUrl] = useState('');
 
     const handleCheckboxChange = (e) => {
         handleSelect(dataSol.solicitud.id, dataSol.solicitud.funcionario.rut, e.target.checked);
@@ -36,6 +37,19 @@ const InboxActions = ({
         handleCheckboxChange(e);
     };
 
+    useEffect(() => {
+        const getUrlPdf = () => {
+            if (dataSol)
+                if( dataSol.aprobacion) {
+                const { urlPdf } = dataSol.aprobacion;
+                setUrl(urlPdf);
+            } else {
+                setUrl(''); // O cualquier valor predeterminado si `aprobacion` es null o undefined
+            }
+        };
+    
+        getUrlPdf();
+    }, [dataSol]);
     return (
         <>
             <td>
@@ -46,9 +60,7 @@ const InboxActions = ({
                             type="checkbox"
                             id={`checkbox-${dataSol.solicitud.id}`}
                             onClick={handlerOnClick}
-
                             checked={isChecked || isCheckedPress}
-                            //    disabled={entradaExistente}
                             onChange={handleCheckboxChange}
                         />
                     )
@@ -107,9 +119,27 @@ const InboxActions = ({
                     {open ? "Ocultar" : "Ver"} <MdRemoveRedEye />
                 </Button>
             </td>
-           
+            {
+                url && (
+                    <td>
+                        {/* Botón para abrir PDF en una nueva pestaña */}
+                        <Button
+                            variant="primary"
+                            onClick={() => window.open(url, '_blank')}
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Abrir PDF"
+                            className="me-2"
+                        >
+                            <MdOpenInNew /> {/* Ícono para abrir en nueva pestaña */}
+                        </Button>
+
+                       
+                    </td>
+                )
+            }
         </>
     );
-}
+};
 
 export default InboxActions;
