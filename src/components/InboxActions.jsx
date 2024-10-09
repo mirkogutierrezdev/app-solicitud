@@ -50,6 +50,7 @@ const InboxActions = ({
     
         getUrlPdf();
     }, [dataSol]);
+    
     return (
         <>
             <td>

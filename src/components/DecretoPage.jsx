@@ -1,271 +1,316 @@
-import { useEffect, useState } from "react";
-import { Col, Container, Form, Row, Button, Table } from "react-bootstrap";
+import { Container, Table, Button, Form, Row, Col, Pagination } from "react-bootstrap";
 import '../css/DecretoPage.css'; // Importa un archivo CSS adicional para personalización
-import { getDeptos } from "../services/services";
+import { useState, useEffect } from "react";
+import Swal from 'sweetalert2'; // Asegúrate de instalar sweetalert2
+import { getAllAprobaciones, getDecretos, saveDecretos } from '../services/services.js';
 
 export const DecretoPage = () => {
-    const [deptos, setDeptos] = useState([]);
+    const [dataAprobaciones, setDataAprobaciones] = useState([]); // Inicializa como un array vacío
+    const [filteredAprobaciones, setFilteredAprobaciones] = useState([]);
+    const [departamentos, setDepartamentos] = useState([]); // Lista de departamentos
+    const [selectedDepto, setSelectedDepto] = useState(''); // Departamento seleccionado para el filtro
+    const [loading, setLoading] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]); // Lista de solicitudes seleccionadas
+    const [isCheckedAll, setIsCheckedAll] = useState(false); // Controlar checkbox de "seleccionar todos"
+    const [currentPage, setCurrentPage] = useState(1); // Página actual
+    const [startDate, setStartDate] = useState(''); // Fecha de inicio para el filtro
+    const [endDate, setEndDate] = useState(''); // Fecha de fin para el filtro
+    const [decretos, setDecretos] = useState({ nroDecreto: 0 }); // Incluye nroDecreto
+    const itemsPerPage = 5; // Elementos por página
 
-const getDepartamentos = async () => {
-    const response = await getDeptos(); // Asumo que tu función se llama fetchDepartamentos
-    if (response) {
-        setDeptos(response);
-    }
-};
+    const fetchAprobaciones = async () => {
+        setLoading(true);
+        try {
+            const response = await getAllAprobaciones();
+            const aprobaciones = response || [];
+            setDataAprobaciones(aprobaciones);
+            setFilteredAprobaciones(aprobaciones);
 
-useEffect(() => {
-    getDepartamentos();
-}, []); // Pasa un array vacío como dependencia para que solo se ejecute una vez al montar
+            // Extraer departamentos únicos de las aprobaciones
+            const uniqueDeptos = [...new Set(aprobaciones.map(aprob => aprob.solicitud.derivaciones[0]?.departamento?.nombre))];
+            setDepartamentos(uniqueDeptos);
+        } catch (error) {
+            console.error("Error al obtener aprobaciones:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-// Para asegurarte de que el valor de deptos se imprime correctamente, hazlo fuera del efecto
-useEffect(() => {
-    console.log(deptos);
-}, [deptos]); // Esto se ejecuta cada vez que deptos cambia
+    const fetchDecretos = async () => {
+        setLoading(true);
+        try {
+            const response = await getDecretos(2);
+            const dataDecretos = response || [];
+            setDecretos(dataDecretos);
+        } catch (error) {
+            console.error("Error al obtener aprobaciones:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-
-
-    const [option, setOption] = useState('');
-    const [resultados, setResultados] = useState([]); // Array para almacenar los resultados de la búsqueda
-    const [filteredResultados, setFilteredResultados] = useState([]);
-    const [selectAll, setSelectAll] = useState(false); // Control para seleccionar todas las filas de la tabla
-    const [filters, setFilters] = useState({
-        rut: '',
-        nombre: '',
-        dependencia: '',
-        fechaSolicitud: '',
-        tipo: ''
-    });
-
-    const handleOptionChangeDireccion = ({ target }) => {
-        const value = target.value;
-        setOption(value);
-    }
-
-    const handleOptionChangeDepto = ({ target }) => {
-        const value = target.value;
-        setOption(value);
-    }
-
-    const handleSearch = () => {
-        // Lógica para buscar y filtrar resultados
-        const mockResultados = [
-            { rut: '12345678-9', nombre: 'Juan Pérez', dependencia: 'Desarrollo', fechaSolicitud: '2023-09-01', cantidadDesde: '1', cantidadHasta: '5', tipo: 'Feriado Legal', fechaAprobacion: '2023-09-05' },
-            { rut: '98765432-1', nombre: 'Ana López', dependencia: 'Dideco', fechaSolicitud: '2023-08-15', cantidadDesde: '2', cantidadHasta: '6', tipo: 'Administrativo', fechaAprobacion: '2023-08-20' }
-        ];
-        setResultados(mockResultados); // Simulación de resultados
-        setFilteredResultados(mockResultados); // Inicialmente, los resultados filtrados son los mismos
-    }
-
-    const handleSelectAll = () => {
-        setSelectAll(!selectAll);
+    // Función para formatear las fechas a dd-mm-aaaa
+    function formatDateString(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const day = date.getUTCDate().toString().padStart(2, '0');
+        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+        const year = date.getUTCFullYear();
+        return `${day}-${month}-${year}`;
     }
 
-    const handleGenerateDecree = () => {
-        // Lógica para generar el decreto
-        console.log('Generando decreto...');
-    }
+    // Manejar el cambio del filtro de departamento
+    const handleFilterChange = (e) => {
+        setSelectedDepto(e.target.value);
+    };
 
-    // Función que maneja el filtrado en cada columna
-    const handleFilterChange = (e, column) => {
-        const value = e.target.value;
-        setFilters({ ...filters, [column]: value });
-        filterResults({ ...filters, [column]: value });
-    }
+    // Manejar el cambio de fecha desde
+    const handleStartDateChange = (e) => {
+        setStartDate(e.target.value);
+    };
 
-    const filterResults = (newFilters) => {
-        const filtered = resultados.filter((resultado) => {
-            return (
-                (resultado.rut.toLowerCase().includes(newFilters.rut.toLowerCase())) &&
-                (resultado.nombre.toLowerCase().includes(newFilters.nombre.toLowerCase())) &&
-                (resultado.dependencia.toLowerCase().includes(newFilters.dependencia.toLowerCase())) &&
-                (resultado.fechaSolicitud.includes(newFilters.fechaSolicitud)) &&
-                (resultado.tipo.toLowerCase().includes(newFilters.tipo.toLowerCase()))
-            );
+    // Manejar el cambio de fecha hasta
+    const handleEndDateChange = (e) => {
+        const endValue = e.target.value;
+        if (startDate && endValue && new Date(endValue) < new Date(startDate)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Fecha inválida',
+                text: 'La fecha de fin no puede ser menor que la fecha de inicio',
+                confirmButtonText: 'Ok'
+            });
+        } else {
+            setEndDate(endValue);
+        }
+    };
+
+    // Función de filtrado combinado por departamento y/o fechas
+    const applyFilter = () => {
+        setCurrentPage(1); // Reiniciar la paginación al aplicar el filtro
+
+        const filtered = dataAprobaciones.filter(aprob => {
+            const solicitudDate = new Date(aprob.solicitud.fechaSolicitud);
+
+            const start = startDate ? new Date(startDate) : null;
+            const end = endDate ? new Date(endDate) : null;
+
+            const isDateInRange = (!start || solicitudDate >= start) && (!end || solicitudDate <= end);
+            const isDeptoValid = !selectedDepto || aprob.solicitud.derivaciones[0]?.departamento?.nombre === selectedDepto;
+
+            return isDateInRange && isDeptoValid;
         });
-        setFilteredResultados(filtered);
-    }
+
+        setFilteredAprobaciones(filtered);
+    };
+
+    // Manejar la selección de todos los checkboxes
+    const handleSelectAll = (e) => {
+        const { checked } = e.target;
+        setIsCheckedAll(checked);
+
+        if (checked) {
+            const allSelected = filteredAprobaciones.map((aprob) => aprob.id);
+            setSelectedItems(allSelected);
+        } else {
+            setSelectedItems([]);
+        }
+    };
+
+    // Manejar la selección de una solicitud individual
+    const handleSelectItem = (e, id) => {
+        const { checked } = e.target;
+
+        if (checked) {
+            setSelectedItems([...selectedItems, id]);
+        } else {
+            setSelectedItems(selectedItems.filter(itemId => itemId !== id));
+        }
+    };
+
+    // Cambiar página
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    // Calcular los elementos a mostrar en la página actual
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredAprobaciones.slice(indexOfFirstItem, indexOfLastItem);
+
+    // Manejar la generación de decreto
+    // Manejar la generación de decreto
+    const handleGenerateDecreto = async () => {
+        // Construir el objeto que el backend espera
+        const decretoData = {
+            nroDecreto: decretos.nroDecreto || 0, // Asigna el número de decreto
+            aprobacionesIds: selectedItems // Asigna los IDs seleccionados
+        };
+
+        console.log("Datos a enviar:", decretoData);  // Verificar el objeto en la consola
+
+        try {
+            const result = await Swal.fire({
+                title: '¿Emitir decreto?',
+                showDenyButton: true,
+                confirmButtonText: `Sí`,
+                denyButtonText: `No`,
+                icon: 'question'
+            });
+
+            if (result.isConfirmed) {
+                await saveDecretos(decretoData);  // Llama a la función que guarda el decreto
+
+                Swal.fire({
+                    text: "Decreto generado con éxito",
+                    icon: "success"
+                });
+
+                // Volver a cargar las aprobaciones, filtrando solo las que no tienen decreto
+                await fetchAprobaciones();
+            }
+        } catch (error) {
+            Swal.fire({
+                text: "Error al generar el decreto",
+                icon: "error"
+            });
+            console.log("Error al generar decreto:", error);
+        }
+    };
+
+
+    useEffect(() => {
+        setIsCheckedAll(selectedItems.length === currentItems.length);
+    }, [selectedItems, currentItems]);
+
+    useEffect(() => {
+        fetchDecretos();
+    }, []);
 
     return (
         <Container>
-            <Row className="text-center my-3">
-                <h1 className="custom-title">Generación de Decretos</h1>
-                <p className="text-muted">Seleccione los filtros y presione Buscar para mostrar los resultados.</p>
-            </Row>
+            <h2 className="my-4">Listado de Solicitudes</h2>
 
-            <Row className="my-3">
-                <Col>
-                    <Form.Group controlId="formSelectDireccion">
-                        <Form.Label className="h5 custom-font-size">Dirección</Form.Label>
-                        <Form.Control
-                            as="select"
-                            value={option}
-                            onChange={handleOptionChangeDireccion}
-                            className="form-select-sm p-2 custom-font-size">
-                            <option value="">Seleccione una opción</option>
-                            {deptos.map((depto, index) => (
-                                <option key={index} value={depto.nombre}>
-                                    {depto.nombreDepartamento}
+            {/* Filtro por departamento y fechas con botón para aplicar el filtro */}
+            <Row className="mb-3">
+                <Col md={4}>
+                    <Form.Group controlId="departamentoSelect">
+                        <Form.Label>Filtrar por Departamento</Form.Label>
+                        <Form.Control as="select" size="sm" value={selectedDepto} onChange={handleFilterChange}>
+                            <option value="">Todos los Departamentos</option>
+                            {departamentos.map((depto, index) => (
+                                <option key={index} value={depto}>
+                                    {depto}
                                 </option>
                             ))}
                         </Form.Control>
                     </Form.Group>
                 </Col>
-
-                <Col>
-                    <Form.Group controlId="formSelectDepto">
-                        <Form.Label className="h5 custom-font-size">Departamento</Form.Label>
+                <Col md={3}>
+                    <Form.Group controlId="fechaDesde">
+                        <Form.Label>Fecha Solicitud Desde</Form.Label>
                         <Form.Control
-                            as="select"
-                            value={option}
-                            onChange={handleOptionChangeDepto}
-                            className="form-select-sm p-2 custom-font-size">
-                            <option value="">Seleccione una opción</option>
-                            <option value="Desarrollo">Desarrollo</option>
-                            <option value="Social">Departamento Social</option>
-                        </Form.Control>
+                            type="date"
+                            size="sm"
+                            value={startDate}
+                            onChange={handleStartDateChange}
+                            onKeyDown={(e) => e.preventDefault()} // Evitar la edición con teclado
+                        />
                     </Form.Group>
                 </Col>
-
-                <Col>
-                    <Form.Group controlId="formSelectSeccion">
-                        <Form.Label className="h5 custom-font-size">Sección</Form.Label>
+                <Col md={3}>
+                    <Form.Group controlId="fechaHasta">
+                        <Form.Label>Fecha Solicitud Hasta</Form.Label>
                         <Form.Control
-                            as="select"
-                            value={option}
-                            onChange={handleOptionChangeDepto}
-                            className="form-select-sm p-2 custom-font-size">
-                            <option value="">Seleccione una opción</option>
-                            <option value="Seccion1">Sección 1</option>
-                        </Form.Control>
+                            type="date"
+                            size="sm"
+                            value={endDate}
+                            onChange={handleEndDateChange}
+                            onKeyDown={(e) => e.preventDefault()} // Evitar la edición con teclado
+                        />
                     </Form.Group>
                 </Col>
-
-                <Col>
-                    <Form.Group controlId="formSelectOficina">
-                        <Form.Label className="h5 custom-font-size">Oficina</Form.Label>
-                        <Form.Control
-                            as="select"
-                            value={option}
-                            onChange={handleOptionChangeDepto}
-                            className="form-select-sm p-2 custom-font-size">
-                            <option value="">Seleccione una opción</option>
-                            <option value="Oficina1">Oficina 1</option>
-                            <option value="Oficina2">Oficina 2</option>
-                        </Form.Control>
-                    </Form.Group>
+                <Col md={2} className="d-flex align-items-end">
+                    <Button variant="info" size="sm" onClick={applyFilter}>
+                        Filtrar
+                    </Button>
                 </Col>
             </Row>
 
-            <Row className="text-center my-3">
-                <Col>
-                    <Button variant="primary" onClick={handleSearch}>Buscar</Button>
-                </Col>
-            </Row>
+            {/* Botón para cargar aprobaciones */}
+            <Button variant="primary" onClick={fetchAprobaciones} disabled={loading} className="my-3">
+                {loading ? "Cargando..." : "Cargar Aprobaciones"}
+            </Button>
 
-            {filteredResultados.length > 0 && (
+            {/* Tabla con paginación */}
+            {Array.isArray(currentItems) && currentItems.length > 0 && (
                 <>
-                    <Row className="text-center my-3">
-                        <Col>
-                            <h3 className="custom-font-size">Resultados</h3>
-                        </Col>
-                    </Row>
-
-                    <Row>
-                        <Table striped bordered hover responsive>
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <Form.Check
+                    <Table striped bordered hover className="mt-4">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input
+                                        type="checkbox"
+                                        checked={isCheckedAll}
+                                        onChange={handleSelectAll}
+                                    />
+                                </th>
+                                <th>Nombre</th>
+                                <th>Departamento</th>
+                                <th>Fecha Desde</th>
+                                <th>Fecha Hasta</th>
+                                <th>ID Solicitud</th>
+                                <th>Fecha Solicitud</th>
+                                <th>Tipo Solicitud</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentItems.map((aprobacion) => (
+                                <tr key={aprobacion.id}>
+                                    <td>
+                                        <input
                                             type="checkbox"
-                                            label="Todos"
-                                            onChange={handleSelectAll}
-                                            checked={selectAll}
+                                            checked={selectedItems.includes(aprobacion.id)}
+                                            onChange={(e) => handleSelectItem(e, aprobacion.id)}
                                         />
-                                    </th>
-                                    <th>
-                                        RUT
-                                        <Form.Control
-                                            size="sm"
-                                            type="text"
-                                            placeholder="Buscar RUT"
-                                            value={filters.rut}
-                                            onChange={(e) => handleFilterChange(e, 'rut')}
-                                        />
-                                    </th>
-                                    <th>
-                                        Nombre
-                                        <Form.Control
-                                            size="sm"
-                                            type="text"
-                                            placeholder="Buscar Nombre"
-                                            value={filters.nombre}
-                                            onChange={(e) => handleFilterChange(e, 'nombre')}
-                                        />
-                                    </th>
-                                    <th>
-                                        Dependencia
-                                        <Form.Control
-                                            size="sm"
-                                            type="text"
-                                            placeholder="Buscar Dependencia"
-                                            value={filters.dependencia}
-                                            onChange={(e) => handleFilterChange(e, 'dependencia')}
-                                        />
-                                    </th>
-                                    <th>
-                                        Fecha de Solicitud
-                                        <Form.Control
-                                            size="sm"
-                                            type="text"
-                                            placeholder="Buscar Fecha"
-                                            value={filters.fechaSolicitud}
-                                            onChange={(e) => handleFilterChange(e, 'fechaSolicitud')}
-                                        />
-                                    </th>
-                                    <th>Cantidad Desde</th>
-                                    <th>Cantidad Hasta</th>
-                                    <th>
-                                        Tipo de Solicitud
-                                        <Form.Control
-                                            size="sm"
-                                            type="text"
-                                            placeholder="Buscar Tipo"
-                                            value={filters.tipo}
-                                            onChange={(e) => handleFilterChange(e, 'tipo')}
-                                        />
-                                    </th>
-                                    <th>Fecha de Aprobación</th>
+                                    </td>
+                                    <td>{aprobacion.solicitud.funcionario.nombre}</td>
+                                    <td>{aprobacion.solicitud.derivaciones[0]?.departamento?.nombre}</td>
+                                    <td>{formatDateString(aprobacion.solicitud.fechaInicio)}</td>
+                                    <td>{formatDateString(aprobacion.solicitud.fechaFin)}</td>
+                                    <td>{aprobacion.solicitud.id}</td>
+                                    <td>{formatDateString(aprobacion.solicitud.fechaSolicitud)}</td>
+                                    <td>{aprobacion.solicitud.tipoSolicitud.nombre}</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {filteredResultados.map((resultado, index) => (
-                                    <tr key={index}>
-                                        <td>
-                                            <Form.Check type="checkbox" checked={selectAll} />
-                                        </td>
-                                        <td>{resultado.rut}</td>
-                                        <td>{resultado.nombre}</td>
-                                        <td>{resultado.dependencia}</td>
-                                        <td>{resultado.fechaSolicitud}</td>
-                                        <td>{resultado.cantidadDesde}</td>
-                                        <td>{resultado.cantidadHasta}</td>
-                                        <td>{resultado.tipo}</td>
-                                        <td>{resultado.fechaAprobacion}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                    </Row>
+                            ))}
+                        </tbody>
+                    </Table>
 
-                    <Row className="text-center my-3">
-                        <Col>
-                            <Button variant="success" onClick={handleGenerateDecree}>Generar Decreto</Button>
-                        </Col>
-                    </Row>
+                    {/* Paginación */}
+                    <Pagination>
+                        {[...Array(Math.ceil(filteredAprobaciones.length / itemsPerPage)).keys()].map(pageNumber => (
+                            <Pagination.Item
+                                key={pageNumber + 1}
+                                active={pageNumber + 1 === currentPage}
+                                onClick={() => handlePageChange(pageNumber + 1)}
+                            >
+                                {pageNumber + 1}
+                            </Pagination.Item>
+                        ))}
+                    </Pagination>
+
+                    {/* Botón para generar decreto */}
+                    <Button
+                        variant="success"
+                        className="mt-3"
+                        onClick={handleGenerateDecreto}
+                        disabled={selectedItems.length === 0}
+                    >
+                        Generar Decreto
+                    </Button>
                 </>
             )}
         </Container>
     );
-}
+};
 
 export default DecretoPage;

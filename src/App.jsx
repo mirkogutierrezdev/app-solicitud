@@ -36,7 +36,7 @@ function App() {
                 <Route path="/:rut/licencias" element={<DataWrapper><LicenciasPage /></DataWrapper>} />
                 <Route path="/:rut/feriados" element={<DataWrapper><FeriadosPage /></DataWrapper>} />
                 <Route path="/:rut/solicitudes" element={<DataWrapper><SolicitudesPage /></DataWrapper>} />
-                <Route path="/decretos" element={<DataWrapper><DecretoPage /></DataWrapper>} />
+                <Route path="/decretos" element={<DecretoPage />} />
             </Routes>
         </Router>
     );

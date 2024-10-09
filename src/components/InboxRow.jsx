@@ -205,7 +205,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                 try {
                     await saveRechazo(solicitudDto);
                     Swal.fire({
-                        text: "Solicitud rechazada con éxito",
+                        text: "Solicitud postergada con éxito",
                         icon: "success"
                     });
                     setIsAprobarDisabled(true); // Deshabilitar el botón después de aprobar con éxito

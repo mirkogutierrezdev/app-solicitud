@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Collapse, Container, Table, ListGroup } from "react-bootstrap";
-import { MdRemoveRedEye } from "react-icons/md";
+import { Button, Collapse, Container, Table, ListGroup, Card } from "react-bootstrap";
+import { MdRemoveRedEye, MdOpenInNew } from "react-icons/md";
 import { getAprobacionesBySolicitud, getRechazosBySolicitud, getSolicitudesByRut } from "../services/services";
 import DataContext from "../context/DataContext";
-
 
 const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -14,11 +13,10 @@ const formatDate = (dateString) => {
     return `${day}-${month}-${year}`;
 };
 
-
 const MisSolicitudes = () => {
 
     const [solicitudes, setSolicitudes] = useState([]);
-    const [dataFunc, setDataFun] = useState({});
+    const [dataFunc, setDataFunc] = useState({});
     const [open, setOpen] = useState({});
     const [rechazos, setRechazos] = useState({});
     const [aprobaciones, setAprobaciones] = useState({});
@@ -26,17 +24,17 @@ const MisSolicitudes = () => {
 
     useEffect(() => {
         if (infoFun.data) {
-            setDataFun(infoFun);
+            setDataFunc(infoFun);
         }
     }, [infoFun]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (dataFunc && dataFunc.data && dataFunc.data.rut) {
+                if (dataFunc?.data?.rut) {
                     const dataSol = await getSolicitudesByRut(dataFunc.data.rut);
                     setSolicitudes(dataSol);
-    
+
                     // Obtener rechazos y aprobaciones para cada solicitud
                     const rechazosTemp = {};
                     const aprobacionTemp = {};
@@ -59,7 +57,7 @@ const MisSolicitudes = () => {
         };
         fetchData();
     }, [dataFunc]);
-    
+
     const handleToggle = (id) => {
         setOpen((prevState) => ({
             ...prevState,
@@ -69,7 +67,7 @@ const MisSolicitudes = () => {
 
     return (
         <Container>
-            <Table>
+            <Table bordered hover responsive>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -77,6 +75,7 @@ const MisSolicitudes = () => {
                         <th>Estado</th>
                         <th>Fecha de Solicitud</th>
                         <th>Detalle</th>
+                        <th>Documento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,41 +87,56 @@ const MisSolicitudes = () => {
                                     <td>{tipoSolicitud.nombre}</td>
                                     <td>{estado.nombre}</td>
                                     <td>{formatDate(fechaSolicitud)}</td>
-
                                     <td>
                                         <Button
                                             onClick={() => handleToggle(id)}
                                             aria-controls={`movement-collapse-${id}`}
                                             aria-expanded={open[id]}
+                                            variant="outline-primary"
                                         >
-                                            <MdRemoveRedEye />
+                                            <MdRemoveRedEye /> Ver Detalles
                                         </Button>
+                                    </td>
+                                    <td>
+                                        {/* Si existe una URL del PDF, muestra el botón para abrirlo */}
+                                        {aprobaciones[id]?.urlPdf && (
+                                            <Button
+                                                variant="success"
+                                                onClick={() => window.open(aprobaciones[id].urlPdf, '_blank')}
+                                                title="Abrir PDF"
+                                            >
+                                                <MdOpenInNew /> Abrir PDF
+                                            </Button>
+                                        )}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colSpan="5">
+                                    <td colSpan="6">
                                         <Collapse in={open[id]}>
-                                            <div id={`movement-collapse-${id}`}>
-                                                <ListGroup>
+                                            <Card body className="mt-3">
+                                                <Card.Title>Detalles de la Solicitud</Card.Title>
+                                                <ListGroup variant="flush">
                                                     <ListGroup.Item><strong>ID de Solicitud:</strong> {id}</ListGroup.Item>
                                                     <ListGroup.Item><strong>Fecha de Solicitud:</strong> {formatDate(fechaSolicitud)}</ListGroup.Item>
                                                     <ListGroup.Item><strong>Tipo de Solicitud:</strong> {tipoSolicitud.nombre}</ListGroup.Item>
                                                     <ListGroup.Item><strong>Estado:</strong> {estado.nombre}</ListGroup.Item>
                                                     {rechazos[id] && (
                                                         <>
-                                                            <ListGroup.Item><strong>Fecha de Rechazo:</strong> {formatDate(rechazos[id].formatDatefechaRechazo)}</ListGroup.Item>
-                                                            <ListGroup.Item><strong>Motivo de Rechazo:</strong> {rechazos[id].comentario}</ListGroup.Item>
-                                                            <ListGroup.Item><strong>Rechazado por:</strong> {rechazos[id].funcionario.nombre}</ListGroup.Item>
+                                                            <Card.Title className="mt-3">Postergación</Card.Title>
+                                                            <ListGroup.Item><strong>Fecha Postergación:</strong> {formatDate(rechazos[id].fechaRechazo)}</ListGroup.Item>
+                                                            <ListGroup.Item><strong>Motivo Postergación:</strong> {rechazos[id].comentario}</ListGroup.Item>
+                                                            <ListGroup.Item><strong>Postergado por:</strong> {rechazos[id].funcionario.nombre}</ListGroup.Item>
                                                         </>
                                                     )}
                                                     {aprobaciones[id] && (
                                                         <>
+                                                            <Card.Title className="mt-3">Aprobación</Card.Title>
                                                             <ListGroup.Item><strong>Fecha de Aprobación:</strong> {formatDate(aprobaciones[id].fechaAprobacion)}</ListGroup.Item>
                                                             <ListGroup.Item><strong>Aprobado por:</strong> {aprobaciones[id].funcionario.nombre}</ListGroup.Item>
                                                         </>
                                                     )}
                                                 </ListGroup>
-                                            </div>
+                                            </Card>
                                         </Collapse>
                                     </td>
                                 </tr>
@@ -130,7 +144,7 @@ const MisSolicitudes = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="5">No hay solicitudes</td>
+                            <td colSpan="6">No hay solicitudes disponibles</td>
                         </tr>
                     )}
                 </tbody>

@@ -351,9 +351,9 @@ export const saveAprobaciones = async (aprobaciones) => {
 }
 
 
-export const getDeptos = async () => {
+export const getAllAprobaciones = async () => {
 
-    const url = `http://localhost:8082/api/smc/departamentos/list`;
+    const url = `http://localhost:8082/api/aprobaciones/getaprobaciones`;
 
     try {
         const response = await axios.get(url);
@@ -363,3 +363,37 @@ export const getDeptos = async () => {
         return null;
     }
 }
+
+
+
+export const getDecretos = async (nroDecreto) => {
+
+    const url = `http://localhost:8082/decretos/${nroDecreto}/find`;
+
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+
+export const saveDecretos = async (decretos) => {
+    const url = `http://localhost:8082/decretos/crear`;
+
+    try {
+        const response = await axios.post(url, decretos, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
+}
+
+
