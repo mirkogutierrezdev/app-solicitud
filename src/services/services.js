@@ -3,7 +3,7 @@ import axios from 'axios';
 //Función que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async (rut) => {
 
-    //rut = 13933050
+    rut = 10735521;
 
     // const url = `http://localhost:8082/api/smc/byRut/13933050`; //Rut de funcionario
     //const url = `http://localhost:8082/api/smc/byRut/15721809`; //Rut de funcionario
@@ -395,5 +395,25 @@ export const saveDecretos = async (decretos) => {
         return null;
     }
 }
+
+
+
+
+export const getFuncionarioApi = async () => {
+    const url = `https://appd.laflorida.cl/apilogin/log.php`;
+
+    try {
+        const response = await axios.post(url, {solicitud:"login", clave:"69"}, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
+}
+
 
 

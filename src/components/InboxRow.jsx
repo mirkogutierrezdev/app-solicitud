@@ -127,7 +127,9 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
+                  
                     await saveDerivacion(derivacion);
+
                     Swal.fire({
                         text: "Solicitud derivada con éxito",
                         icon: "success"
@@ -237,6 +239,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
+                    
                     await saveAprobacion(solicitudDto);
                     Swal.fire({
                         text: "Solicitud aprobada con éxito",

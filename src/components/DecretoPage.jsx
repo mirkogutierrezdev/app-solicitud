@@ -5,6 +5,7 @@ import Swal from 'sweetalert2'; // Asegúrate de instalar sweetalert2
 import { getAllAprobaciones, getDecretos, saveDecretos } from '../services/services.js';
 
 export const DecretoPage = () => {
+    
     const [dataAprobaciones, setDataAprobaciones] = useState([]); // Inicializa como un array vacío
     const [filteredAprobaciones, setFilteredAprobaciones] = useState([]);
     const [departamentos, setDepartamentos] = useState([]); // Lista de departamentos
@@ -185,6 +186,7 @@ export const DecretoPage = () => {
     useEffect(() => {
         fetchDecretos();
     }, []);
+
 
     return (
         <Container>

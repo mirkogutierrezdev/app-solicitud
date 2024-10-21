@@ -3,9 +3,19 @@ import { Container, Table, Spinner, Alert, Button, Form, Pagination } from "reac
 import { getDepto, postDepto } from "../services/services";
 import Swal from "sweetalert2";
 
+const initialValues = {
+    cargoJefe: '',
+    depto: "14050000",
+    deptoInt: 0,
+    deptoOriginal: 0,
+    jefeDepartamento: '',
+    nombreDepartamento: '',
+    rutJefe: 0
+};
+
 const GrabarDepto = () => {
     const [dataDepto, setDataDepto] = useState([]);
-    const [modifiedData, setModifiedData] = useState([]);
+    const [modifiedData, setModifiedData] = useState([initialValues]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
@@ -23,19 +33,18 @@ const GrabarDepto = () => {
     };
 
     const handleSave = async () => {
-        try {
-            // Preparar datos para enviar al backend
-            const deptosToSave = modifiedData.map((depto) => ({
-                ...depto,
-                deptoInt: depto.deptoInt,
-                rut_jefe: depto.rut_jefe,
-            }));
+        const deptosToSave = modifiedData.map((depto) => ({
+            ...depto,
+            deptoInt: depto.deptoInt,
+            rutJefe: depto.rutJefe,
+        }));
 
-            // Enviar datos al backend
+        console.log(deptosToSave);
+
+         //Aquí puedes realizar la llamada para guardar los datos en el backend
+         try {
             const response = await postDepto(deptosToSave);
-            console.log(deptosToSave);
 
-            // Mostrar mensaje de éxito si la respuesta es válida
             if (response) {
                 Swal.fire({
                     icon: "success",
@@ -45,14 +54,14 @@ const GrabarDepto = () => {
         } catch (error) {
             console.error('Error al guardar los datos:', error);
             alert('Error al guardar los datos');
-        }
+        } 
     };
 
     const handleInputChange = (e, id) => {
         const { name, value } = e.target;
         setModifiedData(prevData =>
             prevData.map(depto =>
-                depto.id === id ? { ...depto, [name]: value } : depto
+                depto.id === id ? { ...depto, [name]: value || "" } : depto
             )
         );
     };
@@ -68,9 +77,9 @@ const GrabarDepto = () => {
     useEffect(() => {
         setModifiedData(dataDepto.map((depto) => ({
             ...depto,
-            deptoInt: depto.depto,
+            deptoInt: depto.depto || "", // Asegúrate de que no sea null
             deptoOriginal: depto.depto,
-            rut_jefe: depto.rut_jefe || '', // Inicializar con el valor existente o una cadena vacía
+            rutJefe: depto.rutJefe || "", // Asegúrate de que no sea null
         })));
     }, [dataDepto]);
 
@@ -91,7 +100,6 @@ const GrabarDepto = () => {
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Cargo Jefe</th>
                                     <th>Depto Original</th>
                                     <th>Depto Modificado</th>
@@ -101,29 +109,28 @@ const GrabarDepto = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentItems.map((depto) => (
-                                    <tr key={depto.id}>
-                                        <td>{depto.id}</td>
-                                        <td>{depto.cargo_jefe}</td>
-                                        <td>{depto.deptoOriginal}</td>
+                                {currentItems.map((depto, index) => (
+                                    <tr key={depto.id || index}>
+                                        <td>{depto.cargoJefe || "N/A"}</td>
+                                        <td>{depto.depto || "N/A"}</td>
                                         <td>
                                             <Form.Control
                                                 type="text"
                                                 name="deptoInt"
-                                                value={depto.deptoInt}
+                                                value={depto.deptoInt || ""}
                                                 onChange={(e) => handleInputChange(e, depto.id)}
                                             />
                                         </td>
                                         <td>
                                             <Form.Control
                                                 type="text"
-                                                name="rut_jefe"
-                                                value={depto.rut_jefe}
+                                                name="rutJefe"
+                                                value={depto.rutJefe || ""}
                                                 onChange={(e) => handleInputChange(e, depto.id)}
                                             />
                                         </td>
-                                        <td>{depto.nombre_departamento}</td>
-                                        <td>{depto.jefe_departamento}</td>
+                                        <td>{depto.nombreDepartamento || "N/A"}</td>
+                                        <td>{depto.jefeDepartamento || "N/A"}</td>
                                     </tr>
                                 ))}
                             </tbody>

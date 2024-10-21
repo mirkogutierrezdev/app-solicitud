@@ -218,7 +218,6 @@ function SolicitudesPage() {
         let count = 0;
         const feriados = await getDataHolidays(startDate, calculateMaxPossibleEndDate(startDate, diasPendientes));
     
-        console.log(feriados);
     
         // Contar solo días hábiles (no fines de semana y no feriados)
         while (count < diasPendientes) {
@@ -227,17 +226,14 @@ function SolicitudesPage() {
             // Si no es fin de semana y no es feriado, cuenta como día hábil
             if (!esFinDeSemana(date) && !isHoliday(date, feriados)) {
                 count++;
-                console.log("Día hábil contado: ", formatDate(date));
             }
         }
     
         // Después de contar todos los días hábiles, verificamos si cae en fin de semana o feriado
         while (esFinDeSemana(date) || isHoliday(date, feriados)) {
-            console.log("Fecha cae en fin de semana o feriado, avanzando: ", formatDate(date));
             date.setDate(date.getDate() + 1); // Avanza hasta el siguiente día hábil
         }
     
-        console.log("Fecha final calculada: ", date);
         return formatDate(date);
     }
     

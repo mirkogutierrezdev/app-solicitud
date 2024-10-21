@@ -105,6 +105,7 @@ function DetalleSolView({
             if (result.isConfirmed) {
                 try {
                     const result = await saveSolicitud(solicitud);
+                   console.log(solicitud);
                     Swal.fire({
                         text: result.message,
                         icon: "success"
