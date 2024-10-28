@@ -241,6 +241,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                 try {
                     
                     await saveAprobacion(solicitudDto);
+                    setIsAprobarDisabled(true);
                     Swal.fire({
                         text: "Solicitud aprobada con éxito",
                         icon: "success"
@@ -254,6 +255,8 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                         icon: "error"
                     });
                     console.log(error);
+                }finally{
+                    setIsAprobarDisabled(false);
                 }
             }
         });
