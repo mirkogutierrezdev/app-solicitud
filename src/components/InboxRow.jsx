@@ -163,6 +163,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
             if (result.isConfirmed) {
                 try {
                     await saveEntrada(entrada);
+                  console.log(entrada);
                     Swal.fire({
                         text: "Solicitud recibida con éxito",
                         icon: "success"

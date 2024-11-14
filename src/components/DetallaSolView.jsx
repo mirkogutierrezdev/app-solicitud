@@ -6,22 +6,16 @@ import { saveSolicitud } from "../services/services";
 import Swal from "sweetalert2";
 import '../css/DetalleSolView.css'; // Añade un archivo CSS para estilos personalizados
 
-
 function formatDateString(dateString) {
     if (!dateString) return '';
 
-    // Convierte la cadena de fecha a un objeto Date
     const date = new Date(dateString);
-
-    // Extrae el día, mes y año
     const day = date.getUTCDate().toString().padStart(2, '0');
     const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
     const year = date.getUTCFullYear();
 
-    // Devuelve la fecha en el formato deseado
     return `${day}-${month}-${year}`;
 }
-
 
 function DetalleSolView({
     option,
@@ -36,63 +30,51 @@ function DetalleSolView({
 
     const data = useContext(DataContext);
     const estado = 'PENDIENTE';
-    const departamento = data.data ? data.data.departamento : "";
+    const departamento = data.data ? data.data.departamento : {};
     const rut = data.data ? data.data.rut : 0;
-    const { depto,  nombreDepartamento } = departamento;
+    const { depto, nombreDepartamento } = departamento;
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().slice(0, 10);
 
-
     const handlerClick = async () => {
+        let modifiedStartDate = startDate;
+        let modifiedEndDate = endDate;
 
-        if(option === "Administrativo"){
-            
-        if (optionAdmIni === "mañana") {
-            startDate = startDate + "T" + "12:00:00";
-        }
-    
-        if (optionAdmIni === "tarde") {
-            startDate = startDate + "T" + "17:30:00";
-        }
-    
-        if(optionAdmIni  == "dia"){
-            startDate = startDate + "T" + "00:00:00";
-        }
-    
-        if (optionAdmFin === "mañana") {
-            endDate = endDate + "T" + "12:00:00"
-        }
-    
-        if (optionAdmFin === "tarde") {
-            endDate = endDate + "T" + "17:30:00"
-        }
-    
-        if(optionAdmFin  == "dia"){
-            endDate = endDate + "T" + "00:00:00";
-        }
-    
+        if (option === "Administrativo") {
+            if (optionAdmIni === "mañana") {
+                modifiedStartDate = startDate + "T12:00:00";
+            } else if (optionAdmIni === "tarde") {
+                modifiedStartDate = startDate + "T17:30:00";
+            }
 
+            if (optionAdmFin === "mañana") {
+                modifiedEndDate = endDate + "T12:00:00";
+            } else if (optionAdmFin === "tarde") {
+                modifiedEndDate = endDate + "T17:30:00";
+            }
+
+            if (optionAdmIni === "mañana" && optionAdmFin === "tarde") {
+                modifiedStartDate = startDate + "T00:00:00";
+                modifiedEndDate = endDate + "T00:00:00";
+            }
         }
 
-        if(option === "Feriado Legal"){
-    
-            startDate = startDate + "T" + "00:00:00" ;
-            endDate = endDate + "T" + "00:00:00";
+        if (option === "Feriado Legal") {
+            modifiedStartDate = startDate + "T00:00:00";
+            modifiedEndDate = endDate + "T00:00:00";
         }
 
         const solicitud = {
-            fechaInicio: startDate,
-            fechaFin: endDate,
+            fechaInicio: modifiedStartDate,
+            fechaFin: modifiedEndDate,
             rut: rut,
             tipoSolicitud: option,
             estado: estado,
             depto: depto,
             nombreDepartamento: nombreDepartamento,
             fechaDer: currentDateString,
-            duracion:workDays
-            
+            duracion: workDays
         };
-
 
         Swal.fire({
             title: "Derivar Solicitud",
@@ -104,19 +86,22 @@ function DetalleSolView({
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const result = await saveSolicitud(solicitud);
-                   console.log(solicitud);
+                    const response = await saveSolicitud(solicitud);
+                    
                     Swal.fire({
-                        text: result.message,
+                        text: response.message,
                         icon: "success"
                     });
                 } catch (error) {
                     console.error('Error al guardar la solicitud:', error);
+                    Swal.fire({
+                        text: 'Hubo un error al guardar la solicitud.',
+                        icon: 'error'
+                    });
                 }
             }
         });
     };
-
 
     return (
         <Card className="detalle-sol-card">
@@ -130,12 +115,12 @@ function DetalleSolView({
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Fecha Inicio:</strong> { formatDateString(startDate) }
+                            <strong>Fecha Inicio:</strong> {formatDateString(startDate)}
                         </Card.Text>
                     </Col>
                     <Col md={4}>
                         <Card.Text className="single-line">
-                            <strong>Fecha Fin:</strong> { formatDateString(endDate)}
+                            <strong>Fecha Fin:</strong> {formatDateString(endDate)}
                         </Card.Text>
                     </Col>
                 </Row>

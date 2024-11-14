@@ -17,10 +17,13 @@ const DataWrapper = ({ children, rut }) => {
     const { setRut, fetchFuncionarioData } = useContext(DataContext); // Obtenemos setRut y fetchFuncionarioData del contexto
 
     useEffect(() => {
-        if (rut) {
+     setRut(10397956);   
+     fetchFuncionarioData(10397956);
+     /* 
+          if (rut) {
             setRut(rut);  // Actualizamos el RUT en el contexto
             fetchFuncionarioData(rut);  // Obtenemos los datos del funcionario basado en el RUT
-        }
+        }   */
     }, [rut]);  // El efecto se ejecuta cuando el RUT cambia
 
     return children;
@@ -34,11 +37,11 @@ function App() {
             try {
                 const response = await getFuncionarioApi(); // Llamada a la API para obtener el RUT
                 if (response)
-                if(response.id_user) {
-                    setRut(response.id_user); // Guardamos el `id_user` en el estado como `rut`
-                } else {
-                    console.error("No se encontró el id_user en la respuesta");
-                }
+                    if (response.id_user) {
+                        setRut(response.id_user); // Guardamos el `id_user` en el estado como `rut`
+                    } else {
+                        console.error("No se encontró el id_user en la respuesta");
+                    }
             } catch (error) {
                 console.error("Error fetching RUT", error);
             }
@@ -47,8 +50,9 @@ function App() {
         fetchRut();  // Obtener el RUT al montar la aplicación
     }, []);
 
- 
+
     return (
+
         <Router>
             <Routes>
                 {/* Pasar el id_user (rut) como prop */}
@@ -60,7 +64,7 @@ function App() {
                 <Route path="/licencias" element={<DataWrapper rut={rut}><LicenciasPage rut={rut} /></DataWrapper>} />
                 <Route path="/feriados" element={<DataWrapper rut={rut}><FeriadosPage rut={rut} /></DataWrapper>} />
                 <Route path="/solicitudes" element={<DataWrapper rut={rut}><SolicitudesPage rut={rut} /></DataWrapper>} />
-                <Route path="/decretos" element={<DecretoPage />} /> 
+                <Route path="/decretos" element={<DecretoPage />} />
             </Routes>
         </Router>
     );

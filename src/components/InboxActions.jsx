@@ -90,7 +90,7 @@ const InboxActions = ({
                     <RiLoginBoxLine />
                 </Button>{" "}
                 <Button
-                    data-toggle="tooltip" data-placement="top" title="Rechazar"
+                    data-toggle="tooltip" data-placement="top" title="Postergar"
                     className="mx-2"
                     variant="danger"
                     onClick={handleRechazar}

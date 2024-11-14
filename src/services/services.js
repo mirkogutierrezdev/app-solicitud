@@ -3,22 +3,22 @@ import axios from 'axios';
 //Función que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async (rut) => {
 
-    //rut = 12458602; 
     //rut = 13275111;
-    rut=14562658;
+    //rut=14562658;
 
-    // const url = `http://localhost:8082/api/smc/byRut/13933050`; //Rut de funcionario
-    //const url = `http://localhost:8082/api/smc/byRut/15721809`; //Rut de funcionario
-    //  const url = `http://localhost:8082/api/smc/byRut/19280310`; //Rut de funcionario
-    // const url = `http://localhost:8082/api/smc/byRut/10067570`; //Rut jefe departamento
-    // const url = `http://localhost:8082/api/smc/byRut/10735521`; //Rut Subdirector
+    // const url = `https://appd.laflorida.cl:8082/api/smc/byRut/13933050`; //Rut de funcionario
+    //const url = `https://appd.laflorida.cl:8082/api/smc/byRut/15721809`; //Rut de funcionario
+    //  const url = `https://appd.laflorida.cl:8082/api/smc/byRut/19280310`; //Rut de funcionario
+    // const url = `https://appd.laflorida.cl:8082/api/smc/byRut/10067570`; //Rut jefe departamento
+    // const url = `https://appd.laflorida.cl:8082/api/smc/byRut/10735521`; //Rut Subdirector
 
     //Direccion de informatica
 
-    //  const url = `http://localhost:8082/api/smc/byRut/15721809`; //Rut de funcionario
-    //const url = `http://localhost:8082/api/smc/byRut/18740165`; //Rut de funcionario
-    //  const url = `http://localhost:8082/api/smc/byRut/13890844`; //Rut jefe de departamento
-    const url = `http://localhost:8082/api/smc/byRut/${rut}`; //Rut Director
+    //  const url = `https://appd.laflorida.cl:8082/api/smc/byRut/15721809`; //Rut de funcionario
+    //const url = `https://appd.laflorida.cl:8082/api/smc/byRut/18740165`; //Rut de funcionario
+    //  const url = `https://appd.laflorida.cl:8082/api/smc/byRut/13890844`; //Rut jefe de departamento
+  //  const url = ` https://appd.laflorida.cl/api/smc/byRut/${rut}`; //Rut Director
+    const url = ` http://localhost:8082/api/smc/byRut/${rut}`; //Rut Director
 
     try {
         const response = await axios.get(url);
@@ -31,6 +31,7 @@ export const getFuncionario = async (rut) => {
 
 //Calcula los días hábiles entre dos fechas
 export const getDiasWork = async (fechaIni, fechaTermino) => {
+  //  const url = `https://appd.laflorida.cl/api/utils/calcular?fechaInicio=${fechaIni}&fechaTermino=${fechaTermino}`;
     const url = `http://localhost:8082/api/utils/calcular?fechaInicio=${fechaIni}&fechaTermino=${fechaTermino}`;
 
     try {
@@ -44,6 +45,7 @@ export const getDiasWork = async (fechaIni, fechaTermino) => {
 
 //Guarda solicitud en la base de datos 
 export const saveSolicitud = async (solicitud) => {
+ //   const url = `https://appd.laflorida.cl/api/solicitud/create`;
     const url = `http://localhost:8082/api/solicitud/create`;
 
     try {
@@ -79,6 +81,7 @@ export const saveSolicitud = async (solicitud) => {
 
 //Graba la entrada en la base de datos 
 export const saveEntrada = async (entrada) => {
+ //   const url = `https://appd.laflorida.cl/api/entrada/create`;
     const url = `http://localhost:8082/api/entrada/create`;
 
     try {
@@ -96,6 +99,7 @@ export const saveEntrada = async (entrada) => {
 
 //Graba derivación en la base de datos 
 export const saveDerivacion = async (derivacion) => {
+    //const url = `https://appd.laflorida.cl/api/derivacion/create`;
     const url = `http://localhost:8082/api/derivacion/create`;
 
     try {
@@ -113,6 +117,7 @@ export const saveDerivacion = async (derivacion) => {
 
 //Extrae las solicitudes del buzón de cada departamento 
 export const getSolicitudesInbox = async (depto) => {
+ //   const url = `https://appd.laflorida.cl/api/solicitud/departamento/${depto}`;
     const url = `http://localhost:8082/api/solicitud/departamento/${depto}`;
 
     try {
@@ -126,7 +131,8 @@ export const getSolicitudesInbox = async (depto) => {
 
 //Extrae lista de departamentos
 export const getDepto = async () => {
-    const url = `http://localhost:8080/api/departamentos/list`;
+//    const url = `https://appd.laflorida.cl/api/departamentos/list`;
+  const url = `http://localhost:8082/api/departamentos/list`;
 
     try {
         const response = await axios.get(url);
@@ -139,6 +145,7 @@ export const getDepto = async () => {
 
 //Graba tabla de departamentos
 export const postDepto = async (departamentos) => {
+ //   const url = `https://appd.laflorida.cl/api/departamentos/create`;
     const url = `http://localhost:8082/api/departamentos/create`;
 
     try {
@@ -156,6 +163,7 @@ export const postDepto = async (departamentos) => {
 
 //Consulta si el funcionario es Jefe de departamento
 export const esJefe = async (depto, rut) => {
+   // const url = `https://appd.laflorida.cl/api/departamentos/esjefe/${depto}/${rut}`;
     const url = `http://localhost:8082/api/departamentos/esjefe/${depto}/${rut}`;
 
     try {
@@ -169,6 +177,7 @@ export const esJefe = async (depto, rut) => {
 
 //Graba aprobación en la base de datos
 export const saveAprobacion = async (solicitud) => {
+   // const url = `https://appd.laflorida.cl/api/aprobaciones/create`;
     const url = `http://localhost:8082/api/aprobaciones/create`;
 
     try {
@@ -186,7 +195,8 @@ export const saveAprobacion = async (solicitud) => {
 
 //Graba rechazo en la base de datos
 export const saveRechazo = async (solicitud) => {
-    const url = `http://localhost:8082/api/rechazos/create`;
+  //  const url = `https://appd.laflorida.cl/api/rechazos/create`;
+     const url = `http://localhost:8082/api/rechazos/create`;
 
     try {
         const response = await axios.post(url, solicitud, {
@@ -203,6 +213,7 @@ export const saveRechazo = async (solicitud) => {
 
 //Consulta si departamento es Subdirección 
 export const getEsSub = async (depto) => {
+ //   const url = `https://appd.laflorida.cl/api/departamentos/esSub/${depto}`;
     const url = `http://localhost:8082/api/departamentos/esSub/${depto}`;
 
     try {
@@ -215,6 +226,7 @@ export const getEsSub = async (depto) => {
 }
 
 export const getSolicitudesByRut = async (rut) => {
+ //   const url = `https://appd.laflorida.cl/api/solicitud/byRut/${rut}`;
     const url = `http://localhost:8082/api/solicitud/byRut/${rut}`;
 
     try {
@@ -227,6 +239,7 @@ export const getSolicitudesByRut = async (rut) => {
 }
 
 export const getRechazosBySolicitud = async (solicitudId) => {
+  //  const url = `https://appd.laflorida.cl/api/rechazos/bySolicitud/${solicitudId}`;
     const url = `http://localhost:8082/api/rechazos/bySolicitud/${solicitudId}`;
 
     try {
@@ -239,6 +252,7 @@ export const getRechazosBySolicitud = async (solicitudId) => {
 }
 
 export const getAprobacionesBySolicitud = async (solicitudId) => {
+  //  const url = `https://appd.laflorida.cl/api/aprobaciones/bySolicitud/${solicitudId}`;
     const url = `http://localhost:8082/api/aprobaciones/bySolicitud/${solicitudId}`;
 
     try {
@@ -251,6 +265,7 @@ export const getAprobacionesBySolicitud = async (solicitudId) => {
 }
 
 export const getPdf = async (solicitudId) => {
+  //  const url = `https://appd.laflorida.cl/api/pdf/solicitudes/${solicitudId}`;
     const url = `http://localhost:8082/api/pdf/solicitudes/${solicitudId}`;
 
     try {
@@ -263,6 +278,7 @@ export const getPdf = async (solicitudId) => {
 }
 
 export const getFeriados = async (fechaInicio, fechaTermino) => {
+  //  const url = `https://appd.laflorida.cl/api/utils/feriados/obtener?fechaInicio=${fechaInicio}&fechaTermino=${fechaTermino}`;
     const url = `http://localhost:8082/api/utils/feriados/obtener?fechaInicio=${fechaInicio}&fechaTermino=${fechaTermino}`;
 
     try {
@@ -276,6 +292,7 @@ export const getFeriados = async (fechaInicio, fechaTermino) => {
 
 
 export const getVderivaciones = async (solicitudId) => {
+ //   const url = `https://appd.laflorida.cl/api/derivacion/solicitud/${solicitudId}`;
     const url = `http://localhost:8082/api/derivacion/solicitud/${solicitudId}`;
 
     try {
@@ -288,6 +305,7 @@ export const getVderivaciones = async (solicitudId) => {
 }
 
 export const getSolicitudesEnTramites = async (rut) => {
+  //  const url = `https://appd.laflorida.cl/api/solicitud/entramite/${rut}`;
     const url = `http://localhost:8082/api/solicitud/entramite/${rut}`;
 
     try {
@@ -301,6 +319,7 @@ export const getSolicitudesEnTramites = async (rut) => {
 
 
 export const saveEntradas = async (entrada) => {
+    //const url = `https://appd.laflorida.cl/api/entrada/createEntradas`;
     const url = `http://localhost:8082/api/entrada/createEntradas`;
 
 
@@ -319,6 +338,7 @@ export const saveEntradas = async (entrada) => {
 }
 
 export const saveDerivaciones = async (derivaciones) => {
+//     const url = `https://appd.laflorida.cl/api/derivacion/createDerivaciones`;
     const url = `http://localhost:8082/api/derivacion/createDerivaciones`;
 
 
@@ -337,6 +357,7 @@ export const saveDerivaciones = async (derivaciones) => {
 }
 
 export const saveAprobaciones = async (aprobaciones) => {
+ //   const url = `https://appd.laflorida.cl/api/aprobaciones/createAprobaciones`;
     const url = `http://localhost:8082/api/aprobaciones/createAprobaciones`;
 
     try {
@@ -355,6 +376,7 @@ export const saveAprobaciones = async (aprobaciones) => {
 
 export const getAllAprobaciones = async () => {
 
+ //   const url = `https://appd.laflorida.cl/api/aprobaciones/getaprobaciones`;
     const url = `http://localhost:8082/api/aprobaciones/getaprobaciones`;
 
     try {
@@ -370,6 +392,7 @@ export const getAllAprobaciones = async () => {
 
 export const getDecretos = async (nroDecreto) => {
 
+   // const url = `https://appd.laflorida.cl/decretos/${nroDecreto}/find`;
     const url = `http://localhost:8082/decretos/${nroDecreto}/find`;
 
     try {
@@ -383,6 +406,7 @@ export const getDecretos = async (nroDecreto) => {
 
 
 export const saveDecretos = async (decretos) => {
+   // const url = `https://appd.laflorida.cl/decretos/crear`;
     const url = `http://localhost:8082/decretos/crear`;
 
     try {

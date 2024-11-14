@@ -52,6 +52,8 @@ function SolicitudesPage() {
         }
     };
 
+
+
     const handleOptionChange = async (e) => {
         const selectedOption = e.target.value;
     

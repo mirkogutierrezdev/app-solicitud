@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import { DataProvider } from './context/DataContext.jsx'; // Proporcionamos acceso global al contexto de datos
-import { UnreadProvider } from './context/UnreadContext';
+import { UnreadProvider } from './context/UnreadContext.jsx';
 import HomeTabs from './components/HomeTabs..jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
