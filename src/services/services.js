@@ -441,5 +441,48 @@ export const getFuncionarioApi = async () => {
     }
 }
 
+export const getListDeptos = async (depto) => {
 
+    // const url = `https://appd.laflorida.cl/decretos/${nroDecreto}/find`;
+     const url = `http://localhost:8080/api/smc/funcionario/listDtoDepto/${depto}`;
+ 
+     try {
+         const response = await axios.get(url);
+         return response.data;
+     } catch (error) {
+         console.error(error);
+         return null;
+     }
+ }
+ 
 
+ export const saveSubrogancia = async (subrogancia) => {
+    // const url = `https://appd.laflorida.cl/decretos/crear`;
+     const url = `http://localhost:8082/api/sub/create`;
+ 
+     try {
+         const response = await axios.post(url, subrogancia, {
+             headers: {
+                 'Content-Type': 'application/json'
+             }
+         });
+         return response.data;
+     } catch (error) {
+         console.error('Error fetching data:', error);
+         return null;
+     }
+ }
+ 
+ export const getSubrogancias = async (rut) => {
+
+    // const url = `https://appd.laflorida.cl/decretos/${nroDecreto}/find`;
+     const url = `http://localhost:8082/api/sub/by-rut/${rut}`;
+ 
+     try {
+         const response = await axios.get(url);
+         return response.data;
+     } catch (error) {
+         console.error(error);
+         return null;
+     }
+ }
