@@ -476,7 +476,7 @@ export const getListDeptos = async (depto) => {
  export const getSubrogancias = async (rut) => {
 
     // const url = `https://appd.laflorida.cl/decretos/${nroDecreto}/find`;
-     const url = `http://localhost:8082/api/sub/by-rut/${rut}`;
+     const url = `http://localhost:8082/api/sub/view/by-rut/${rut}`;
  
      try {
          const response = await axios.get(url);

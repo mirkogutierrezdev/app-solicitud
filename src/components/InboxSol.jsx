@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 import { Container, Table, Spinner, Alert, Pagination, Button,  Tabs, Tab } from "react-bootstrap";
-import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones, getEsSub } from "../services/services";
+import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones, getEsSub, getSubrogancias } from "../services/services";
 import DataContext from "../context/DataContext";
 import '../css/InboxSolicitudes.css';
 import UnreadContext from "../context/UnreadContext";
@@ -9,7 +9,7 @@ import InboxRow from "./InboxRow";
 import Swal from "sweetalert2";
 
 const InboxSol = () => {
-    const { data,  } = useContext(DataContext); // Acceso al RUT y los datos del funcionario
+    const { data, rut } = useContext(DataContext); // Acceso al RUT y los datos del funcionario
     const { setDepto } = useContext(UnreadContext); // Para manejar el departamento en UnreadContext
 
     const [solicitudes, setSolicitudes] = useState([]);
@@ -23,6 +23,9 @@ const InboxSol = () => {
     const [isCheckedAll, setIsCheckedAll] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
     const [esSubdir, setEsSubdir] = useState(false);
+    const [subrogatedSolicitudes, setSubrogatedSolicitudes] = useState([]);
+    const [subrogancias,setSubrogancias] =useState([]);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -70,6 +73,69 @@ const InboxSol = () => {
             }
         }
     };
+
+    const fetSubrogancias = async () =>{
+        if(localDepto){
+            try{
+                const dataSub = await getSubrogancias(rut);
+                setSubrogancias(dataSub)
+            }catch (error){
+                console.log(error);
+            }
+        }
+    };
+
+    const fetchSubrogatedSolicitudes = async () => {
+        const subrogatedDeptos = subrogancias
+            .filter(sub => sub?.depto) // Filtra subrogancias válidas y pendientes
+            .map(sub => Math.floor(sub.depto / 100)); // Elimina los dos últimos dígitos de cada depto
+    
+        try {
+            const allSubrogatedSolicitudes = await Promise.all(
+                subrogatedDeptos.map(depto => getSolicitudesInbox(19010000))
+            );
+            setSubrogatedSolicitudes(allSubrogatedSolicitudes.flat());
+        } catch (error) {
+            console.error("Error fetching subrogated solicitudes:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSolicitudes();
+        fetSubrogancias();
+    }, [localDepto]);
+
+    useEffect(() => {
+        if (subrogancias.length > 0) {
+            fetchSubrogatedSolicitudes();
+        }
+    }, [subrogancias]);
+
+    console.log(subrogatedSolicitudes)
+
+   
+
+
+    useEffect(() => {
+        // Mostrar las subrogancias cargadas en la consola
+        if (subrogancias.length > 0) {
+            console.log("Subrogancias cargadas:", subrogancias);
+        } else {
+            console.log("No se encontraron subrogancias para el RUT actual.");
+        }
+    }, [subrogancias]);
+
+    useEffect(() => {
+        // Mostrar las subrogancias cargadas en la consola
+        if (subrogatedSolicitudes.length > 0) {
+            console.log("Subrogancias cargadas:", subrogatedSolicitudes);
+        } else {
+            console.log("No se encontraron subrogancias para el RUT actual.");
+        }
+    }, [subrogatedSolicitudes]);
+    
+    
+    
 
     useEffect(() => {
         fetchSolicitudes();
@@ -263,165 +329,211 @@ const InboxSol = () => {
 
     return (
         <Container>
-            <h2 className="m-3 text-center">Bandeja de Solicitudes</h2>
-            {loading ? (
-                <Spinner animation="border" />
-            ) : (
-                <Tabs defaultActiveKey="recibir" id="uncontrolled-tab-example">
-                    <Tab eventKey="recibir" title="Recibir">
-                        <Table striped bordered hover>
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <input
-                                            type="checkbox"
-                                            checked={isCheckedAll}
-                                            onChange={handleSelectAll}
-                                        />
-                                    </th>
-                                    <th>ID</th>
-                                    <th>Funcionario</th>
-                                    <th>Tipo solicitud</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredSolicitudes.length > 0 ? (
-                                    paginatedItems(filteredSolicitudes.filter(sol =>
-                                        sol.solicitud.estado.nombre === "PENDIENTE" &&
-                                        sol.derivaciones.some(deriv =>
-                                            deriv.departamento.deptoSmc == localDepto &&
-                                            !sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == localDepto)
-                                        )
-                                    )).map((sol) => (
-                                        <InboxRow
-                                            key={sol.solicitud.id}
-                                            solicitud={sol}
-                                            open={open}
-                                            depto={localDepto}
-                                            setOpen={setOpen}
-                                            selectedItems={selectedItems}
-                                            handleSelect={handleSelect}
-                                            isCheckedAll={isCheckedAll}
-                                            isChecked={isChecked}
-                                        />
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="5">
-                                            <Alert variant="info" className="text-center">No hay solicitudes en la bandeja de Recibir</Alert>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </Table>
-                        <Pagination>
-                            {[...Array(totalPages)].map((_, index) => (
-                                <Pagination.Item
-                                    key={index + 1}
-                                    active={index + 1 === currentPage}
-                                    onClick={() => setCurrentPage(index + 1)}
-                                >
-                                    {index + 1}
-                                </Pagination.Item>
-                            ))}
-                        </Pagination>
-                        <div className="d-flex justify-content-end">
-                            <Button
-                                variant="success"
-                                className="mr-2"
-                                onClick={inAll}
-                                disabled={
-                                    selectedItems.length === 0 ||
-                                    filteredSolicitudes.every(sol =>
-                                        sol.derivaciones.some(deriv =>
-                                            deriv.departamento.deptoSmc === localDepto &&
-                                            sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc === localDepto)
-                                        )
+        <h2 className="m-3 text-center">Bandeja de Solicitudes</h2>
+        {loading ? (
+            <Spinner animation="border" />
+        ) : (
+            <Tabs defaultActiveKey="recibir" id="uncontrolled-tab-example">
+                <Tab eventKey="recibir" title="Recibir">
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input
+                                        type="checkbox"
+                                        checked={isCheckedAll}
+                                        onChange={handleSelectAll}
+                                    />
+                                </th>
+                                <th>ID</th>
+                                <th>Funcionario</th>
+                                <th>Tipo solicitud</th>
+                                <th>Estado</th>
+                                <th>Subrogancia</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredSolicitudes.length > 0 ? (
+                                paginatedItems(filteredSolicitudes.filter(sol =>
+                                    sol.solicitud.estado.nombre === "PENDIENTE" &&
+                                    sol.derivaciones.some(deriv =>
+                                        deriv.departamento.deptoSmc == localDepto &&
+                                        !sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == localDepto)
                                     )
-                                }
-                            >
-                                Recibir Todo
-                            </Button>
-                        </div>
-                    </Tab>
-                    <Tab eventKey="derivar" title="Entrada">
-                        <Table striped bordered hover>
-                            <thead>
+                                )).map((sol) => (
+                                    <InboxRow
+                                        key={sol.solicitud.id}
+                                        solicitud={sol}
+                                        open={open}
+                                        depto={localDepto}
+                                        setOpen={setOpen}
+                                        selectedItems={selectedItems}
+                                        handleSelect={handleSelect}
+                                        isCheckedAll={isCheckedAll}
+                                        isChecked={isChecked}
+                                        isSubrogancia={
+                                            subrogancias.some(sub => sub.solicitudId === sol.solicitud.id)
+                                        }
+                                    />
+                                ))
+                            ) : (
                                 <tr>
-                                    <th>
-                                        <input
-                                            type="checkbox"
-                                            checked={isCheckedAll}
-                                            onChange={handleSelectAll}
-                                        />
-                                    </th>
-                                    <th>ID</th>
-                                    <th>Funcionario</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
+                                    <td colSpan="7">
+                                        <Alert variant="info" className="text-center">No hay solicitudes en la bandeja de Recibir</Alert>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {filteredSolicitudes.length > 0 ? (
-                                    paginatedItems(filteredSolicitudes.filter(sol =>
-                                        sol.derivaciones.some(deriv =>
-                                            deriv.departamento.deptoSmc == localDepto &&
-                                            sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == localDepto)/* &&
-                                            !sol.salidas.some(salida => salida.derivacion.id === deriv.id)*/
-                                        )
-                                    )).map((sol) => (
-                                        <InboxRow
-                                            key={sol.solicitud.id}
-                                            solicitud={sol}
-                                            open={open}
-                                            depto={localDepto}
-                                            setOpen={setOpen}
-                                            selectedItems={selectedItems}
-                                            handleSelect={handleSelect}
-                                            isCheckedAll={isCheckedAll}
-                                            isChecked={isChecked}
-                                        />
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="5">
-                                            <Alert variant="info" className="text-center">No hay solicitudes en la bandeja de Entrada</Alert>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </Table>
-                        <Pagination>
-                            {[...Array(totalPages)].map((_, index) => (
-                                <Pagination.Item
-                                    key={index + 1}
-                                    active={index + 1 === currentPage}
-                                    onClick={() => setCurrentPage(index + 1)}
-                                >
-                                    {index + 1}
-                                </Pagination.Item>
-                            ))}
-                        </Pagination>
-                        <div className="d-flex justify-content-end">
-                            {!esSubdir && <Button
-                                variant="primary"
-                                className="mr-2"
-                                onClick={deriveAll}
-                                disabled={selectedItems.length === 0}
+                            )}
+                        </tbody>
+                    </Table>
+                    <Pagination>
+                        {[...Array(totalPages)].map((_, index) => (
+                            <Pagination.Item
+                                key={index + 1}
+                                active={index + 1 === currentPage}
+                                onClick={() => setCurrentPage(index + 1)}
                             >
-                                Derivar Todo
+                                {index + 1}
+                            </Pagination.Item>
+                        ))}
+                    </Pagination>
+                    <div className="d-flex justify-content-end">
+                        <Button
+                            variant="success"
+                            className="mr-2"
+                            onClick={inAll}
+                            disabled={
+                                selectedItems.length === 0 ||
+                                filteredSolicitudes.every(sol =>
+                                    sol.derivaciones.some(deriv =>
+                                        deriv.departamento.deptoSmc === localDepto &&
+                                        sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc === localDepto)
+                                    )
+                                )
+                            }
+                        >
+                            Recibir Todo
+                        </Button>
+                    </div>
+                </Tab>
+                <Tab eventKey="derivar" title="Entrada">
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input
+                                        type="checkbox"
+                                        checked={isCheckedAll}
+                                        onChange={handleSelectAll}
+                                    />
+                                </th>
+                                <th>ID</th>
+                                <th>Funcionario</th>
+                                <th>Estado</th>
+                                <th>Subrogancia</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredSolicitudes.length > 0 ? (
+                                paginatedItems(filteredSolicitudes.filter(sol =>
+                                    sol.derivaciones.some(deriv =>
+                                        deriv.departamento.deptoSmc == localDepto &&
+                                        sol.entradas.some(entrada => entrada.derivacion.id === deriv.id && entrada.derivacion.departamento.deptoSmc == localDepto)
+                                    )
+                                )).map((sol) => (
+                                    <InboxRow
+                                        key={sol.solicitud.id}
+                                        solicitud={sol}
+                                        open={open}
+                                        depto={localDepto}
+                                        setOpen={setOpen}
+                                        selectedItems={selectedItems}
+                                        handleSelect={handleSelect}
+                                        isCheckedAll={isCheckedAll}
+                                        isChecked={isChecked}
+                                        isSubrogancia={
+                                            subrogancias.some(sub => sub.solicitudId === sol.solicitud.id)
+                                        }
+                                    />
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="6">
+                                        <Alert variant="info" className="text-center">No hay solicitudes en la bandeja de Entrada</Alert>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </Table>
+                    <Pagination>
+                        {[...Array(totalPages)].map((_, index) => (
+                            <Pagination.Item
+                                key={index + 1}
+                                active={index + 1 === currentPage}
+                                onClick={() => setCurrentPage(index + 1)}
+                            >
+                                {index + 1}
+                            </Pagination.Item>
+                        ))}
+                    </Pagination>
+                    <div className="d-flex justify-content-end">
+                        {!esSubdir && <Button
+                            variant="primary"
+                            className="mr-2"
+                            onClick={deriveAll}
+                            disabled={selectedItems.length === 0}
+                        >
+                            Derivar Todo
+                        </Button>}
+                        {esSubdir &&
+                            <Button variant="success" className="ml-3" onClick={approveAll}>
+                                Aprobar Todo
                             </Button>}
-                            {esSubdir &&
-                                <Button variant="success" className="ml-3" onClick={approveAll}>
-                                    Aprobar Todo
-                                </Button>}
-                        </div>
-                    </Tab>
-                </Tabs>
+                    </div>
+                </Tab>
+                <Tab eventKey="subrogancia" title="Subrogancia">
+    <Table striped bordered hover>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Funcionario</th>
+                <th>Tipo solicitud</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {subrogatedSolicitudes.length > 0 ? (
+                subrogatedSolicitudes.map((sol) => (
+                    <InboxRow
+                        key={sol.solicitud.id}
+                        solicitud={sol}
+                        open={open}
+                        depto={localDepto}
+                        setOpen={setOpen}
+                        selectedItems={selectedItems}
+                        handleSelect={handleSelect}
+                        isCheckedAll={isCheckedAll}
+                        isChecked={isChecked}
+                    />
+                ))
+            ) : (
+                <tr>
+                    <td colSpan="5">
+                        <Alert variant="info" className="text-center">
+                            No hay solicitudes en la bandeja de Subrogancia
+                        </Alert>
+                    </td>
+                </tr>
             )}
-        </Container>
+        </tbody>
+    </Table>
+</Tab>
+            </Tabs>
+        )}
+    </Container>
+    
     );
 };
 
