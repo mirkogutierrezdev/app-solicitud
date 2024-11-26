@@ -271,6 +271,9 @@ function SolicitudesPage() {
         setEndDate('');
         setMaxEndDate('');
         setIsActiveButton(false);
+        setOption('');
+        setOptionAdmIni('');
+        setOptionAdmFin('')
     };
 
     return (
@@ -327,6 +330,7 @@ function SolicitudesPage() {
                                 option={option}
                                 optionAdmIni={optionAdmIni}
                                 optionAdmFin={optionAdmFin}
+                                resetAllValues={resetAllValues}
                             />
                         </Card.Body>
                     </Card>

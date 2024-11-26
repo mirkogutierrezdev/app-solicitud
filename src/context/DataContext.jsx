@@ -8,6 +8,7 @@ export const DataProvider = ({ children }) => {
     // Inicializamos el RUT con el valor almacenado en sessionStorage o null
     const [rut, setRut] = useState(() => sessionStorage.getItem('rut') || null);  
     const [data, setData] = useState(null);
+    const [urlFoto,setUrlFoto] = useState('');
     const [loadingData, setLoadingData] = useState(false);
     const [error, setError] = useState(null);
 
@@ -32,7 +33,7 @@ export const DataProvider = ({ children }) => {
     }, [rut]);
 
     return (
-        <DataContext.Provider value={{ data, rut, setRut, fetchFuncionarioData, loadingData, error }}>
+        <DataContext.Provider value={{ data, rut, setRut, fetchFuncionarioData, loadingData, error, urlFoto,setUrlFoto }}>
             {children}
         </DataContext.Provider>
     );

@@ -26,7 +26,9 @@ function DetalleSolView({
     startDate,
     endDate,
     optionAdmIni,
-    optionAdmFin }) {
+    optionAdmFin,
+    resetAllValues
+ }) {
 
     const data = useContext(DataContext);
     const estado = 'PENDIENTE';
@@ -153,6 +155,7 @@ function DetalleSolView({
 
         try {
             const response = await saveSolicitud(solicitud);
+            console.log(solicitud)
 
             if (isJefe) {
                 if (!response.id) throw new Error("No se pudo obtener el ID de la solicitud");
@@ -177,10 +180,13 @@ function DetalleSolView({
                 }
             }
 
+            resetAllValues();
+
             Swal.fire({
                 text: "Solicitud creada correctamente.",
                 icon: "success"
             });
+           
         } catch (error) {
             console.error("Error al guardar la solicitud:", error);
             Swal.fire({

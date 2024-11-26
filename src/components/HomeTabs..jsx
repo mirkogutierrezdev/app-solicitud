@@ -40,11 +40,11 @@ function HomeTabs() {
     const handleLogout = () => {
         sessionStorage.clear();
         setRut(null); 
-        window.location.href = 'https://appd.laflorida.cl/login/cerrar-sesion.php';
+        window.location.href = 'https://appx.laflorida.cl/login/cerrar-sesion.php';
     };
 
     const handleBack = () => {
-        window.location.href = 'https://appd.laflorida.cl/login/menu.php';
+        window.location.href = 'https://appx.laflorida.cl/login/menu.php';
     };
 
     return (
@@ -99,36 +99,36 @@ function HomeTabs() {
                                         Solicitudes
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        <Dropdown.Item href="/solicitudes">Solicitar</Dropdown.Item>
-                                        <Dropdown.Item href="/missolicitudes">Mis solicitudes</Dropdown.Item>
+                                        <Dropdown.Item href="/sol/solicitudes">Solicitar</Dropdown.Item>
+                                        <Dropdown.Item href="/sol/missolicitudes">Mis solicitudes</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
 
                                 {!isMobile && (
                                     <>
                                         <Button
-                                            href="/"
+                                            href="/sol/home"
                                             variant="light"
                                             className="me-2 rounded-pill border-0 text-dark home-tab-button"
                                         >
                                             Mis Datos
                                         </Button>
                                         <Button
-                                            href="/ausencias"
+                                            href="/sol/ausencias"
                                             variant="light"
                                             className="me-2 rounded-pill border-0 text-dark home-tab-button"
                                         >
                                             Ausencias
                                         </Button>
                                         <Button
-                                            href="/feriados"
+                                            href="/sol/feriados"
                                             variant="light"
                                             className="me-2 rounded-pill border-0 text-dark home-tab-button"
                                         >
                                             Administrativos y Feriados
                                         </Button>
                                         <Button
-                                            href="/licencias"
+                                            href="/sol/licencias"
                                             variant="light"
                                             className="me-2 rounded-pill border-0 text-dark home-tab-button"
                                         >
@@ -148,7 +148,7 @@ function HomeTabs() {
                                 {!isMobile && isJefe && (
                                     <div className="text-center text-dark mt-3">
                                         <a
-                                            href="/inboxsol"
+                                            href="/sol/inboxsol"
                                             style={{ textDecoration: 'none', color: 'black' }}
                                             className="position-relative"
                                         >

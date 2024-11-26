@@ -4,26 +4,31 @@ import AusenciasView from './AusenciasView';
 import { useContext } from 'react';
 import DataContext from '../context/DataContext';
 
-
 function AusenciasPage() {
-
-
     const { data, loadingData, error } = useContext(DataContext);
     const ausencias = data ? data.ausencias : [];
+
+    // Extraer lógica condicional
+    let content;
+    if (loadingData) {
+        content = (
+            <Spinner animation="border" aria-live="polite">
+                <output aria-live="polite" className="visually-hidden">
+                    Loading...
+                </output>
+            </Spinner>
+        );
+    } else if (error) {
+        content = <Alert variant="danger">{error}</Alert>;
+    } else {
+        content = <AusenciasView ausencias={ausencias} />;
+    }
 
     return (
         <Container className="mt-3">
             <Row>
                 <Col md={12}>
-                    {loadingData ? (
-                        <Spinner animation="border" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </Spinner>
-                    ) : error ? (
-                        <Alert variant="danger">{error}</Alert>
-                    ) : (
-                        <AusenciasView ausencias={ausencias} />
-                    )}
+                    {content}
                 </Col>
             </Row>
         </Container>

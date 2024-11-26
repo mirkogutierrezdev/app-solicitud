@@ -22,7 +22,7 @@ function CardFuncionario({ nombres, apellidopaterno, apellidomaterno, contrato, 
                         <h3>{capitalize(nombres)} {capitalize(apellidopaterno)} {capitalize(apellidomaterno)}</h3>
                         <h5><strong>Tipo de Contrato </strong>{capitalize(nombrecontrato)}</h5>
                         <h5><strong>Escalafon </strong>{capitalize(escalafon)} Grado {grado}</h5>
-                        <h5><strong>Dependencia </strong>{capitalize(nombreDepartamento)} </h5>
+                        <h4><strong>{capitalize(nombreDepartamento)} </strong> </h4>
                         
                     </Col>
                 </Row>
