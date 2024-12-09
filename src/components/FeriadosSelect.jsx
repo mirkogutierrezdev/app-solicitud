@@ -1,8 +1,8 @@
-/* eslint-disable react/prop-types */
 import { Col, Form } from "react-bootstrap";
+import PropTypes from "prop-types";
 
-export const FeriadosSelect = ({ option,
-
+export const FeriadosSelect = ({
+    option,
     startDate,
     handleStartDateChange,
     calculateFirstDayOfMonth,
@@ -14,9 +14,6 @@ export const FeriadosSelect = ({ option,
 
     return (
         <>
-
-
-
             <Col md={3}>
                 <Form.Group controlId="formStartDate">
                     <Form.Label className="h5 custom-font-size">Fecha de inicio</Form.Label>
@@ -51,3 +48,13 @@ export const FeriadosSelect = ({ option,
 }
 
 export default FeriadosSelect;
+
+FeriadosSelect.propTypes = {
+    option: PropTypes.string,
+    startDate: PropTypes.string,
+    handleStartDateChange: PropTypes.func,
+    calculateFirstDayOfMonth: PropTypes.func,
+    endDate: PropTypes.string,
+    maxEndDate: PropTypes.string,
+    handleEndDateChange: PropTypes.func
+}

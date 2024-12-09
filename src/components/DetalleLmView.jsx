@@ -1,7 +1,8 @@
-/* eslint-disable react/prop-types */
-import { Card, Col, Row } from "react-bootstrap";
 
-function DetalleLmView({ detalle }) {
+import { Card, Col, Row } from "react-bootstrap";
+import PropTypes from 'prop-types';
+
+export const DetalleLmView = ({ detalle }) => {
 
     const {
         diasPago = 0,
@@ -67,4 +68,10 @@ function formatNumberWithCommas(number) {
         return "0";
     }
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+
+DetalleLmView.propTypes = {
+    detalle: PropTypes.object.isRequired
+
 }

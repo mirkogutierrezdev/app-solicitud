@@ -1,7 +1,7 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { Card, Col, Collapse, Row, Table } from "react-bootstrap";
 import { getVderivaciones } from "../services/services";
+import PropTypes from "prop-types";
 
 // Función para formatear la fecha en formato dd-MM-yyyy
 const formatDate = (dateString) => {
@@ -27,7 +27,7 @@ const determinaJornada = (fechaFin) => {
     if (!fechaFin) return 'No definida';
 
     const time = new Date(fechaFin).toLocaleTimeString('es-CL', { hour12: false });
-    
+
     if (time === '12:00:00') {
         return 'AM';
     } else if (time === '17:30:00') {
@@ -37,7 +37,8 @@ const determinaJornada = (fechaFin) => {
     }
 };
 
-const InboxCollapse = ({ solicitud: dataSol, open }) => {
+export const InboxCollapse = ({ solicitud: dataSol, open }) => {
+
     const { solicitud } = dataSol;
     const { fechaInicio, fechaFin, fechaSolicitud } = solicitud;
     const { duracion } = solicitud;
@@ -119,3 +120,8 @@ const InboxCollapse = ({ solicitud: dataSol, open }) => {
 };
 
 export default InboxCollapse;
+
+InboxCollapse.propTypes = {
+    solicitud: PropTypes.object,
+    open: PropTypes.bool
+}

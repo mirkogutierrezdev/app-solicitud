@@ -2,11 +2,11 @@
 import { Navbar, Nav, Button, Col, Row, Dropdown, Container } from 'react-bootstrap';
 import '../css/HomeTab.css'; // Importa el archivo CSS creado
 import { useContext, useEffect, useState } from 'react';
-import { esJefe } from '../services/services';
+import { esJefe, getPermisosUsuario } from '../services/services';
 import DataContext from '../context/DataContext';
 import UnreadContext from '../context/UnreadContext';
 
-function HomeTabs() {
+export const  HomeTabs=()=> {
     const { data, setRut } = useContext(DataContext);
     const { unreadCount, setDepto } = useContext(UnreadContext);
     const depto = data ? data.departamento.depto : 0;
@@ -14,6 +14,7 @@ function HomeTabs() {
     const [isJefe, setIsJefe] = useState(false);
     const [expanded, setExpanded] = useState(false); // Estado para manejar el colapso del menú
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // Estado para detectar vista móvil
+    const [permisoUsuario, setPermisoUsuario] = useState([]);
 
     const getIsJefe = async () => {
         try {
@@ -24,10 +25,20 @@ function HomeTabs() {
         }
     };
 
+    const fetchPermisos = async () => {
+        try {
+            const permisosUsuario = await getPermisosUsuario(rut); // Implementa esta función en tu backend
+            setPermisoUsuario(permisosUsuario);
+        } catch (error) {
+            console.error('Error fetching permisos:', error);
+        }
+    };
+
     useEffect(() => {
         if (depto && rut) {
             getIsJefe();
             setDepto(depto);
+            fetchPermisos();
         }
     }, [depto, rut, setDepto]);
 
@@ -45,7 +56,15 @@ function HomeTabs() {
 
     const handleBack = () => {
         window.location.href = 'https://appx.laflorida.cl/login/menu.php';
+
+        
     };
+
+    const hasPermission = (permission) => {
+        const permisos = permisoUsuario?.perfil?.permisos?.map(p => p.nombre) || [];
+        return permisos.includes(permission);
+    };
+
 
     return (
         <Container fluid className="position-relative p-3">
@@ -99,8 +118,27 @@ function HomeTabs() {
                                         Solicitudes
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        <Dropdown.Item href="/sol/solicitudes">Solicitar</Dropdown.Item>
-                                        <Dropdown.Item href="/sol/missolicitudes">Mis solicitudes</Dropdown.Item>
+                                        
+                                            <Dropdown.Item href="/sol/solicitudes">
+                                                Solicitar
+                                            </Dropdown.Item>
+                                        
+                                      
+                                            <Dropdown.Item href="/sol/missolicitudes">
+                                                Mis solicitudes
+                                            </Dropdown.Item>
+                                      
+                                        {hasPermission("GESTIONAR_USUARIOS") && (
+                                            <Dropdown.Item href="/sol/usuarios">Usuarios</Dropdown.Item>
+                                        )}
+                                        {hasPermission("GESTIONAR_PERFILES") && (
+                                            <Dropdown.Item href="/sol/perfiles">Perfiles</Dropdown.Item>
+                                        )}
+                                        {hasPermission("VER_DECRETO") && (
+                                            <Dropdown.Item href="/sol/decretos">
+                                                Generación de Decretos
+                                            </Dropdown.Item>
+                                        )}
                                     </Dropdown.Menu>
                                 </Dropdown>
 

@@ -1,7 +1,13 @@
 /* eslint-disable react/prop-types */
 import { Card, Col, Row, Image } from "react-bootstrap";
 
-function CardFuncionario({ nombres, apellidopaterno, apellidomaterno, contrato, departamento }) {
+export const CardFuncionario = ({
+    nombres,
+    apellidopaterno,
+    apellidomaterno,
+    contrato,
+    departamento
+}) => {
     const { escalafon, grado, nombrecontrato } = contrato;
     const { nombreDepartamento } = departamento;
 
@@ -23,7 +29,7 @@ function CardFuncionario({ nombres, apellidopaterno, apellidomaterno, contrato, 
                         <h5><strong>Tipo de Contrato </strong>{capitalize(nombrecontrato)}</h5>
                         <h5><strong>Escalafon </strong>{capitalize(escalafon)} Grado {grado}</h5>
                         <h4><strong>{capitalize(nombreDepartamento)} </strong> </h4>
-                        
+
                     </Col>
                 </Row>
             </Card.Body>
@@ -32,3 +38,7 @@ function CardFuncionario({ nombres, apellidopaterno, apellidomaterno, contrato, 
 }
 
 export default CardFuncionario;
+
+
+
+

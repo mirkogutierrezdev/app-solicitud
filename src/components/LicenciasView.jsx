@@ -1,7 +1,7 @@
-/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import { Table, Pagination, Form, Row, Col, Card } from 'react-bootstrap';
 import DetalleLmView from './DetalleLmView';
+import PropTypes from 'prop-types';
 
 const initialDetails = {
     diasPago: 0,
@@ -17,7 +17,8 @@ const initialDetails = {
     subSalud: 0
 };
 
-function LicenciasView({ licencias }) {
+export const LicenciasView = ({ licencias }) => {
+
     const [selectedLicencia, setSelectedLicencia] = useState(initialDetails);
     const [filteredLicencias, setFilteredLicencias] = useState([]);
     const [selectedYear, setSelectedYear] = useState('');
@@ -136,4 +137,9 @@ function formatDate(dateString) {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
+}
+
+
+LicenciasView.propTypes = {
+    licencias: PropTypes.array
 }

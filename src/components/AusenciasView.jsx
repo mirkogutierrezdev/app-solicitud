@@ -1,8 +1,8 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { Table, Pagination, Tabs, Tab, Form } from 'react-bootstrap';
 
-function AusenciasView({ ausencias }) {
+export const  AusenciasView = ({ ausencias })=> {
     const currentYear = new Date().getFullYear().toString();
     const [filteredAusencias, setFilteredAusencias] = useState([]);
     const [sortAsc, setSortAsc] = useState(true);
@@ -145,3 +145,7 @@ function AusenciasView({ ausencias }) {
 }
 
 export default AusenciasView;
+
+AusenciasView.propTypes = {
+    ausencias : PropTypes.array
+}

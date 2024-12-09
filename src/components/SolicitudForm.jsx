@@ -2,7 +2,7 @@
 import { Col, Form, Row } from "react-bootstrap";
 import PropTypes from 'prop-types';
 
-function SolicitudForm({
+export const SolicitudForm = ({
   option,
   setOption,
   optionAdmIni,
@@ -20,7 +20,7 @@ function SolicitudForm({
   handleOptionChangeAdmnFin,
   handleStartDateChange,
   handleEndDateChange,
-}) {
+}) => {
   return (
     <Row className="align-items-center mb-3">
       <Col md={option === "Administrativo" ? 2 : 3}>

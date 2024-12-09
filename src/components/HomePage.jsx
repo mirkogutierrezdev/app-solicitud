@@ -3,7 +3,7 @@ import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import HomeView from './HomeView';
 import DataContext from '../context/DataContext'; // Importamos el DataContext
 
-function HomePage() {
+export const  HomePage=()=> {
   // Usamos useContext para acceder a los valores del contexto
   const { data, loadingData, error } = useContext(DataContext);
 

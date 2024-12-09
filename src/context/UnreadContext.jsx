@@ -1,10 +1,9 @@
-// src/context/UnreadContext.jsx
 import { createContext, useState, useEffect } from 'react';
 import { getSolicitudesInbox } from '../services/services';
+import PropTypes from 'prop-types';
 
 const UnreadContext = createContext();
 
-// eslint-disable-next-line react/prop-types
 export const UnreadProvider = ({ children }) => {
     const [unreadCount, setUnreadCount] = useState(0);
     const [depto, setDepto] = useState(null);
@@ -42,3 +41,7 @@ export const UnreadProvider = ({ children }) => {
 };
 
 export default UnreadContext;
+
+UnreadProvider.propTypes = {
+    children: PropTypes.object
+}

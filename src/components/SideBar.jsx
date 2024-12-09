@@ -4,7 +4,7 @@ import DataContext from '../context/DataContext';
 import { esJefe } from '../services/services';
 import UnreadContext from '../context/UnreadContext';
 
-const Sidebar = () => {
+export const Sidebar = () => {
 
     const { data } = useContext(DataContext);
     const { unreadCount, setDepto } = useContext(UnreadContext);

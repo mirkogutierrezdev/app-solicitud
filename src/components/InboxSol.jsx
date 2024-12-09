@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 import { Container, Table, Spinner, Alert, Pagination, Button, Tabs, Tab } from "react-bootstrap";
 import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones, getEsSub, getSubrogancias } from "../services/services";
@@ -9,7 +8,7 @@ import InboxRow from "./InboxRow";
 import Swal from "sweetalert2";
 import { Subrogancias } from "./Subgorancias";
 
-const InboxSol = () => {
+export const InboxSol = () => {
     const { data, rut } = useContext(DataContext); // Acceso al RUT y los datos del funcionario
     const { setDepto } = useContext(UnreadContext); // Para manejar el departamento en UnreadContext
 
@@ -24,6 +23,7 @@ const InboxSol = () => {
     const [isCheckedAll, setIsCheckedAll] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
     const [esSubdir, setEsSubdir] = useState(false);
+    // eslint-disable-next-line no-unused-vars
     const [subrogatedSolicitudes, setSubrogatedSolicitudes] = useState([]);
     const [subrogancias, setSubrogancias] = useState([]);
 
@@ -87,7 +87,6 @@ const InboxSol = () => {
     };
 
     const fetchSubrogatedSolicitudes = async () => {
-        console.log("Subrogancias:", subrogancias); // Debug para verificar estructura
 
         const subrogatedDeptos = subrogancias
             .filter(sub => sub?.subDepartamento) // Verifica si el campo existe
@@ -113,19 +112,6 @@ const InboxSol = () => {
             fetchSubrogatedSolicitudes();
         }
     }, [subrogancias]);
-
-
-
-
-
-    useEffect(() => {
-        // Mostrar las subrogancias cargadas en la consola
-        if (subrogatedSolicitudes.length > 0) {
-            console.log("Subrogancias cargadas:", subrogatedSolicitudes);
-        } else {
-            console.log("No se encontraron subrogancias para el RUT actual.");
-        }
-    }, [subrogatedSolicitudes]);
 
 
 
@@ -320,7 +306,6 @@ const InboxSol = () => {
     const paginatedItems = (items) => items.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredSolicitudes.length / itemsPerPage);
 
-    console.log(solicitudes);
 
     return (
         <Container>

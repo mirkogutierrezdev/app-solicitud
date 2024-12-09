@@ -13,7 +13,7 @@ const initialValues = {
     rutJefe: 0
 };
 
-const GrabarDepto = () => {
+export const GrabarDepto = () => {
     const [dataDepto, setDataDepto] = useState([]);
     const [modifiedData, setModifiedData] = useState([initialValues]);
     const [loading, setLoading] = useState(true);

@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import { Col, Form } from "react-bootstrap";
 
 export const AdmSelect = ({
@@ -9,19 +9,15 @@ export const AdmSelect = ({
     handleEndDateChange,
     maxEndDate,
     option,
-    optionAdmIni, 
-    optionAdmFin, 
+    optionAdmIni,
+    optionAdmFin,
     handleOptionChangeAdmnIni,
     handleOptionChangeAdmnFin
 }) => {
 
-    
-        console.log(startDate)
-    
-
     return (
         <>
-        <Col md={2}>
+            <Col md={2}>
                 <Form.Group controlId="formSelectOption">
                     <Form.Label className="h5 custom-font-size">Duracion</Form.Label>
                     <Form.Control
@@ -59,7 +55,7 @@ export const AdmSelect = ({
                         onChange={handleOptionChangeAdmnFin}
                         className="p-2 custom-font-size"
                         disabled={!option}
-                        >
+                    >
                         <option value="">Seleccione una opción</option>
                         <option value="mañana">Mañana</option>
                         <option value="tarde">Tarde</option>
@@ -81,7 +77,7 @@ export const AdmSelect = ({
                     />
                 </Form.Group>
             </Col>
-           
+
         </>
 
 
@@ -89,3 +85,21 @@ export const AdmSelect = ({
 }
 
 export default AdmSelect;
+
+AdmSelect.propTypes = {
+    startDate: PropTypes.string,
+    handleStartDateChange: PropTypes.func.isRequired,
+    calculateFirstDayOfMonth: PropTypes.func.isRequired,
+    endDate: PropTypes.string,
+    handleEndDateChange: PropTypes.func.isRequired,
+    maxEndDate: PropTypes.string,
+    option: PropTypes.string,
+    optionAdmIni: PropTypes.string,
+    optionAdmFin: PropTypes.string,
+    handleOptionChangeAdmnIni: PropTypes.func.isRequired,
+    handleOptionChangeAdmnFin: PropTypes.func.isRequired
+
+
+
+
+}

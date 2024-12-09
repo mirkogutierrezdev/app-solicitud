@@ -1,8 +1,8 @@
-/* eslint-disable react/prop-types */
 import { Container, Row, Col, Alert } from 'react-bootstrap';
 import CardFuncionario from './CardFuncionario';
+import PropTypes from 'prop-types';
 
-function HomeView({ funcionario }) {
+export const HomeView = ({ funcionario }) => {
     if (!funcionario) {
         return (
             <Container className="mt-4">
@@ -65,3 +65,7 @@ function HomeView({ funcionario }) {
 }
 
 export default HomeView;
+
+HomeView.propTypes = {
+    funcionario: PropTypes.object
+}

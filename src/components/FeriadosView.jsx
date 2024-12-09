@@ -1,7 +1,7 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import { Container, Row, Table } from 'react-bootstrap';
 
-function FeriadosView({ feriados }) {
+export const FeriadosView = ({ feriados })=> {
     return (
         <Container className="mt-4">
             <Row className="justify-content-center">
@@ -45,3 +45,7 @@ function FeriadosView({ feriados }) {
 }
 
 export default FeriadosView;
+
+FeriadosView.propTypes={
+    feriados:PropTypes.array
+}

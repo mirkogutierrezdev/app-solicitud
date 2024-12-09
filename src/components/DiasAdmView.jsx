@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Row, Table } from "react-bootstrap";
 
-function DiasAdmView({ diasAdm }) {
+export const  DiasAdmView = ({ diasAdm })=> {
 
     const {
         maximo,
@@ -40,3 +40,4 @@ function DiasAdmView({ diasAdm }) {
 }
 
 export default DiasAdmView;
+

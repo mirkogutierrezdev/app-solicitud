@@ -1,15 +1,15 @@
 import axios from 'axios';
 
-//const urlPrefix = `https://appx.laflorida.cl`
 
-//const urlPrefixLocal = `http://localhost:8082`
+const urlPrefixLocal = `http://localhost:8082`
+
+//const urlPrefixLocal = `https://appx.laflorida.cl`
 
 //Función que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async (rut) => {
 
 
-  //  const url = urlPrefixLocal + `/api/smc/byRut/${rut}`; //Rut Director
-      const url = `https://appx.laflorida.cl/api/smc/byRut/${rut}`; //Rut Director
+    const url = urlPrefixLocal + `/api/smc/byRut/${rut}`; //Rut Director
 
     try {
         const response = await axios.get(url);
@@ -24,8 +24,7 @@ export const getFuncionario = async (rut) => {
 export const getDiasWork = async (fechaIni, fechaTermino) => {
 
 
-    //const url = urlPrefixLocal + `/api/utils/calcular?fechaInicio=${fechaIni}&fechaTermino=${fechaTermino}`;
-       const url = `https://appx.laflorida.cl/api/utils/calcular?fechaInicio=${fechaIni}&fechaTermino=${fechaTermino}`;
+    const url = urlPrefixLocal + `/api/utils/calcular?fechaInicio=${fechaIni}&fechaTermino=${fechaTermino}`;
 
     try {
         const response = await axios.get(url);
@@ -40,8 +39,7 @@ export const getDiasWork = async (fechaIni, fechaTermino) => {
 export const saveSolicitud = async (solicitud) => {
 
 
-    //const url = urlPrefixLocal + `/api/solicitud/create`;
-      const url = `https://appx.laflorida.cl/api/solicitud/create`;
+    const url = urlPrefixLocal + `/api/solicitud/create`;
 
     try {
         const response = await axios.post(url, solicitud, {
@@ -78,8 +76,7 @@ export const saveSolicitud = async (solicitud) => {
 export const saveEntrada = async (entrada) => {
 
 
-    //const url = urlPrefixLocal + `/api/entrada/create`;
-    const url = `https://appx.laflorida.cl/api/entrada/create`;
+    const url = urlPrefixLocal + `/api/entrada/create`;
 
     try {
         const response = await axios.post(url, entrada, {
@@ -98,8 +95,7 @@ export const saveEntrada = async (entrada) => {
 export const saveDerivacion = async (derivacion) => {
 
 
-    //const url = urlPrefixLocal + `/api/derivacion/create`;
-      const url = `https://appx.laflorida.cl/api/derivacion/create`;
+    const url = urlPrefixLocal + `/api/derivacion/create`;
 
     try {
         const response = await axios.post(url, derivacion, {
@@ -118,8 +114,7 @@ export const saveDerivacion = async (derivacion) => {
 export const getSolicitudesInbox = async (depto) => {
 
 
-    //const url = urlPrefixLocal + `/api/solicitud/departamento/${depto}`;
-    const url = `https://appx.laflorida.cl/api/solicitud/departamento/${depto}`;
+    const url = urlPrefixLocal + `/api/solicitud/departamento/${depto}`;
 
     try {
         const response = await axios.get(url);
@@ -134,8 +129,7 @@ export const getSolicitudesInbox = async (depto) => {
 export const getDepto = async () => {
 
 
-    //const url = urlPrefixLocal + `/api/departamentos/list`;
-      const url = `https://appx.laflorida.cl/api/departamentos/list`;
+    const url = urlPrefixLocal + `/api/departamentos/list`;
 
     try {
         const response = await axios.get(url);
@@ -150,8 +144,7 @@ export const getDepto = async () => {
 export const postDepto = async (departamentos) => {
 
 
-    //const url = urlPrefixLocal + `/api/departamentos/create`;
-     const url = `https://appx.laflorida.cl/api/departamentos/create`;
+    const url = urlPrefixLocal + `/api/departamentos/create`;
 
     try {
         const response = await axios.post(url, departamentos, {
@@ -170,8 +163,7 @@ export const postDepto = async (departamentos) => {
 export const esJefe = async (depto, rut) => {
 
 
-    //const url = urlPrefixLocal + `/api/departamentos/esjefe/${depto}/${rut}`;
-      const url = `https://appx.laflorida.cl/api/departamentos/esjefe/${depto}/${rut}`;
+    const url = urlPrefixLocal + `/api/departamentos/esjefe/${depto}/${rut}`;
 
     try {
         const response = await axios.get(url);
@@ -186,8 +178,7 @@ export const esJefe = async (depto, rut) => {
 export const saveAprobacion = async (solicitud) => {
 
 
-    //const url = urlPrefixLocal + `/api/aprobaciones/create`;
-        const url = `https://appx.laflorida.cl/api/aprobaciones/create`;
+    const url = urlPrefixLocal + `/api/aprobaciones/create`;
 
     try {
         const response = await axios.post(url, solicitud, {
@@ -206,8 +197,7 @@ export const saveAprobacion = async (solicitud) => {
 export const saveRechazo = async (solicitud) => {
 
 
-    //const url = urlPrefixLocal + `/api/rechazos/create`;
-     const url = `https://appx.laflorida.cl/api/rechazos/create`;
+    const url = urlPrefixLocal + `/api/rechazos/create`;
 
     try {
         const response = await axios.post(url, solicitud, {
@@ -226,8 +216,7 @@ export const saveRechazo = async (solicitud) => {
 export const getEsSub = async (depto) => {
 
 
-    //const url = urlPrefixLocal + `/api/departamentos/esSub/${depto}`;
-     const url = `https://appx.laflorida.cl/api/departamentos/esSub/${depto}`;
+    const url = urlPrefixLocal + `/api/departamentos/esSub/${depto}`;
 
     try {
         const response = await axios.get(url);
@@ -241,8 +230,7 @@ export const getEsSub = async (depto) => {
 export const getSolicitudesByRut = async (rut) => {
 
 
-    //const url = urlPrefixLocal + `/api/solicitud/byRut/${rut}`;
-       const url = `https://appx.laflorida.cl/api/solicitud/byRut/${rut}`;
+    const url = urlPrefixLocal + `/api/solicitud/byRut/${rut}`;
 
     try {
         const response = await axios.get(url);
@@ -256,8 +244,7 @@ export const getSolicitudesByRut = async (rut) => {
 export const getRechazosBySolicitud = async (solicitudId) => {
 
 
-    //const url = urlPrefixLocal + `/api/rechazos/bySolicitud/${solicitudId}`;
-     const url = `https://appx.laflorida.cl/api/rechazos/bySolicitud/${solicitudId}`;
+    const url = urlPrefixLocal + `/api/rechazos/bySolicitud/${solicitudId}`;
 
     try {
         const response = await axios.get(url);
@@ -271,8 +258,7 @@ export const getRechazosBySolicitud = async (solicitudId) => {
 export const getAprobacionesBySolicitud = async (solicitudId) => {
 
 
-    //const url = urlPrefixLocal + `/api/aprobaciones/bySolicitud/${solicitudId}`;
-    const url = `https://appx.laflorida.cl/api/aprobaciones/bySolicitud/${solicitudId}`;
+    const url = urlPrefixLocal + `/api/aprobaciones/bySolicitud/${solicitudId}`;
 
     try {
         const response = await axios.get(url);
@@ -285,8 +271,7 @@ export const getAprobacionesBySolicitud = async (solicitudId) => {
 
 export const getPdf = async (solicitudId) => {
 
-    //const url = urlPrefixLocal + `/api/pdf/solicitudes/${solicitudId}`;
-     const url = `https://appx.laflorida.cl/api/pdf/solicitudes/${solicitudId}`;
+    const url = urlPrefixLocal + `/api/pdf/solicitudes/${solicitudId}`;
 
 
     try {
@@ -301,8 +286,7 @@ export const getPdf = async (solicitudId) => {
 export const getFeriados = async (fechaInicio, fechaTermino) => {
 
 
-    //const url = urlPrefixLocal + `/api/utils/feriados/obtener?fechaInicio=${fechaInicio}&fechaTermino=${fechaTermino}`;
-    const url = `https://appx.laflorida.cl/api/utils/feriados/obtener?fechaInicio=${fechaInicio}&fechaTermino=${fechaTermino}`;
+    const url = urlPrefixLocal + `/api/utils/feriados/obtener?fechaInicio=${fechaInicio}&fechaTermino=${fechaTermino}`;
 
     try {
         const response = await axios.get(url);
@@ -317,8 +301,7 @@ export const getFeriados = async (fechaInicio, fechaTermino) => {
 export const getVderivaciones = async (solicitudId) => {
 
 
-    //const url = urlPrefixLocal + `/api/derivacion/solicitud/${solicitudId}`;
-      const url = `https://appx.laflorida.cl/api/derivacion/solicitud/${solicitudId}`;
+    const url = urlPrefixLocal + `/api/derivacion/solicitud/${solicitudId}`;
 
     try {
         const response = await axios.get(url);
@@ -331,8 +314,7 @@ export const getVderivaciones = async (solicitudId) => {
 
 export const getSolicitudesEnTramites = async (rut) => {
 
-    //const url = urlPrefixLocal + `/api/solicitud/entramite/${rut}`;
-    const url = `https://appx.laflorida.cl/api/solicitud/entramite/${rut}`;
+    const url = urlPrefixLocal + `/api/solicitud/entramite/${rut}`;
 
     try {
         const response = await axios.get(url);
@@ -346,8 +328,7 @@ export const getSolicitudesEnTramites = async (rut) => {
 
 export const saveEntradas = async (entrada) => {
 
-    //const url = urlPrefixLocal + `/api/entrada/createEntradas`;
-    const url = `https://appx.laflorida.cl/api/entrada/createEntradas`;
+    const url = urlPrefixLocal + `/api/entrada/createEntradas`;
 
 
 
@@ -366,8 +347,7 @@ export const saveEntradas = async (entrada) => {
 
 export const saveDerivaciones = async (derivaciones) => {
 
-    //const url = urlPrefixLocal + `/api/derivacion/createDerivaciones`;
-    const url = `https://appx.laflorida.cl/api/derivacion/createDerivaciones`;
+    const url = urlPrefixLocal + `/api/derivacion/createDerivaciones`;
 
 
 
@@ -386,8 +366,7 @@ export const saveDerivaciones = async (derivaciones) => {
 
 export const saveAprobaciones = async (aprobaciones) => {
 
-    //const url = urlPrefixLocal + `/api/aprobaciones/createAprobaciones`;
-    const url = `https://appx.laflorida.cl/api/aprobaciones/createAprobaciones`;
+    const url = urlPrefixLocal + `/api/aprobaciones/createAprobaciones`;
 
     try {
         const response = await axios.post(url, aprobaciones, {
@@ -406,8 +385,7 @@ export const saveAprobaciones = async (aprobaciones) => {
 export const getAllAprobaciones = async () => {
 
 
-    //const url = urlPrefixLocal + `/api/aprobaciones/getaprobaciones`;
-      const url = `https://appx.laflorida.cl/api/aprobaciones/getaprobaciones`;
+    const url = urlPrefixLocal + `/api/aprobaciones/getaprobaciones`;
 
     try {
         const response = await axios.get(url);
@@ -423,8 +401,7 @@ export const getAllAprobaciones = async () => {
 export const getDecretos = async (nroDecreto) => {
 
 
-    //    const url = urlPrefixLocal+`/decretos/${nroDecreto}/find`;
-    const url = `https://appx.laflorida.cl/decretos/${nroDecreto}/find`;
+        const url = urlPrefixLocal+`/decretos/${nroDecreto}/find`;
 
     try {
         const response = await axios.get(url);
@@ -438,8 +415,7 @@ export const getDecretos = async (nroDecreto) => {
 
 export const saveDecretos = async (decretos) => {
 
-//    const url = urlPrefixLocal+`/decretos/crear`;
-    const url = `https://appx.laflorida.cl/decretos/crear`;
+    const url = urlPrefixLocal+`/decretos/crear`;
 
     try {
         const response = await axios.post(url, decretos, {
@@ -475,8 +451,7 @@ export const getFuncionarioApi = async () => {
 
 export const getListDeptos = async (depto) => {
 
-    //    const url = urlPrefixLocal+`/api/departamentos/listDtoDepto/${depto}`;
-    const url = `https://appx.laflorida.cl/api/departamentos/listDtoDepto/${depto}`;
+        const url = urlPrefixLocal+`/api/departamentos/listDtoDepto/${depto}`;
 
     try {
         const response = await axios.get(url);
@@ -491,8 +466,7 @@ export const getListDeptos = async (depto) => {
 export const saveSubrogancia = async (subrogancia) => {
 
 
-    //   const url = urlPrefixLocal+`/api/sub/create`;
-    const url = `https://appx.laflorida.cl/api/sub/create`;
+       const url = urlPrefixLocal+`/api/sub/create`;
 
     try {
         const response = await axios.post(url, subrogancia, {
@@ -510,8 +484,7 @@ export const saveSubrogancia = async (subrogancia) => {
 export const getSubrogancias = async (rut) => {
 
 
-    //    const url = urlPrefixLocal+`/api/sub/view/by-rut/${rut}`;
-    const url = `https://appx.laflorida.cl/api/sub/view/by-rut/${rut}`;
+        const url = urlPrefixLocal+`/api/sub/view/by-rut/${rut}`;
 
     try {
         const response = await axios.get(url);
@@ -521,3 +494,114 @@ export const getSubrogancias = async (rut) => {
         return null;
     }
 }
+
+export const getPerfiles = async () => {
+
+    const url = urlPrefixLocal+`/api/perfiles/list`;
+
+try {
+    const response = await axios.get(url);
+    return response.data;
+} catch (error) {
+    console.error(error);
+    return null;
+}
+}
+
+
+export const savePerfil = async (perfil) => {
+    const url = perfil.id
+        ? `${urlPrefixLocal}/api/perfiles/${perfil.id}` // Actualizar perfil
+        : `${urlPrefixLocal}/api/perfiles/create`; // Crear nuevo perfil
+
+    const method = perfil.id ? "PUT" : "POST";
+
+    try {
+        const response = await axios({
+            method: method,
+            url: url,
+            data: perfil,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error al guardar el perfil:", error);
+        throw error; // Lanza el error para manejarlo en el frontend
+    }
+};
+
+
+
+export const deletePerfil = async (id) => {
+    const url = `${urlPrefixLocal}/api/perfiles/${id}`;
+    try {
+        await axios.delete(url); // Llamada al backend
+        console.log("Perfil eliminado correctamente");
+    } catch (error) {
+        console.error("Error al eliminar el perfil:", error);
+        throw error; // Lanza el error para manejarlo en el frontend
+    }
+};
+
+
+export const getPermisos = async () => {
+
+    const url = urlPrefixLocal+`/api/permisos/list`;
+
+try {
+    const response = await axios.get(url);
+    return response.data;
+} catch (error) {
+    console.error(error);
+    return null;
+}
+}
+
+export const getUsuarios = async () => {
+
+    const url = urlPrefixLocal+`/api/usuarios/list`;
+
+try {
+    const response = await axios.get(url);
+    return response.data;
+} catch (error) {
+    console.error(error);
+    return null;
+}
+}
+
+export const saveUsuario = async (usuario) => {
+
+
+    const url = urlPrefixLocal+`/api/usuarios/create`;
+
+ try {
+     const response = await axios.post(url, usuario, {
+         headers: {
+             'Content-Type': 'application/json'
+         }
+     });
+     return response.data;
+ } catch (error) {
+     console.error('Error fetching data:', error);
+     return null;
+ }
+}
+
+
+export const getPermisosUsuario = async (rut) => {
+
+    const url = urlPrefixLocal+`/api/usuarios/${rut}`;
+
+try {
+    const response = await axios.get(url);
+    return response.data;
+} catch (error) {
+    console.error(error);
+    return null;
+}
+}
+
+

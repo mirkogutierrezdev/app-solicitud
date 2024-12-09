@@ -1,12 +1,13 @@
-/* eslint-disable react/prop-types */
 import { Button } from "react-bootstrap";
-import { MdOutlineCancel, MdRemoveRedEye,  MdOpenInNew } from "react-icons/md";
+import { MdOutlineCancel, MdRemoveRedEye, MdOpenInNew } from "react-icons/md";
 import '../css/InboxSolicitudes.css';
 import { FaCircleCheck } from "react-icons/fa6";
 import { RiInboxArchiveLine, RiLoginBoxLine } from "react-icons/ri";
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
-const InboxActions = ({
+
+export const InboxActions = ({
     solicitud: dataSol,
     handleRecibir,
     isRecibirDisabled,
@@ -40,17 +41,17 @@ const InboxActions = ({
     useEffect(() => {
         const getUrlPdf = () => {
             if (dataSol)
-                if( dataSol.aprobacion) {
-                const { urlPdf } = dataSol.aprobacion;
-                setUrl(urlPdf);
-            } else {
-                setUrl(''); // O cualquier valor predeterminado si `aprobacion` es null o undefined
-            }
+                if (dataSol.aprobacion) {
+                    const { urlPdf } = dataSol.aprobacion;
+                    setUrl(urlPdf);
+                } else {
+                    setUrl(''); // O cualquier valor predeterminado si `aprobacion` es null o undefined
+                }
         };
-    
+
         getUrlPdf();
     }, [dataSol]);
-    
+
     return (
         <>
             <td>
@@ -135,7 +136,7 @@ const InboxActions = ({
                             <MdOpenInNew /> {/* Ícono para abrir en nueva pestaña */}
                         </Button>
 
-                       
+
                     </td>
                 )
             }
@@ -144,3 +145,22 @@ const InboxActions = ({
 };
 
 export default InboxActions;
+
+InboxActions.propTypes = {
+    solicitud: PropTypes.object,
+    handleRecibir: PropTypes.func,
+    isRecibirDisabled: PropTypes.bool,
+    esSubdir: PropTypes.bool,
+    handleGuardarYDerivar: PropTypes.func,
+    isDerivarDisabled: PropTypes.bool,
+    handleRechazar: PropTypes.func,
+    isRechazarDisable: PropTypes.bool,
+    handlerAprobar: PropTypes.func,
+    isAprobarDisable: PropTypes.bool,
+    setOpen: PropTypes.func,
+    open: PropTypes.bool,
+    estadoClass: PropTypes.string,
+    handleSelect: PropTypes.func,
+    isChecked: PropTypes.bool,
+    hasEntries: PropTypes.bool
+}

@@ -1,10 +1,9 @@
-/* eslint-disable react/prop-types */
 import { Spinner, Alert, Container, Row, Col } from 'react-bootstrap';
 import AusenciasView from './AusenciasView';
 import { useContext } from 'react';
 import DataContext from '../context/DataContext';
 
-function AusenciasPage() {
+export const  AusenciasPage =()=> {
     const { data, loadingData, error } = useContext(DataContext);
     const ausencias = data ? data.ausencias : [];
 

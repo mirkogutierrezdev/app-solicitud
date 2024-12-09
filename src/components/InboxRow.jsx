@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import { useContext, useEffect, useState } from "react";
 import { getEsSub, saveAprobacion, saveDerivacion, saveEntrada, saveRechazo } from "../services/services";
 import DataContext from "../context/DataContext";
@@ -7,8 +5,15 @@ import Swal from 'sweetalert2';
 import '../css/InboxSolicitudes.css';
 import InboxActions from "./InboxActions";
 import InboxCollapse from "./InboxCollapse";
+import PropTypes from "prop-types";
 
-const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
+export const InboxRow = ({
+    solicitud,
+    open,
+    setOpen,
+    handleSelect,
+    isChecked
+}) => {
 
     const infoFun = useContext(DataContext);
 
@@ -127,7 +132,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                  
+
                     await saveDerivacion(derivacion);
 
                     Swal.fire({
@@ -163,7 +168,6 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
             if (result.isConfirmed) {
                 try {
                     await saveEntrada(entrada);
-                  console.log(entrada);
                     Swal.fire({
                         text: "Solicitud recibida con éxito",
                         icon: "success"
@@ -240,8 +244,8 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    
                     await saveAprobacion(solicitudDto);
+
                     setIsAprobarDisabled(true);
                     Swal.fire({
                         text: "Solicitud aprobada con éxito",
@@ -256,7 +260,7 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
                         icon: "error"
                     });
                     console.log(error);
-                }finally{
+                } finally {
                     setIsAprobarDisabled(false);
                 }
             }
@@ -300,3 +304,11 @@ const InboxRow = ({ solicitud, open, setOpen, handleSelect, isChecked }) => {
 };
 
 export default InboxRow;
+
+InboxRow.propTypes = {
+    solicitud: PropTypes.object,
+    open: PropTypes.bool,
+    setOpen: PropTypes.func,
+    handleSelect: PropTypes.func,
+    isChecked: PropTypes.bool
+}

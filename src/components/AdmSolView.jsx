@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
+
 import { Table } from "react-bootstrap";
 
 // eslint-disable-next-line react/prop-types
-function AdmSolView({ diasAdm }) {
+export const  AdmSolView = ({ diasAdm })=> {
 
     const {
         usados,
@@ -35,3 +36,4 @@ function AdmSolView({ diasAdm }) {
 }
 
 export default AdmSolView;
+

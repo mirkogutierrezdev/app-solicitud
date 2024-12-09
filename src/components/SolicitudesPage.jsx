@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Col, Container, Row, Card } from "react-bootstrap";
 import AdmSolView from "./AdmSolView";
 import FeriadoSolView from "./FeriadoSolView";
-import DetalleSolView from "./DetallaSolView";
+import DetalleSolView from "./DetalleSolView";
 import { getDiasWork, getFeriados, getSolicitudesEnTramites } from "../services/services";
 import '../css/SolicitudesPage.css'; 
 import Swal from "sweetalert2";
@@ -10,7 +10,8 @@ import DataContext from "../context/DataContext";
 import PropTypes from 'prop-types';
 import SolicitudForm from "./SolicitudForm";
 
-function SolicitudesPage() {
+export const  SolicitudesPage=()=> {
+    
     const { data } = useContext(DataContext);
 
     const currentYear = new Date().getFullYear();

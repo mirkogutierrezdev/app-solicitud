@@ -1,8 +1,9 @@
-/* eslint-disable react/prop-types */
+
+import PropTypes from "prop-types";
 import { Table } from "react-bootstrap";
 
-// eslint-disable-next-line react/prop-types
-function FeriadoSolView({ feriados }) {
+
+export const FeriadoSolView = ({ feriados }) => {
 
     const currentYear = new Date().getFullYear();
 
@@ -46,3 +47,8 @@ function FeriadoSolView({ feriados }) {
 }
 
 export default FeriadoSolView;
+
+FeriadoSolView.propTypes = {
+    feriados: PropTypes.array
+
+}
