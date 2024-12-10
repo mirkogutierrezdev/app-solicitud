@@ -19,14 +19,13 @@ const DataWrapper = ({ children, rut }) => {
     const { setRut, fetchFuncionarioData } = useContext(DataContext); // Obtenemos setRut y fetchFuncionarioData del contexto
 
     useEffect(() => {
-        setRut(10397956)
-        fetchFuncionarioData(10397956)
+   
 
 
-        /* if (rut) {
+         if (rut) {
             setRut(rut);  // Actualizamos el RUT en el contexto
             fetchFuncionarioData(rut);  // Obtenemos los datos del funcionario basado en el RUT
-        } */
+        } 
     }, [rut]);  // El efecto se ejecuta cuando el RUT cambia
 
     return children;

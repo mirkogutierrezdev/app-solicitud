@@ -9,8 +9,8 @@ import PropTypes from "prop-types";
 
 export const InboxRow = ({
     solicitud,
-    open,
-    setOpen,
+    openId,
+    handleToggle,
     handleSelect,
     isChecked
 }) => {
@@ -229,12 +229,12 @@ export const InboxRow = ({
 
 
     const handlerAprobar = async () => {
-
         const solicitudDto = {
             solicitudId: solicitud.solicitud.id,
             rut: data.rut,
             estado: "APROBADA"
         };
+    
         Swal.fire({
             title: '¿Está seguro de aprobar la solicitud?',
             showDenyButton: true,
@@ -244,21 +244,42 @@ export const InboxRow = ({
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await saveAprobacion(solicitudDto);
-
                     setIsAprobarDisabled(true);
+    
+                    // Mostrar el modal de espera mientras se procesa la aprobación
+                    const waitModal = Swal.fire({
+                        title: 'Estamos firmando digitalmente su documento...',
+                        text: 'Por favor espere mientras procesamos la solicitud.',
+                        icon: 'info',
+                        showConfirmButton: false,
+                        allowOutsideClick: false, // Impide cerrar el modal haciendo clic fuera
+                        allowEscapeKey: false, // Desactiva la tecla ESC para cerrar el modal
+                        willOpen: () => {
+                            // Puedes agregar alguna animación o lógica adicional aquí si lo deseas
+                        }
+                    });
+    
+                    // Simula la espera de la firma digital (llama a tu función para guardar la aprobación)
+                    await saveAprobacion(solicitudDto);
+    
+                    // Cierra el modal de espera
+                    waitModal.close();
+    
+                    // Muestra el mensaje de éxito
                     Swal.fire({
                         text: "Solicitud aprobada con éxito",
                         icon: "success"
                     });
-
-
-                    setIsAprobarDisabled(true); // Deshabilitar el botón después de aprobar con éxito
+    
                 } catch (error) {
+                    // Cierra el modal de espera si hubo un error
+                    Swal.close();
+    
                     Swal.fire({
                         text: "Error al aprobar la solicitud",
                         icon: "error"
                     });
+    
                     console.log(error);
                 } finally {
                     setIsAprobarDisabled(false);
@@ -266,6 +287,8 @@ export const InboxRow = ({
             }
         });
     };
+    
+    
 
     useEffect(() => {
         verificarEstadoBotones();
@@ -291,14 +314,16 @@ export const InboxRow = ({
                     esSubdir={esSubdir} handleGuardarYDerivar={handleGuardarYDerivar}
                     isDerivarDisabled={isDerivarDisabled} handleRechazar={handleRechazar}
                     isRechazarDisable={isRechazarDisabled} handlerAprobar={handlerAprobar}
-                    isAprobarDisable={isAprobarDisabled} setOpen={setOpen} open={open}
+                    isAprobarDisable={isAprobarDisabled} 
+                    handleToggle={handleToggle} 
+                    openId={openId}
                     estadoClass={estadoClass}
                     handleSelect={handleSelect}
                     isChecked={isChecked}
                     hasEntries={hasDerivation}
                 />
             </tr>
-            <InboxCollapse solicitud={solicitud} open={open} />
+            <InboxCollapse solicitud={solicitud} openId={openId} />
         </>
     );
 };
@@ -307,8 +332,8 @@ export default InboxRow;
 
 InboxRow.propTypes = {
     solicitud: PropTypes.object,
-    open: PropTypes.bool,
-    setOpen: PropTypes.func,
+    openId: PropTypes.number,
+    handleToggle: PropTypes.func,
     handleSelect: PropTypes.func,
     isChecked: PropTypes.bool
 }

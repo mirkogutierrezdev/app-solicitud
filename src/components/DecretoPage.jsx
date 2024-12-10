@@ -80,7 +80,6 @@ export const DecretoPage = () => {
 
     const handleGenerateDecreto = async () => {
         const decretoData = {
-            nroDecreto: decretos.nroDecreto || 0,
             aprobacionesIds: selectedItems
         };
     
@@ -97,6 +96,7 @@ export const DecretoPage = () => {
             if (result.isConfirmed) {
                 // Guardar decreto en el backend
                 await saveDecretos(decretoData);
+             console.log(decretoData);
                 Swal.fire({
                     text: "Decreto generado con éxito",
                     icon: "success"

@@ -41,7 +41,7 @@ export const SolicitudForm = ({
       {option === "Administrativo" && (
         <Col md={2}>
           <Form.Group controlId="formSelectOption2">
-            <Form.Label className="h5 custom-font-size">Duración</Form.Label>
+            <Form.Label className="h5 custom-font-size">Jornada Inicio</Form.Label>
             <Form.Control
               as="select"
               value={optionAdmIni}
@@ -89,7 +89,7 @@ export const SolicitudForm = ({
       {option === "Administrativo" && (
         <Col md={2}>
           <Form.Group controlId="formSelectOption3">
-            <Form.Label className="h5 custom-font-size">Duración</Form.Label>
+            <Form.Label className="h5 custom-font-size">Jornada Termino</Form.Label>
             <Form.Control
               as="select"
               value={optionAdmFin}

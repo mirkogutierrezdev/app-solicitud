@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 
-const urlPrefixLocal = `http://localhost:8082`
+//const urlPrefixLocal = `http://localhost:8082`
 
-//const urlPrefixLocal = `https://appx.laflorida.cl`
+const urlPrefixLocal = `https://appx.laflorida.cl`
 
 //Función que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async (rut) => {
@@ -401,7 +401,7 @@ export const getAllAprobaciones = async () => {
 export const getDecretos = async (nroDecreto) => {
 
 
-        const url = urlPrefixLocal+`/decretos/${nroDecreto}/find`;
+        const url = urlPrefixLocal+`/api/decretos/${nroDecreto}/find`;
 
     try {
         const response = await axios.get(url);
@@ -415,7 +415,7 @@ export const getDecretos = async (nroDecreto) => {
 
 export const saveDecretos = async (decretos) => {
 
-    const url = urlPrefixLocal+`/decretos/crear`;
+    const url = urlPrefixLocal+`/api/decretos/crear`;
 
     try {
         const response = await axios.post(url, decretos, {

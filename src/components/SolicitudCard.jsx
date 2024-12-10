@@ -1,7 +1,8 @@
 import { Card, Button, Collapse, ListGroup } from "react-bootstrap";
-import { MdRemoveRedEye, MdOpenInNew } from "react-icons/md";
+import { MdRemoveRedEye,  } from "react-icons/md";
 import MisSolicitudesDetalle from "./MisSolicitudesDetalle";
 import PropTypes from "prop-types";
+import { FaFilePdf } from "react-icons/fa6";
 
 const SolicitudCard = ({
     solicitudes,
@@ -10,6 +11,8 @@ const SolicitudCard = ({
     open,
     handleToggle
 }) => {
+
+    
     return solicitudes.length > 0 ? (
         solicitudes.map(({ id, fechaSolicitud, tipoSolicitud, estado }) => (
             <Card key={id} className="mb-3">
@@ -36,7 +39,7 @@ const SolicitudCard = ({
                                     onClick={() => window.open(aprobaciones[id].urlPdf, '_blank')}
                                     title="Abrir PDF"
                                 >
-                                    <MdOpenInNew /> Abrir PDF
+                                    <FaFilePdf /> 
                                 </Button>
                             </ListGroup.Item>
                         )}
@@ -61,10 +64,10 @@ const SolicitudCard = ({
 export default SolicitudCard;
 
 SolicitudCard.propTypes = {
-    solicitudes: PropTypes.object,
+    solicitudes: PropTypes.array,
     aprobaciones: PropTypes.object,
     rechazos: PropTypes.object,
-    open: PropTypes.bool,
+    open: PropTypes.object,
     handleToggle: PropTypes.func
 
 }

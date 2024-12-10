@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Table, Button } from "react-bootstrap";
+import { FaFilePdf } from "react-icons/fa6";
 import * as XLSX from "xlsx"; // Importar la biblioteca xlsx
 
 export const AprobacionesTable = ({
@@ -11,6 +12,7 @@ export const AprobacionesTable = ({
     setIsCheckedAll,
     handleSelectItem
 }) => {
+
     const handleSelectAll = (e) => {
         const { checked } = e.target;
         setIsCheckedAll(checked);
@@ -97,6 +99,7 @@ export const AprobacionesTable = ({
                         <th>ID Solicitud</th>
                         <th>Fecha Solicitud</th>
                         <th>Tipo Solicitud</th>
+                        <th>Documento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,6 +124,18 @@ export const AprobacionesTable = ({
                             <td>{aprobacion.solicitud.id}</td>
                             <td>{formatDateString(aprobacion.solicitud.fechaSolicitud)}</td>
                             <td>{aprobacion.solicitud.tipoSolicitud.nombre}</td>
+                            <td>
+                                <Button
+                                    variant="light"
+                                    onClick={() => window.open(aprobacion.urlPdf, '_blank')}
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Abrir PDF"
+                                    className="me-2"
+                                >
+                                    <FaFilePdf /> {/* Ícono para abrir en nueva pestaña */}
+                                </Button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

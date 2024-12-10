@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Container, Table, Spinner, Alert, Pagination, Button, Tabs, Tab } from "react-bootstrap";
+import { Container, Table, Spinner, Alert, Pagination, Button, Tabs, Tab,  Row, Col } from "react-bootstrap";
 import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones, getEsSub, getSubrogancias } from "../services/services";
 import DataContext from "../context/DataContext";
 import '../css/InboxSolicitudes.css';
@@ -17,7 +17,6 @@ export const InboxSol = () => {
     const [setErrors] = useState(null);
     const [loading, setLoading] = useState(true);
     const [localDepto, setLocalDepto] = useState(null); // Estado local para el departamento
-    const [open, setOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedItems, setSelectedItems] = useState([]);
     const [isCheckedAll, setIsCheckedAll] = useState(false);
@@ -26,6 +25,16 @@ export const InboxSol = () => {
     // eslint-disable-next-line no-unused-vars
     const [subrogatedSolicitudes, setSubrogatedSolicitudes] = useState([]);
     const [subrogancias, setSubrogancias] = useState([]);
+    const [selectedYear, setSelectedYear] = useState(null);
+    const [openId, setOpenId] = useState(null)
+
+    const handleToggle = (id) => {
+        console.log(id);
+        setOpenId(openId === id ? null : id);  // Si el ID es el mismo, lo cerramos, si no, lo abrimos
+    };
+
+
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -126,7 +135,7 @@ export const InboxSol = () => {
     useEffect(() => {
         applyFilter(solicitudes);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [solicitudes, filters]);
+    }, [solicitudes, filters,selectedYear]);
 
     const applyFilter = (solicitudes) => {
         let filtered = solicitudes;
@@ -301,19 +310,67 @@ export const InboxSol = () => {
         });
     };
 
+
+
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const paginatedItems = (items) => items.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredSolicitudes.length / itemsPerPage);
 
+    const availableYears = [...new Set(filteredSolicitudes.map(sol => sol.solicitud.fechaSolicitud.substring(0, 4)))].sort().reverse();
+
+    const handlerChangeYear = (anio) => {
+
+
+        if(anio === 0){
+            let date = new Date();
+            let anioActual = date.getFullYear();
+            setSelectedYear(anioActual);
+
+        }
+        setSelectedYear(anio);
+
+
+        let filterItems = solicitudes.filter(sol => {
+            const year = new Date(sol.solicitud.fechaSolicitud).getFullYear();
+            return year == anio;
+        });
+        
+        applyFilter(filterItems)
+    };
+
+
+ 
 
     return (
         <Container>
             <h2 className="m-3 text-center">Bandeja de Solicitudes</h2>
             {loading ? (
                 <Spinner animation="border" />
-            ) : (
+            ) : (<>
+                <Row >
+                    <Col md={2} className="m-2">
+                    <p>Filtrar por Año de Solicitud</p>
+                        <select
+                            className="form-select"
+                            onChange={(event)=>{
+                                handlerChangeYear(event.target.value)
+                            }}
+                        >
+                            <option value={0}>Selecione un año</option>
+                          {
+                            availableYears.map((anio,index)=>(
+                                <option value={anio} key={index}>{anio}</option>
+                            ))
+                          }
+                          
+                        </select>
+
+
+                    </Col>
+                </Row>
                 <Tabs defaultActiveKey="recibir" id="uncontrolled-tab-example">
+
                     <Tab eventKey="recibir" title="Recibir">
                         <Table striped bordered hover>
                             <thead>
@@ -344,9 +401,9 @@ export const InboxSol = () => {
                                         <InboxRow
                                             key={sol.solicitud.id}
                                             solicitud={sol}
-                                            open={open}
                                             depto={localDepto}
-                                            setOpen={setOpen}
+                                            handleToggle={handleToggle}
+                                            openId={openId}
                                             selectedItems={selectedItems}
                                             handleSelect={handleSelect}
                                             isCheckedAll={isCheckedAll}
@@ -422,9 +479,9 @@ export const InboxSol = () => {
                                         <InboxRow
                                             key={sol.solicitud.id}
                                             solicitud={sol}
-                                            open={open}
                                             depto={localDepto}
-                                            setOpen={setOpen}
+                                            handleToggle={handleToggle}
+                                            openId={openId}
                                             selectedItems={selectedItems}
                                             handleSelect={handleSelect}
                                             isCheckedAll={isCheckedAll}
@@ -464,7 +521,7 @@ export const InboxSol = () => {
                                 Derivar Todo
                             </Button>}
                             {esSubdir &&
-                                <Button variant="success" className="ml-3" onClick={approveAll}>
+                                <Button style={{display:"none"}} variant="success" className="ml-3" onClick={approveAll}>
                                     Aprobar Todo
                                 </Button>}
                         </div>
@@ -472,6 +529,7 @@ export const InboxSol = () => {
                     <Subrogancias />
 
                 </Tabs>
+            </>
             )}
         </Container>
 

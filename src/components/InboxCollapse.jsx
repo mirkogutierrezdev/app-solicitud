@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Card, Col, Collapse, Row, Table } from "react-bootstrap";
+import { Card, Col, Collapse,  Row, Table } from "react-bootstrap";
 import { getVderivaciones } from "../services/services";
 import PropTypes from "prop-types";
 
@@ -37,7 +37,7 @@ const determinaJornada = (fechaFin) => {
     }
 };
 
-export const InboxCollapse = ({ solicitud: dataSol, open }) => {
+export const InboxCollapse = ({ solicitud: dataSol, openId, }) => {
 
     const { solicitud } = dataSol;
     const { fechaInicio, fechaFin, fechaSolicitud } = solicitud;
@@ -60,9 +60,10 @@ export const InboxCollapse = ({ solicitud: dataSol, open }) => {
     }, [solicitud]);
 
     return (
+        
         <tr>
-            <td colSpan="6">
-                <Collapse in={open}>
+            <td colSpan="8">
+                <Collapse in={openId === solicitud.id}>
                     <div id={`movement-collapse-${solicitud?.id}`}>
                         <Card className="m-3">
                             <Card.Body>
@@ -116,6 +117,7 @@ export const InboxCollapse = ({ solicitud: dataSol, open }) => {
                 </Collapse>
             </td>
         </tr>
+        
     );
 };
 
@@ -123,5 +125,5 @@ export default InboxCollapse;
 
 InboxCollapse.propTypes = {
     solicitud: PropTypes.object,
-    open: PropTypes.bool
+    openId: PropTypes.number
 }

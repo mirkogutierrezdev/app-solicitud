@@ -219,6 +219,7 @@ export const  SolicitudesPage=()=> {
  const  calculateMaxEndDate = async (startDate, diasPendientes)=> {
         let date = new Date(startDate);
         let count = 0;
+        
         const feriados = await getDataHolidays(startDate, calculateMaxPossibleEndDate(startDate, diasPendientes));
     
     
@@ -236,6 +237,7 @@ export const  SolicitudesPage=()=> {
         while (esFinDeSemana(date) || isHoliday(date, feriados)) {
             date.setDate(date.getDate() + 1); // Avanza hasta el siguiente día hábil
         }
+
     
         return formatDate(date);
     }
@@ -248,7 +250,7 @@ export const  SolicitudesPage=()=> {
     // Función para verificar si la fecha es un feriado
     function isHoliday(date, feriados) {
         const normalizedDate = formatDate(date);
-        return feriados.some(feriado => feriado.feriado === normalizedDate);
+        return feriados.some(feriado => feriado.fecha === normalizedDate);
     }
     
     // Función para formatear la fecha en formato YYYY-MM-DD

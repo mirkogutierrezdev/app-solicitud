@@ -1,11 +1,11 @@
 import { Button } from "react-bootstrap";
-import { MdOutlineCancel, MdRemoveRedEye, MdOpenInNew } from "react-icons/md";
+import { MdOutlineCancel } from "react-icons/md";
 import '../css/InboxSolicitudes.css';
 import { FaCircleCheck } from "react-icons/fa6";
-import { RiInboxArchiveLine, RiLoginBoxLine } from "react-icons/ri";
+import { RiInboxArchiveLine, RiLoginBoxLine, } from "react-icons/ri";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-
+import { FaFilePdf } from "react-icons/fa";
 
 export const InboxActions = ({
     solicitud: dataSol,
@@ -18,8 +18,7 @@ export const InboxActions = ({
     isRechazarDisable,
     handlerAprobar,
     isAprobarDisable,
-    setOpen,
-    open,
+    handleToggle,
     estadoClass,
     handleSelect,
     isChecked,
@@ -112,13 +111,12 @@ export const InboxActions = ({
             <td>
                 <Button
                     data-toggle="tooltip" data-placement="top" title="Ver Detalles"
-                    variant="info"
-                    onClick={() => setOpen(!open)}
+                    variant="light"
+                    onClick={() => handleToggle(dataSol?.solicitud?.id)}
                     aria-controls={`movement-collapse-${dataSol?.solicitud?.id}`}
-                    aria-expanded={open}
                     className="me-2"
                 >
-                    {open ? "Ocultar" : "Ver"} <MdRemoveRedEye />
+                    Detalles
                 </Button>
             </td>
             {
@@ -133,7 +131,7 @@ export const InboxActions = ({
                             title="Abrir PDF"
                             className="me-2"
                         >
-                            <MdOpenInNew /> {/* Ícono para abrir en nueva pestaña */}
+                            <FaFilePdf /> {/* Ícono para abrir en nueva pestaña */}
                         </Button>
 
 
@@ -157,8 +155,7 @@ InboxActions.propTypes = {
     isRechazarDisable: PropTypes.bool,
     handlerAprobar: PropTypes.func,
     isAprobarDisable: PropTypes.bool,
-    setOpen: PropTypes.func,
-    open: PropTypes.bool,
+    handleToggle: PropTypes.func,
     estadoClass: PropTypes.string,
     handleSelect: PropTypes.func,
     isChecked: PropTypes.bool,
