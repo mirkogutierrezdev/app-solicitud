@@ -10,7 +10,9 @@ export const AprobacionesTable = ({
     setSelectedItems,
     isCheckedAll,
     setIsCheckedAll,
-    handleSelectItem
+    handleSelectItem,
+    addVerify,
+    formatRut
 }) => {
 
     const handleSelectAll = (e) => {
@@ -49,8 +51,8 @@ export const AprobacionesTable = ({
 
         // Crear los datos en formato JSON para exportar usando `allItems`
         const dataToExport = allItems.map((aprobacion) => ({
-            Nombre: aprobacion.solicitud.funcionario.nombre,
-            Rut: aprobacion.solicitud.funcionario.rut,
+            Nombre: aprobacion.solicitud.funcionario.nombre.concat(' ',aprobacion.paterno),
+            Rut: formatRut(`${aprobacion.solicitud.funcionario.rut}-${addVerify(aprobacion.solicitud.funcionario.rut)}`),
             Departamento: aprobacion.solicitud.derivaciones[0]?.departamento?.nombre || "N/A",
             "Fecha Desde": formatDateString(aprobacion.solicitud.fechaInicio),
             "Fecha Hasta": formatDateString(aprobacion.solicitud.fechaFin),
@@ -58,7 +60,8 @@ export const AprobacionesTable = ({
             Duracion: aprobacion.solicitud.duracion,
             "ID Solicitud": aprobacion.solicitud.id,
             "Fecha Solicitud": formatDateString(aprobacion.solicitud.fechaSolicitud),
-            "Tipo Solicitud": aprobacion.solicitud.tipoSolicitud.nombre
+            "Tipo Solicitud": aprobacion.solicitud.tipoSolicitud.nombre,
+            "Tipo Contrato":aprobacion.tipoContrato
         }));
 
         // Crear una hoja de trabajo a partir de los datos
@@ -72,14 +75,16 @@ export const AprobacionesTable = ({
         XLSX.writeFile(workbook, "aprobaciones.xlsx");
     };
 
+
+    console.log(currentItems);
     return (
         <>
             <div className="d-flex justify-content-end mb-3">
-                <Button variant="success" size="sm" onClick={handleExportToExcel}>
+                <Button style={{ display: "none" }} variant="success" size="sm" onClick={handleExportToExcel}>
                     Exportar a Excel (Todos los Datos)
                 </Button>
             </div>
-            <Table striped bordered hover className="mt-4">
+            <Table className="mt-4" style={{fontSize:"13px"}}>
                 <thead>
                     <tr>
                         <th>
@@ -95,10 +100,9 @@ export const AprobacionesTable = ({
                         <th>Fecha Desde</th>
                         <th>Fecha Hasta</th>
                         <th>Jornada</th>
-                        <th>Duracion</th>
-                        <th>ID Solicitud</th>
                         <th>Fecha Solicitud</th>
                         <th>Tipo Solicitud</th>
+                        <th>Contrato</th>
                         <th>Documento</th>
                     </tr>
                 </thead>
@@ -114,20 +118,19 @@ export const AprobacionesTable = ({
                                     }
                                 />
                             </td>
-                            <td>{aprobacion.solicitud.funcionario.rut}</td>
-                            <td>{aprobacion.solicitud.funcionario.nombre}</td>
-                            <td>{aprobacion.solicitud.derivaciones[0]?.departamento?.nombre}</td>
-                            <td>{formatDateString(aprobacion.solicitud.fechaInicio)}</td>
-                            <td>{formatDateString(aprobacion.solicitud.fechaFin)}</td>
-                            <td>{determineJornada(aprobacion.solicitud.fechaFin)}</td>
-                            <td>{aprobacion.solicitud.duracion}</td>
-                            <td>{aprobacion.solicitud.id}</td>
-                            <td>{formatDateString(aprobacion.solicitud.fechaSolicitud)}</td>
-                            <td>{aprobacion.solicitud.tipoSolicitud.nombre}</td>
+                            <td>   {`${aprobacion.rut}-${addVerify(aprobacion.rut)}`}</td>
+                            <td>{`${aprobacion.paterno} ${aprobacion.nombres}`}</td>
+                            <td>{aprobacion.depto}</td>
+                            <td>{formatDateString(aprobacion.fechaInicio)}</td>
+                            <td>{formatDateString(aprobacion.fechaTermino)}</td>
+                            <td>{aprobacion.jornada}</td>
+                            <td>{formatDateString(aprobacion.fechaSolicitud)}</td>
+                            <td>{aprobacion.tipoSolicitud}</td>
+                            <td>{aprobacion.tipoContrato}</td>
                             <td>
                                 <Button
                                     variant="light"
-                                    onClick={() => window.open(aprobacion.urlPdf, '_blank')}
+                                    onClick={() => window.open(aprobacion.url, '_blank')}
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     title="Abrir PDF"

@@ -1,9 +1,10 @@
 import { Container } from "react-bootstrap";
 import { useState } from "react";
 import Swal from 'sweetalert2';
-import { getAllAprobaciones,  saveDecretos } from '../services/services';
+import { getAllAprobaciones, saveDecretos } from '../services/services';
 import '../css/DecretoPage.css';
 import * as XLSX from "xlsx"; // Importar la biblioteca xlsx
+import { addVerify,formatRut } from '../services/validation'
 
 import AprobacionesFilter from "./AprobacionesFilter";
 import AprobacionLoadButton from "./AprobacionLoadButton";
@@ -26,8 +27,10 @@ export const DecretoPage = () => {
     const [decretos, setDecretos] = useState({ nroDecreto: 0 });
     const itemsPerPage = 5;
 
+    console.log(dataAprobaciones);
 
-    
+
+
     const formatDateString = (dateString) => {
         if (!dateString) return "";
         const date = new Date(dateString);
@@ -42,7 +45,7 @@ export const DecretoPage = () => {
             setDataAprobaciones(aprobaciones);
             setFilteredAprobaciones(aprobaciones);
 
-            const uniqueDeptos = [...new Set(aprobaciones.map(aprob => aprob.solicitud.derivaciones[0]?.departamento?.nombre))];
+            const uniqueDeptos = [...new Set(aprobaciones.map(aprob => aprob.depto))];
             setDepartamentos(uniqueDeptos);
         } catch (error) {
             console.error("Error al obtener aprobaciones:", error);
@@ -51,7 +54,7 @@ export const DecretoPage = () => {
         }
     };
 
-    
+
 
     const applyFilter = () => {
         const start = startDate ? new Date(startDate) : null;
@@ -66,7 +69,7 @@ export const DecretoPage = () => {
         }
 
         const filtered = dataAprobaciones.filter(aprob => {
-            const solicitudDate = new Date(aprob.solicitud.fechaSolicitud);
+            const solicitudDate = new Date(aprob.fechaSolicitud);
 
             const isDateInRange = (!start || solicitudDate >= start) && (!end || solicitudDate <= end);
             const isDeptoValid = !selectedDepto || aprob.solicitud.derivaciones[0]?.departamento?.nombre === selectedDepto;
@@ -82,7 +85,7 @@ export const DecretoPage = () => {
         const decretoData = {
             aprobacionesIds: selectedItems
         };
-    
+
         try {
             const result = await Swal.fire({
                 title: '¿Emitir decreto?',
@@ -92,19 +95,19 @@ export const DecretoPage = () => {
                 denyButtonText: 'No',
                 icon: 'question'
             });
-    
+
             if (result.isConfirmed) {
                 // Guardar decreto en el backend
                 await saveDecretos(decretoData);
-             console.log(decretoData);
+                console.log(decretoData);
                 Swal.fire({
                     text: "Decreto generado con éxito",
                     icon: "success"
                 });
-    
+
                 // Exportar a Excel
                 exportSelectedItemsToExcel();
-    
+
                 setSelectedItems([]); // Limpiar selección después de generar decreto
                 await fetchAprobaciones(); // Refrescar aprobaciones
             }
@@ -115,48 +118,40 @@ export const DecretoPage = () => {
             });
         }
     };
-    
+
     const exportSelectedItemsToExcel = () => {
         // Filtrar los elementos seleccionados
         const selectedData = dataAprobaciones.filter(item =>
             selectedItems.includes(item.id)
         );
-    
+
         // Formatear los datos para Excel
         const dataToExport = selectedData.map(aprobacion => ({
-            Nombre: aprobacion.solicitud.funcionario.nombre,
-            Rut: aprobacion.solicitud.funcionario.rut,
-            Departamento: aprobacion.solicitud.derivaciones[0]?.departamento?.nombre || "N/A",
-            "Fecha Desde": formatDateString(aprobacion.solicitud.fechaInicio),
-            "Fecha Hasta": formatDateString(aprobacion.solicitud.fechaFin),
-            "Jornada": determineJornada(aprobacion.solicitud.fechaFin),
-            Duracion: aprobacion.solicitud.duracion,
-            "ID Solicitud": aprobacion.solicitud.id,
-            "Fecha Solicitud": formatDateString(aprobacion.solicitud.fechaSolicitud),
-            "Tipo Solicitud": aprobacion.solicitud.tipoSolicitud.nombre
+            Nombre: `${aprobacion.paterno} ${aprobacion.nombres}`,
+            Rut: formatRut(`${aprobacion.rut}-${addVerify(aprobacion.rut)}`),
+            Departamento: aprobacion.depto,
+            "Fecha Desde": formatDateString(aprobacion.fechaInicio),
+            "Fecha Hasta": formatDateString(aprobacion.fechaTermino),
+            "Jornada": aprobacion.jornada,
+            "ID Solicitud": aprobacion.id,
+            "Fecha Solicitud": formatDateString(aprobacion.fechaSolicitud),
+            "Tipo Solicitud": aprobacion.tipoSolicitud,
+            "Tipo Contrato":aprobacion.tipoContrato
         }));
-    
+
         // Crear hoja de trabajo y libro
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Decretos");
-    
+
         // Exportar como archivo Excel
         XLSX.writeFile(workbook, "decretos.xlsx");
     };
 
-    const determineJornada = (fechaFin) => {
-        if (!fechaFin) return "N/A";
-        const time = new Date(fechaFin).toLocaleTimeString("en-US", { hour12: false });
-        if (time === "12:00:00") return "AM";
-        if (time === "17:30:00") return "PM";
-        if (time === "00:00:00") return "Todo el día";
-        return "N/A";
-    };
     
 
-    
-    
+
+
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -164,7 +159,7 @@ export const DecretoPage = () => {
 
     return (
         <Container>
-            <h2 className="my-4">Listado de Solicitudes</h2>
+            <h2 className="my-4">Listado de Solicitudes Aprobadas</h2>
             <AprobacionesFilter
                 departamentos={departamentos}
                 selectedDepto={selectedDepto}
@@ -188,6 +183,9 @@ export const DecretoPage = () => {
                 setSelectedItems={setSelectedItems}
                 isCheckedAll={isCheckedAll}
                 setIsCheckedAll={setIsCheckedAll}
+                addVerify={addVerify}
+                formatRut={formatRut}
+                
                 handleSelectItem={(id, checked) => {
                     if (checked) {
                         setSelectedItems([...selectedItems, id]);

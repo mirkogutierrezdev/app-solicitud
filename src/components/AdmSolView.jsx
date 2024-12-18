@@ -16,7 +16,7 @@ export const  AdmSolView = ({ diasAdm })=> {
             <thead className="table-dark">
                 <tr>
                     <th>Administrativos usados </th>
-                    <th>Administrativos pendienets</th>
+                    <th>Administrativos pendientes</th>
                 </tr>
             </thead>
             <tbody>

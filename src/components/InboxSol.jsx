@@ -435,6 +435,7 @@ export const InboxSol = () => {
                             <Button
                                 variant="success"
                                 className="mr-2"
+                                style={{display:"none"}}
                                 onClick={inAll}
                                 disabled={
                                     selectedItems.length === 0 ||
@@ -516,6 +517,7 @@ export const InboxSol = () => {
                                 variant="primary"
                                 className="mr-2"
                                 onClick={deriveAll}
+                                style={{display:"none"}}
                                 disabled={selectedItems.length === 0}
                             >
                                 Derivar Todo

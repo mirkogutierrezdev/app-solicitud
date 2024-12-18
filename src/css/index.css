@@ -1,3 +1,55 @@
-* {
-    margin-left: 110px;
+/* Estilo global para asegurar que el Footer quede abajo */
+body, html, #root {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1; /* El contenido principal ocupa el espacio restante */
+}
+
+footer {
+    background-color: #f8f9fa; /* Fondo gris muy claro */
+    color: #333333; /* Texto oscuro */
+    padding: 20px 0; /* Mayor espaciado superior e inferior */
+    text-align: center; /* Alineación centrada */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Sombra superior sutil */
+    border-top: 1px solid #e0e0e0; /* Línea divisoria sutil */
+    font-size: 0.9rem; /* Tamaño de letra ligeramente más pequeño */
+}
+
+footer a {
+    color: #007bff; /* Enlaces en azul Bootstrap */
+    text-decoration: none; /* Sin subrayado */
+    font-weight: 500;
+    margin: 0 10px; /* Espaciado horizontal entre enlaces */
+}
+
+footer a:hover {
+    text-decoration: underline; /* Subrayado al pasar el mouse */
+    color: #0056b3; /* Azul más oscuro al hacer hover */
+}
+
+footer .footer-info {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    gap: 15px; /* Espacio entre elementos */
+    flex-wrap: wrap; /* Adaptable para pantallas pequeñas */
+}
+
+footer .footer-info div {
+    display: inline-block; /* Evita saltos de línea */
+}
+
+footer .footer-credits {
+    margin-top: 10px; /* Espacio entre la información y el texto adicional */
+    font-size: 0.8rem;
+    color: #777; /* Color de texto más suave */
 }
