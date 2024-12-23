@@ -605,3 +605,17 @@ try {
 }
 
 
+export const getJefeDerivacion = async (depto) => {
+
+    const url = urlPrefixLocal+`/api/utils/jefe/${depto}`;
+
+try {
+    const response = await axios.get(url);
+    return response.data;
+} catch (error) {
+    console.error(error);
+    return null;
+}
+}
+
+

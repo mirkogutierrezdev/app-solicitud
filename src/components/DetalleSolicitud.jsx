@@ -19,12 +19,12 @@ export const  DetalleSolicitud = ({
     endDate,
     workDays,
     numDaysToUse,
-    supervisor,
     handlerClick,
     isActiveButton,
     subroganteRut,
     subroganteNombre,
-    subroganteDepto
+    subroganteDepto,
+    jefeDerivacion
 
 
 
@@ -41,7 +41,7 @@ export const  DetalleSolicitud = ({
                 <Row className="mb-3">
                     <Col md={4}><strong>Días a Usar:</strong> {workDays}</Col>
                     <Col md={4}><strong>Nuevo Saldo:</strong> {numDaysToUse}</Col>
-                    <Col md={4}><strong>Jefe de Departamento:</strong> {supervisor}</Col>
+                    <Col md={4}><strong>Jefe de Departamento:</strong> {jefeDerivacion}</Col>
                 </Row>
                 {
                     subroganteRut && (
@@ -71,11 +71,11 @@ DetalleSolicitud.propTypes = {
     endDate:PropTypes.string,
     workDays:PropTypes.number,
     numDaysToUse:PropTypes.number,
-    supervisor:PropTypes.string,
     handlerClick:PropTypes.func,
     isActiveButton:PropTypes.bool,
     subroganteRut:PropTypes.string,
     subroganteNombre:PropTypes.string,
-    subroganteDepto:PropTypes.string
+    subroganteDepto:PropTypes.string,
+    jefeDerivacion:PropTypes.string
 }
 

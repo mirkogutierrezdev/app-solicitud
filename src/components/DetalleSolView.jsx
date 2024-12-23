@@ -1,7 +1,7 @@
 
 import { useContext, useEffect, useState } from "react";
 import DataContext from "../context/DataContext";
-import { esJefe, getListDeptos, saveSolicitud, saveSubrogancia } from "../services/services";
+import { esJefe, getJefeDerivacion, getListDeptos, saveSolicitud, saveSubrogancia } from "../services/services";
 import Swal from "sweetalert2";
 import '../css/DetalleSolView.css'; // Añade un archivo CSS para estilos personalizados
 import DetalleSolicitud from "./DetalleSolicitud";
@@ -9,18 +9,17 @@ import SubroganteModal from "./SubroganteModal";
 import BuscarSubroganteModal from "./BuscarSubroganteModal";
 import PropTypes from "prop-types";
 
-export const  DetalleSolView =({
+export const DetalleSolView = ({
     option,
     workDays,
     numDaysToUse,
-    supervisor,
     isActiveButton,
     startDate,
     endDate,
     optionAdmIni,
     optionAdmFin,
     resetAllValues
-})=> {
+}) => {
     const data = useContext(DataContext);
     const estado = 'PENDIENTE';
     const departamento = data.data ? data.data.departamento : {};
@@ -37,6 +36,7 @@ export const  DetalleSolView =({
     const [deptos, setDeptos] = useState([]); // Estado para almacenar los departamentos
     const [searchName, setSearchName] = useState(""); // Estado para el término de búsqueda por nombre
     const [currentPage, setCurrentPage] = useState(1); // Página actual
+    const [jefeDerivacion, setJefeDerivacion] = useState('');
     const resultsPerPage = 5; // Número de resultados por página
 
     const getIsJefe = async () => {
@@ -95,7 +95,7 @@ export const  DetalleSolView =({
             setSubroganteNombre(subroganteData.nombre);
             setSubroganteDepto(subroganteData.nombreDepartamento)
             setShowSearchModal(false); // Cierra el modal de búsqueda
-            
+
         }
     };
 
@@ -210,7 +210,31 @@ export const  DetalleSolView =({
     const totalPages = Math.ceil(filteredDeptos.length / resultsPerPage);
 
     
-  
+
+    const fetchNombreJefeDerivacion = async () => {
+
+        try {
+
+            
+            if ( depto) {
+                const response = await getJefeDerivacion(depto);
+                setJefeDerivacion(response)
+
+            }
+
+        } catch (error) {
+            console.log(error);
+
+        }
+
+    }
+
+    useEffect(() => {
+        fetchNombreJefeDerivacion();
+    }, [depto])
+
+
+
 
     return (
         <>
@@ -220,12 +244,12 @@ export const  DetalleSolView =({
                 endDate={endDate}
                 workDays={workDays}
                 numDaysToUse={numDaysToUse}
-                supervisor={supervisor}
                 handlerClick={handlerClick}
                 isActiveButton={isActiveButton}
                 subroganteRut={subroganteRut}
                 subroganteNombre={subroganteNombre}
                 subroganteDepto={subroganteDepto}
+                jefeDerivacion={jefeDerivacion}
             />
             <SubroganteModal
                 show={showModal}
@@ -255,14 +279,14 @@ export const  DetalleSolView =({
 export default DetalleSolView;
 
 DetalleSolView.propTypes = {
-    option:PropTypes.string,
-    workDays:PropTypes.number,
-    numDaysToUse:PropTypes.number,
-    supervisor:PropTypes.string,
-    isActiveButton:PropTypes.bool,
-    startDate:PropTypes.string,
-    endDate:PropTypes.string,
-    optionAdmIni:PropTypes.string,
-    optionAdmFin:PropTypes.string,
-    resetAllValues:PropTypes.func
+    option: PropTypes.string,
+    workDays: PropTypes.number,
+    numDaysToUse: PropTypes.number,
+    supervisor: PropTypes.string,
+    isActiveButton: PropTypes.bool,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+    optionAdmIni: PropTypes.string,
+    optionAdmFin: PropTypes.string,
+    resetAllValues: PropTypes.func
 }

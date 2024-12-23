@@ -17,8 +17,6 @@ export const  SolicitudesPage=()=> {
     const currentYear = new Date().getFullYear();
     const adm = data ? data.diasAdm : [];
     const feriados = data ? data.feriados : [];
-    const depto = data ? data.departamento : [];
-    const { jefeDepartamento } = depto;
     const [option, setOption] = useState('');
     const [optionAdmIni, setOptionAdmIni] = useState('');
     const [optionAdmFin, setOptionAdmFin] = useState('');
@@ -328,7 +326,6 @@ export const  SolicitudesPage=()=> {
                                 endDate={endDate}
                                 numDaysToUse={numDaysToUse}
                                 workDays={workDays}
-                                supervisor={jefeDepartamento}
                                 isActiveButton={isActiveButton}
                                 option={option}
                                 optionAdmIni={optionAdmIni}
