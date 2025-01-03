@@ -87,7 +87,7 @@ export const InboxSol = () => {
     const fetSubrogancias = async () => {
         if (localDepto) {
             try {
-                const dataSub = await getSubrogancias(rut);
+                const dataSub = await getSubrogancias(rut,'2024-11-28','2024-11-28');
                 setSubrogancias(dataSub)
             } catch (error) {
                 console.log(error);
@@ -338,6 +338,7 @@ export const InboxSol = () => {
         
         applyFilter(filterItems)
     };
+
 
 
  

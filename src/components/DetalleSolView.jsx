@@ -161,11 +161,13 @@ export const DetalleSolView = ({
                     rutJefe: rut,
                     fechaInicio: startDate,
                     fechaFin: endDate,
-                    idSolicitud: response.id
+                    idSolicitud: response.id,
+                    depto:depto
                 };
 
                 try {
                     await saveSubrogancia(subrogancia);
+                  console.log(subrogancia)
                 } catch (subError) {
                     console.error("Error al guardar la subrogancia:", subError);
                     Swal.fire({
@@ -209,6 +211,8 @@ export const DetalleSolView = ({
 
     const totalPages = Math.ceil(filteredDeptos.length / resultsPerPage);
 
+
+
     
 
     const fetchNombreJefeDerivacion = async () => {
@@ -232,7 +236,6 @@ export const DetalleSolView = ({
     useEffect(() => {
         fetchNombreJefeDerivacion();
     }, [depto])
-
 
 
 

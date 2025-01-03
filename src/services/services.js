@@ -481,10 +481,10 @@ export const saveSubrogancia = async (subrogancia) => {
     }
 }
 
-export const getSubrogancias = async (rut) => {
+export const getSubrogancias = async (rutSubrogante, fechaInicio,fechaFin) => {
 
 
-        const url = urlPrefixLocal+`/api/sub/view/by-rut/${rut}`;
+        const url = urlPrefixLocal+`/api/sub/view/by-rut?rutSubrogante=${rutSubrogante}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
 
     try {
         const response = await axios.get(url);
