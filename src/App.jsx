@@ -19,8 +19,10 @@ const DataWrapper = ({ children, rut }) => {
     const { setRut, fetchFuncionarioData } = useContext(DataContext); // Obtenemos setRut y fetchFuncionarioData del contexto
 
     useEffect(() => {
-        setRut(15721809)
-        fetchFuncionarioData(15721809)
+        //setRut(10397956)
+        setRut(15700766)
+
+        fetchFuncionarioData(15700766)
 
        /*   if (rut) {
             setRut(rut);  // Actualizamos el RUT en el contexto

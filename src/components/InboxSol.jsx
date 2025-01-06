@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Container, Table, Spinner, Alert, Pagination, Button, Tabs, Tab,  Row, Col } from "react-bootstrap";
+import { Container, Table, Spinner, Alert, Pagination, Button, Tabs, Tab, Row, Col } from "react-bootstrap";
 import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones, getEsSub, getSubrogancias } from "../services/services";
 import DataContext from "../context/DataContext";
 import '../css/InboxSolicitudes.css';
@@ -84,10 +84,10 @@ export const InboxSol = () => {
         }
     };
 
-    const fetSubrogancias = async () => {
+    const fetchSubrogancias = async () => {
         if (localDepto) {
             try {
-                const dataSub = await getSubrogancias(rut,'2024-11-28','2024-11-28');
+                const dataSub = await getSubrogancias(rut);
                 setSubrogancias(dataSub)
             } catch (error) {
                 console.log(error);
@@ -95,32 +95,80 @@ export const InboxSol = () => {
         }
     };
 
-    const fetchSubrogatedSolicitudes = async () => {
-
-        const subrogatedDeptos = subrogancias
-            .filter(sub => sub?.subDepartamento) // Verifica si el campo existe
-            .map(sub => sub.subDepartamento); // Extrae correctamente
-
-        try {
-            const allSubrogatedSolicitudes = await Promise.all(
-                subrogatedDeptos.map(depto => getSolicitudesInbox(depto)) // Usa el valor directo
-            );
-            setSubrogatedSolicitudes(allSubrogatedSolicitudes.flat());
-        } catch (error) {
-            console.error("Error fetching subrogated solicitudes:", error);
+    const fetchSolicitudesSubrogancia = async (depto) => {
+        if (localDepto) {
+            try {
+                const dataSol = await getSolicitudesInbox(depto);
+                setSolicitudes(dataSol);
+                setLoading(false);
+                applyFilter(dataSol); // Aplicar el filtro después de obtener los datos
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setErrors(error.message);
+                setLoading(false);
+            }
         }
     };
 
+   
     useEffect(() => {
         fetchSolicitudes();
-        fetSubrogancias();
+        fetchSubrogancias();
     }, [localDepto]);
 
+
     useEffect(() => {
-        if (subrogancias.length > 0) {
-            fetchSubrogatedSolicitudes();
+    
+  
+        if(subrogancias){
+            Swal.fire({
+                titleText:"Sistema de Solicitudes",
+                text:"Usted tiene subrogancias asociadas. Las subrogancias aparecen destacads en otro color en la bandeja de solicitudes"
+            })
         }
-    }, [subrogancias]);
+        
+    }, []);
+    
+    useEffect(() => {
+    
+  
+        const fetchAllSubrogancias = async () => {
+            if (subrogancias.length > 0) {
+                try {
+                    // Usa Promise.all para obtener todas las solicitudes
+                    const allSolicitudes = await Promise.all(
+                        subrogancias.map(({ depto }) => fetchSolicitudesSubrogancia(depto))
+                    );
+    
+                    // Combina todas las solicitudes en un solo array
+                 //   const mergedSolicitudes = allSolicitudes.flat();
+    
+                    // Actualiza el estado con las solicitudes de subrogancia
+                    setSubrogatedSolicitudes(allSolicitudes);
+                } catch (error) {
+                    console.error("Error fetching subrogated solicitudes:", error);
+                }
+            } else {
+                console.log("No existen subrogancias");
+            }
+        };
+        
+
+        fetchAllSubrogancias();
+    }, [localDepto]);
+
+
+    useEffect(() => {
+    
+  
+        console.log(subrogatedSolicitudes)
+        
+    }, [localDepto]);
+
+    
+
+  
+  
 
 
 
@@ -135,7 +183,7 @@ export const InboxSol = () => {
     useEffect(() => {
         applyFilter(solicitudes);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [solicitudes, filters,selectedYear]);
+    }, [solicitudes, filters, selectedYear]);
 
     const applyFilter = (solicitudes) => {
         let filtered = solicitudes;
@@ -322,7 +370,7 @@ export const InboxSol = () => {
     const handlerChangeYear = (anio) => {
 
 
-        if(anio === 0){
+        if (anio === 0) {
             let date = new Date();
             let anioActual = date.getFullYear();
             setSelectedYear(anioActual);
@@ -335,13 +383,12 @@ export const InboxSol = () => {
             const year = new Date(sol.solicitud.fechaSolicitud).getFullYear();
             return year == anio;
         });
-        
+
         applyFilter(filterItems)
     };
 
 
 
- 
 
     return (
         <Container>
@@ -351,20 +398,20 @@ export const InboxSol = () => {
             ) : (<>
                 <Row >
                     <Col md={2} className="m-2">
-                    <p>Filtrar por Año de Solicitud</p>
+                        <p>Filtrar por Año de Solicitud</p>
                         <select
                             className="form-select"
-                            onChange={(event)=>{
+                            onChange={(event) => {
                                 handlerChangeYear(event.target.value)
                             }}
                         >
                             <option value={0}>Selecione un año</option>
-                          {
-                            availableYears.map((anio,index)=>(
-                                <option value={anio} key={index}>{anio}</option>
-                            ))
-                          }
-                          
+                            {
+                                availableYears.map((anio, index) => (
+                                    <option value={anio} key={index}>{anio}</option>
+                                ))
+                            }
+
                         </select>
 
 
@@ -436,7 +483,7 @@ export const InboxSol = () => {
                             <Button
                                 variant="success"
                                 className="mr-2"
-                                style={{display:"none"}}
+                                style={{ display: "none" }}
                                 onClick={inAll}
                                 disabled={
                                     selectedItems.length === 0 ||
@@ -518,13 +565,13 @@ export const InboxSol = () => {
                                 variant="primary"
                                 className="mr-2"
                                 onClick={deriveAll}
-                                style={{display:"none"}}
+                                style={{ display: "none" }}
                                 disabled={selectedItems.length === 0}
                             >
                                 Derivar Todo
                             </Button>}
                             {esSubdir &&
-                                <Button style={{display:"none"}} variant="success" className="ml-3" onClick={approveAll}>
+                                <Button style={{ display: "none" }} variant="success" className="ml-3" onClick={approveAll}>
                                     Aprobar Todo
                                 </Button>}
                         </div>
