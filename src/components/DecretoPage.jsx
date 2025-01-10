@@ -29,14 +29,20 @@ export const DecretoPage = () => {
 
     console.log(dataAprobaciones);
 
-
-
-    const formatDateString = (dateString) => {
+    const adjustDateForExport = (dateString) => {
         if (!dateString) return "";
         const date = new Date(dateString);
-        return date.toLocaleDateString();
+        const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000); // Ajuste a UTC
+    
+        const day = localDate.getDate().toString().padStart(2, '0'); // Día con 2 dígitos
+        const month = (localDate.getMonth() + 1).toString().padStart(2, '0'); // Mes con 2 dígitos
+        const year = localDate.getFullYear(); // Año
+    
+        return `${day}-${month}-${year}`;
     };
-
+    
+ 
+    
     const fetchAprobaciones = async () => {
         setLoading(true);
         try {
@@ -127,18 +133,19 @@ export const DecretoPage = () => {
 
         // Formatear los datos para Excel
         const dataToExport = selectedData.map(aprobacion => ({
-            Nombre: `${aprobacion.paterno} ${aprobacion.nombres}`,
+            Nombre: `${aprobacion.paterno} ${aprobacion.materno} ${aprobacion.nombres}`,
             Rut: formatRut(`${aprobacion.rut}-${addVerify(aprobacion.rut)}`),
             Departamento: aprobacion.depto,
-            "Fecha Desde": formatDateString(aprobacion.fechaInicio),
-            "Fecha Hasta": formatDateString(aprobacion.fechaTermino),
+            "Fecha Desde": adjustDateForExport(aprobacion.fechaInicio),
+            "Fecha Hasta": adjustDateForExport(aprobacion.fechaTermino),
             "Jornada": aprobacion.jornada,
+            "Duracion":aprobacion.duracion,
             "ID Solicitud": aprobacion.id,
-            "Fecha Solicitud": formatDateString(aprobacion.fechaSolicitud),
+            "Fecha Solicitud": adjustDateForExport(aprobacion.fechaSolicitud),
             "Tipo Solicitud": aprobacion.tipoSolicitud,
-            "Tipo Contrato":aprobacion.tipoContrato
+            "Tipo Contrato": aprobacion.tipoContrato
         }));
-
+        
         // Crear hoja de trabajo y libro
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
         const workbook = XLSX.utils.book_new();

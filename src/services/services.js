@@ -495,6 +495,21 @@ export const getSubrogancias = async (rutSubrogante) => {
     }
 }
 
+export const getSubroganciasByFecha = async (rutSubrogante,fechaInicio) => {
+
+
+    const url = urlPrefixLocal+`/api/sub/view/by-fecha?rut=${rutSubrogante}&fechaInicio=${fechaInicio}`;
+
+try {
+    const response = await axios.get(url);
+    return response.data;
+} catch (error) {
+    console.error(error);
+    return null;
+}
+}
+
+
 export const getPerfiles = async () => {
 
     const url = urlPrefixLocal+`/api/perfiles/list`;

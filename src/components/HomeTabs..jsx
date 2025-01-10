@@ -2,7 +2,7 @@
 import { Navbar, Nav, Button, Col, Row, Dropdown, Container } from 'react-bootstrap';
 import '../css/HomeTab.css'; // Importa el archivo CSS creado
 import { useContext, useEffect, useState } from 'react';
-import { esJefe, getPermisosUsuario } from '../services/services';
+import { esJefe, getPermisosUsuario,  getSubroganciasByFecha } from '../services/services';
 import DataContext from '../context/DataContext';
 import UnreadContext from '../context/UnreadContext';
 
@@ -15,6 +15,16 @@ export const  HomeTabs=()=> {
     const [expanded, setExpanded] = useState(false); // Estado para manejar el colapso del menú
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // Estado para detectar vista móvil
     const [permisoUsuario, setPermisoUsuario] = useState([]);
+    const [subrogancias,setSubrogancias] = useState([]);
+    const [fechaActual,setFechaActual]  = useState(null);
+
+    function getCurrentDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
+        const day = String(today.getDate()).padStart(2, '0');
+        setFechaActual( `${year}-${month}-${day}`);
+    }
 
     const getIsJefe = async () => {
         try {
@@ -24,6 +34,22 @@ export const  HomeTabs=()=> {
             console.error('Error fetching esJefe:', error);
         }
     };
+    
+       const fetchSubrogancias = async () => {
+          
+                try {
+    
+                    const response = await getSubroganciasByFecha(rut,fechaActual);
+                    if(response){
+                        setSubrogancias(response);
+                    }
+    
+                } catch (error) {
+                    console.log(error);
+    
+                }
+            
+        }
 
     const fetchPermisos = async () => {
         try {
@@ -39,8 +65,32 @@ export const  HomeTabs=()=> {
             getIsJefe();
             setDepto(depto);
             fetchPermisos();
+            fetchSubrogancias();
+            getCurrentDate();
         }
+       
     }, [depto, rut, setDepto]);
+
+    useEffect(() => {
+       
+           
+            getCurrentDate();
+       
+       
+    }, []);
+
+
+    useEffect(() => {
+        if(subrogancias.length>0){
+            setIsJefe(true);
+        }
+       
+       
+    }, [subrogancias]);
+
+
+
+    
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);

@@ -15,6 +15,19 @@ export const AprobacionesTable = ({
     formatRut
 }) => {
 
+    const adjustDateForExport = (dateString) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000); // Ajuste a UTC
+    
+        const day = localDate.getDate().toString().padStart(2, '0'); // Día con 2 dígitos
+        const month = (localDate.getMonth() + 1).toString().padStart(2, '0'); // Mes con 2 dígitos
+        const year = localDate.getFullYear(); // Año
+    
+        return `${day}-${month}-${year}`;
+    };
+    
+
     const handleSelectAll = (e) => {
         const { checked } = e.target;
         setIsCheckedAll(checked);
@@ -100,6 +113,7 @@ export const AprobacionesTable = ({
                         <th>Fecha Desde</th>
                         <th>Fecha Hasta</th>
                         <th>Jornada</th>
+                        <th>Duracion</th>
                         <th>Fecha Solicitud</th>
                         <th>Tipo Solicitud</th>
                         <th>Contrato</th>
@@ -119,12 +133,13 @@ export const AprobacionesTable = ({
                                 />
                             </td>
                             <td>   {`${aprobacion.rut}-${addVerify(aprobacion.rut)}`}</td>
-                            <td>{`${aprobacion.paterno} ${aprobacion.nombres}`}</td>
+                            <td>{`${aprobacion.paterno} ${aprobacion.materno}  ${aprobacion.nombres}`}</td>
                             <td>{aprobacion.depto}</td>
-                            <td>{formatDateString(aprobacion.fechaInicio)}</td>
-                            <td>{formatDateString(aprobacion.fechaTermino)}</td>
+                            <td>{adjustDateForExport(aprobacion.fechaInicio)}</td>
+                            <td>{adjustDateForExport(aprobacion.fechaTermino)}</td>
                             <td>{aprobacion.jornada}</td>
-                            <td>{formatDateString(aprobacion.fechaSolicitud)}</td>
+                            <td>{aprobacion.duracion}</td>
+                            <td>{adjustDateForExport(aprobacion.fechaSolicitud)}</td>
                             <td>{aprobacion.tipoSolicitud}</td>
                             <td>{aprobacion.tipoContrato}</td>
                             <td>
