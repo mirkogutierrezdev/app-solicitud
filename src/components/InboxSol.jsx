@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { Container, Table, Spinner, Alert, Pagination, Button, Tabs, Tab, Row, Col } from "react-bootstrap";
-import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones, getEsSub,  getSubroganciasByFecha } from "../services/services";
+import { Container, Table, Spinner, Alert, Pagination, Button, Tabs, Tab, Row, Col, Form } from "react-bootstrap";
+import { getSolicitudesInbox, saveDerivaciones, saveEntradas, saveAprobaciones, getEsSub, getSubroganciasByFecha } from "../services/services";
 import DataContext from "../context/DataContext";
 import '../css/InboxSolicitudes.css';
 import UnreadContext from "../context/UnreadContext";
@@ -25,9 +25,13 @@ export const InboxSol = () => {
     const [dataSubrogancias, setDataSubrogancias] = useState([]);
     const [solicitudesSub, setSolicitudesSub] = useState([]);
     // eslint-disable-next-line no-unused-vars
-    const [selectedYear, setSelectedYear] = useState(null);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [openId, setOpenId] = useState(null)
-    const [fechaActual,setFechaActual]= useState(null);
+    const [fechaActual, setFechaActual] = useState(null);
+    const [availableYears, setAvailableYears] = useState([]);
+    const [searchById, setSearchById] = useState('');
+    const [searchByName, setSearchByName] = useState(' ');
+
 
     const handleToggle = (id) => {
         console.log(id);
@@ -39,14 +43,18 @@ export const InboxSol = () => {
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
         const day = String(today.getDate()).padStart(2, '0');
-        setFechaActual( `${year}-${month}-${day}`);
+        setFechaActual(`${year}-${month}-${day}`);
     }
 
-useEffect(()=>{
-    getCurrentDate();
-    
+    useEffect(() => {
+        getCurrentDate();
 
-},[])
+    }, [])
+
+    useEffect(() => {
+        const years = [...new Set(solicitudes.map(sol => sol.solicitud.fechaSolicitud.substring(0, 4)))].sort().reverse();
+        setAvailableYears(years);
+    }, [solicitudes])
 
 
     useEffect(() => {
@@ -88,7 +96,7 @@ useEffect(()=>{
                 const dataSol = await getSolicitudesInbox(localDepto);
                 setSolicitudes(dataSol);
                 setLoading(false);
-                applyFilter(dataSol); // Aplicar el filtro después de obtener los datos
+                applyFilter(dataSol, selectedYear); // Aplicar el filtro después de obtener los datos
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setErrors(error.message);
@@ -98,13 +106,11 @@ useEffect(()=>{
     };
 
 
-
-
     const fetchSubrogancias = async () => {
         if (localDepto) {
             try {
 
-                const response = await getSubroganciasByFecha(rut,fechaActual);
+                const response = await getSubroganciasByFecha(rut, fechaActual);
                 setDataSubrogancias(response);
 
             } catch (error) {
@@ -120,7 +126,7 @@ useEffect(()=>{
             // Puedes procesar o combinar los datos según sea necesario
             //setSolicitudes((prevSolicitudes) => [...prevSolicitudes, ...dataSol]);
             setSolicitudesSub(dataSol);
-            applyFilter(dataSol);
+            applyFilterSub(dataSol, selectedYear);
         } catch (error) {
             console.error(`Error fetching solicitudes for depto ${depto}:`, error);
             setErrors(error.message);
@@ -146,42 +152,66 @@ useEffect(()=>{
     }, [dataSubrogancias]);
 
 
+         useEffect(() => {
+            fetchSolicitudes();
+            const intervalId = setInterval(fetchSolicitudes, 5000 * 2); // Actualiza cada 5 segundos
+            return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [localDepto]);
+    
     useEffect(() => {
-        fetchSolicitudes();
-        const intervalId = setInterval(fetchSolicitudes, 5000); // Actualiza cada 5 segundos
-        return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [localDepto]);
-
-    useEffect(() => {
-        applyFilter(solicitudes);
+        applyFilter(solicitudes, selectedYear);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [solicitudes, filters, selectedYear]);
 
-    const applyFilter = (solicitudes) => {
-        let filtered = solicitudes;
 
-        // Filtra en función de los checkboxes seleccionados
-        if (filters.ALL) {
-            // No aplica filtro si 'ALL' está seleccionado
-        } else {
-            if (filters.PENDIENTE) {
-                filtered = filtered.filter(sol => sol.solicitud.estado.nombre === "PENDIENTE");
-            }
-            if (filters.APROBADA) {
-                filtered = filtered.filter(sol => sol.solicitud.estado.nombre === "APROBADA");
-            }
-            if (filters.RECHAZADA) {
-                filtered = filtered.filter(sol => sol.solicitud.estado.nombre === "RECHAZADA");
-            }
-        }
+
+    const handlerChangeYear = (anio) => {
+        setSelectedYear(anio);
+    };
+
+
+    useEffect(() => {
+        applyFilter(solicitudes, selectedYear);
+
+    }, [selectedYear]);
+
+    const applyFilter = (solicitudes, anio) => {
+
+
+
+        let filtered = solicitudes.filter(sol => {
+            const fecha = new Date(sol.solicitud.fechaSolicitud); // Asegúrate de convertirlo a Date si es necesario
+            return fecha.getFullYear() == anio;
+        });
+
 
         // Ordena las solicitudes por ID de mayor a menor
         filtered.sort((a, b) => b.solicitud.id - a.solicitud.id);
 
         // Actualiza el estado con la lista filtrada y ordenada
         setFilteredSolicitudes(filtered);
+
     };
+
+
+    const applyFilterSub = (solicitudes, anio) => {
+
+
+        let filtered = solicitudes.filter(sol => {
+            const fecha = new Date(sol.solicitud.fechaSolicitud); // Asegúrate de convertirlo a Date si es necesario
+            return fecha.getFullYear() == anio;
+        });
+
+
+        // Ordena las solicitudes por ID de mayor a menor
+        filtered.sort((a, b) => b.solicitud.id - a.solicitud.id);
+
+        // Actualiza el estado con la lista filtrada y ordenada
+        setSolicitudesSub(filtered);
+
+    };
+
 
 
 
@@ -331,6 +361,52 @@ useEffect(()=>{
         });
     };
 
+    const handlerSearchById = (id) => {
+        // Permitir solo números en el input
+        if (/^\d*$/.test(id)) {
+            setSearchById(id); // Actualizar el estado solo con números válidos
+        }
+    };
+
+    const handlerSearchByFunc = (nameFunc) => {
+        // Validar que solo contenga letras y espacios
+        if (/^[a-zA-Z\s]*$/.test(nameFunc)) {
+            setSearchByName(nameFunc); // Actualizar solo si es válido
+        }
+    };
+
+
+    const handlerSearchButtonById = () => {
+
+        let filterId = solicitudes;
+        if (searchById > 0) {
+
+            filterId = solicitudes.filter(sol => sol.solicitud.id == searchById);
+        }
+
+
+        applyFilter(filterId, selectedYear)
+    }
+
+    const handlerSearchButtonByName = () => {
+        let filterName = solicitudes;
+    
+        console.log(searchByName);
+    
+        if (searchByName !== '') {
+            filterName = solicitudes.filter((sol) => {
+                // Convierte el nombre completo a minúsculas y elimina espacios extra.
+                const nombreCompleto = sol.solicitud.funcionario.nombre.toLowerCase().trim();
+    
+                // Compara si el nombre completo incluye la búsqueda
+                return nombreCompleto.includes(searchByName.toLowerCase().trim());
+            });
+        }
+    
+        applyFilter(filterName, selectedYear);
+    };
+    
+
 
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -338,57 +414,71 @@ useEffect(()=>{
     const paginatedItems = (items) => items.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredSolicitudes.length / itemsPerPage);
 
-    const availableYears = [...new Set(filteredSolicitudes.map(sol => sol.solicitud.fechaSolicitud.substring(0, 4)))].sort().reverse();
-
-    const handlerChangeYear = (anio) => {
-
-
-        if (anio === 0) {
-            let date = new Date();
-            let anioActual = date.getFullYear();
-            setSelectedYear(anioActual);
-
-        }
-        setSelectedYear(anio);
-
-
-        let filterItems = solicitudes.filter(sol => {
-            const year = new Date(sol.solicitud.fechaSolicitud).getFullYear();
-            return year == anio;
-        });
-
-        applyFilter(filterItems)
-    };
-
-
-    console.log(localDepto)
     return (
         <Container>
             <h2 className="m-3 text-center">Bandeja de Solicitudes</h2>
             {loading ? (
                 <Spinner animation="border" />
             ) : (<>
-                <Row >
-                    <Col md={2} className="m-2">
+                <Row className="align-items-center">
+                    {/* Filtro por Año de Solicitud */}
+                    <Col md={3} className="m-2">
                         <p>Filtrar por Año de Solicitud</p>
                         <select
                             className="form-select"
                             onChange={(event) => {
-                                handlerChangeYear(event.target.value)
+                                handlerChangeYear(event.target.value);
                             }}
                         >
-                            <option value={0}>Selecione un año</option>
-                            {
-                                availableYears.map((anio, index) => (
-                                    <option value={anio} key={index}>{anio}</option>
-                                ))
-                            }
-
+                            {availableYears.map((anio) => (
+                                <option value={anio} key={anio}>
+                                    {anio}
+                                </option>
+                            ))}
                         </select>
+                    </Col>
 
+                    {/* Campo de Búsqueda por ID */}
+                    <Col md={4} className="m-2">
+                        <p>Buscar por ID de Solicitud</p>
+                        <div className="d-flex">
+                            <Form.Control
+                                type="text"
+                                placeholder="Ingresa el ID de la solicitud"
+                                value={searchById}
+                                onChange={(event) => handlerSearchById(event.target.value)}
+                                className="me-2"
+                            />
+                            <Button
+                                variant="primary"
+                                onClick={handlerSearchButtonById}
+                            >
+                                Buscar
+                            </Button>
+                        </div>
+                    </Col>
 
+                    {/* Otro Campo (Placeholder) */}
+                    <Col md={4} className="m-2">
+                        <p>Buscar Funcionario</p>
+                        <div className="d-flex">
+                            <Form.Control
+                                type="text"
+                                placeholder="Ingrese el funcionario a buscar"
+                                value={searchByName}
+                                onChange={(event) => handlerSearchByFunc(event.target.value)}
+                                className="me-2"
+                            />
+                            <Button
+                                variant="primary"
+                                onClick={handlerSearchButtonByName}
+                            >
+                                Buscar
+                            </Button>
+                        </div>
                     </Col>
                 </Row>
+
                 <Tabs defaultActiveKey="recibir" id="uncontrolled-tab-example">
 
                     <Tab eventKey="recibir" title="Recibir">
@@ -546,7 +636,7 @@ useEffect(()=>{
                                 </Button>}
                         </div>
                     </Tab>
-                    { dataSubrogancias.length>0  && (<Tab eventKey="otros-departamentos" title="Solicitudes de Otros Departamentos">
+                    {dataSubrogancias.length > 0 && (<Tab eventKey="otros-departamentos" title="Solicitudes de Otros Departamentos">
                         <Tabs defaultActiveKey="recibir-otros" id="sub-tab-otros-departamentos">
                             {/* Sub-pestaña Recibir de Otros Departamentos */}
                             <Tab eventKey="recibir-otros" title="Recibir">
@@ -573,8 +663,8 @@ useEffect(()=>{
                                             paginatedItems(solicitudesSub.filter(sol =>
                                                 sol.solicitud.estado.nombre === "PENDIENTE" &&
                                                 sol.derivaciones.some(deriv =>
-                                                    
-                                                    !sol.entradas.some(entrada => entrada.derivacion.id === deriv.id ) && deriv.departamento.deptoSmc != localDepto
+
+                                                    !sol.entradas.some(entrada => entrada.derivacion.id === deriv.id) && deriv.departamento.deptoSmc != localDepto
                                                 )
                                             )).map((sol) => (
                                                 <InboxRowSub
@@ -637,13 +727,24 @@ useEffect(()=>{
                                     </thead>
                                     <tbody>
                                         {solicitudesSub.length > 0 ? (
-                                            paginatedItems(solicitudesSub.filter(sol =>
-                                                sol.solicitud.estado.nombre === "PENDIENTE" &&
-                                                sol.derivaciones.some(deriv =>
-                                                    
-                                                    sol.entradas.some(entrada => entrada.derivacion.id === deriv.id)  && deriv.departamento.deptoSmc != localDepto
+                                            paginatedItems(
+                                                solicitudesSub.filter((sol) =>
+                                                    sol.solicitud.estado.nombre === "PENDIENTE" &&
+                                                    sol.derivaciones.length > 0 && // Aseguramos que existan derivaciones
+                                                    sol.entradas.some((entrada) => {
+                                                        // Obtener la derivación con el número máximo de id
+                                                        const ultimaDerivacion = sol.derivaciones.reduce((max, actual) => {
+                                                            return actual.id > max.id ? actual : max;
+                                                        });
+
+                                                        // Comparar con las entradas y validar el departamento
+                                                        return (
+                                                            entrada.derivacion.id === ultimaDerivacion.id &&
+                                                            ultimaDerivacion.departamento.deptoSmc !== localDepto
+                                                        );
+                                                    })
                                                 )
-                                            )).map((sol) => (
+                                            ).map((sol) => (
                                                 <InboxRowSub
                                                     key={sol.id}
                                                     solicitud={sol}
@@ -682,15 +783,10 @@ useEffect(()=>{
                         </Tabs>
                     </Tab>
                     )}
-
-
-
                 </Tabs>
             </>
             )}
         </Container>
-
-
     );
 };
 

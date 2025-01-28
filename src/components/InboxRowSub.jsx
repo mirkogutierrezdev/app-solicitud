@@ -16,7 +16,6 @@ export const InboxRowSub = ({
     esDireccion
 }) => {
 
-    console.log(esDireccion)
 
 
 
