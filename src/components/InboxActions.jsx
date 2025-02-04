@@ -3,9 +3,12 @@ import { MdOutlineCancel } from "react-icons/md";
 import '../css/InboxSolicitudes.css';
 import { FaCircleCheck } from "react-icons/fa6";
 import { RiInboxArchiveLine, RiLoginBoxLine, } from "react-icons/ri";
-import { useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { FaFilePdf } from "react-icons/fa";
+
+
+
 
 export const InboxActions = ({
     solicitud: dataSol,
@@ -25,8 +28,16 @@ export const InboxActions = ({
     hasEntries
 }) => {
 
+
+
+
+
+
+
     const [isCheckedPress, setIsCheckedPress] = useState(false);
     const [url, setUrl] = useState('');
+
+
 
     const handleCheckboxChange = (e) => {
         handleSelect(dataSol.solicitud.id, dataSol.solicitud.funcionario.rut, e.target.checked);
@@ -51,6 +62,13 @@ export const InboxActions = ({
         getUrlPdf();
     }, [dataSol]);
 
+ 
+const handlerReImprimir = (id)=>{
+    console.log(id);
+
+}
+
+    
     return (
         <>
             <td>
@@ -138,6 +156,18 @@ export const InboxActions = ({
                     </td>
                 )
             }
+            <td>
+                <Button
+                    data-toggle="tooltip" data-placement="top" title="Ver Detalles"
+                    variant="light"
+                    onClick={() => handlerReImprimir(dataSol?.solicitud?.id)}
+                    className="me-2"
+                >
+                    Re-Imprimir
+                </Button>
+            </td>
+            
+
         </>
     );
 };

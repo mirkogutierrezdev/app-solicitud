@@ -11,6 +11,7 @@ export const AprobacionesFilter = ({
     endDate,
     setEndDate,
     applyFilter }) => {
+    
     return (
         <Row className="mb-3">
             <Col md={4}>

@@ -17,6 +17,7 @@ export const  SolicitudesPage=()=> {
     const currentYear = new Date().getFullYear();
     const adm = data ? data.diasAdm : [];
     const feriados = data ? data.feriados : [];
+ 
     const [option, setOption] = useState('');
     const [optionAdmIni, setOptionAdmIni] = useState('');
     const [optionAdmFin, setOptionAdmFin] = useState('');
@@ -30,6 +31,8 @@ export const  SolicitudesPage=()=> {
     const { diasPendientes: remainingDays } = filteredFeriados.length > 0 ? filteredFeriados[0] : { diasPendientes: 0 };
     const { saldo: remainingDaysAdm } = adm;
     const rut = data ? data.rut : 0;
+
+
 
     const getDataHolidays = async (fechaInicio, fechaTermino) => {
         try {
@@ -184,6 +187,8 @@ export const  SolicitudesPage=()=> {
                         const calculatedMaxEndDate = await calculateMaxEndDate(startDate, remainingDays);
                         setEndDate(calculatedMaxEndDate);
                     }
+
+                  
 
                     setWorkDays(diasTotales);
                     setNumDaysToUse(option === "Feriado Legal" ? remainingDays - diasTotales : remainingDaysAdm - diasTotales);

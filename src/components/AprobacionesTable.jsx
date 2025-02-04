@@ -89,7 +89,6 @@ export const AprobacionesTable = ({
     };
 
 
-    console.log(currentItems);
     return (
         <>
             <div className="d-flex justify-content-end mb-3">

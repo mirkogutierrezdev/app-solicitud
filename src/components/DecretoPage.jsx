@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import { getAllAprobaciones, saveDecretos } from '../services/services';
 import '../css/DecretoPage.css';
 import * as XLSX from "xlsx"; // Importar la biblioteca xlsx
-import { addVerify,formatRut } from '../services/validation'
+import { addVerify, formatRut } from '../services/validation'
 
 import AprobacionesFilter from "./AprobacionesFilter";
 import AprobacionLoadButton from "./AprobacionLoadButton";
@@ -25,24 +25,26 @@ export const DecretoPage = () => {
     const [endDate, setEndDate] = useState('');
     // eslint-disable-next-line no-unused-vars
     const [decretos, setDecretos] = useState({ nroDecreto: 0 });
+
     const itemsPerPage = 5;
 
-    console.log(dataAprobaciones);
+
 
     const adjustDateForExport = (dateString) => {
         if (!dateString) return "";
         const date = new Date(dateString);
         const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000); // Ajuste a UTC
-    
+
         const day = localDate.getDate().toString().padStart(2, '0'); // Día con 2 dígitos
         const month = (localDate.getMonth() + 1).toString().padStart(2, '0'); // Mes con 2 dígitos
         const year = localDate.getFullYear(); // Año
-    
+
         return `${day}-${month}-${year}`;
     };
-    
- 
-    
+
+
+
+
     const fetchAprobaciones = async () => {
         setLoading(true);
         try {
@@ -63,6 +65,9 @@ export const DecretoPage = () => {
 
 
     const applyFilter = () => {
+
+
+
         const start = startDate ? new Date(startDate) : null;
         const end = endDate ? new Date(endDate) : null;
 
@@ -76,12 +81,16 @@ export const DecretoPage = () => {
 
         const filtered = dataAprobaciones.filter(aprob => {
             const solicitudDate = new Date(aprob.fechaSolicitud);
+            const startIsValid = start ? solicitudDate >= start : true;
+            const endIsValid = end ? solicitudDate <= end : true;
+            const deptoIsValid = selectedDepto.trim() ? aprob.depto.trim() == selectedDepto : true;
 
-            const isDateInRange = (!start || solicitudDate >= start) && (!end || solicitudDate <= end);
-            const isDeptoValid = !selectedDepto || aprob.solicitud.derivaciones[0]?.departamento?.nombre === selectedDepto;
-
-            return isDateInRange && isDeptoValid;
+            return startIsValid && endIsValid && deptoIsValid;
         });
+
+
+        console.log(selectedDepto)
+
 
         setFilteredAprobaciones(filtered);
         setCurrentPage(1);
@@ -105,7 +114,6 @@ export const DecretoPage = () => {
             if (result.isConfirmed) {
                 // Guardar decreto en el backend
                 await saveDecretos(decretoData);
-                console.log(decretoData);
                 Swal.fire({
                     text: "Decreto generado con éxito",
                     icon: "success"
@@ -131,6 +139,7 @@ export const DecretoPage = () => {
             selectedItems.includes(item.id)
         );
 
+
         // Formatear los datos para Excel
         const dataToExport = selectedData.map(aprobacion => ({
             Nombre: `${aprobacion.paterno} ${aprobacion.materno} ${aprobacion.nombres}`,
@@ -139,13 +148,14 @@ export const DecretoPage = () => {
             "Fecha Desde": adjustDateForExport(aprobacion.fechaInicio),
             "Fecha Hasta": adjustDateForExport(aprobacion.fechaTermino),
             "Jornada": aprobacion.jornada,
-            "Duracion":aprobacion.duracion,
-            "ID Solicitud": aprobacion.id,
+            "Duracion": aprobacion.duracion,
+            "Id Aprobacion": aprobacion.id,
+            "ID Solicitud": aprobacion.idSolicitud,
             "Fecha Solicitud": adjustDateForExport(aprobacion.fechaSolicitud),
             "Tipo Solicitud": aprobacion.tipoSolicitud,
             "Tipo Contrato": aprobacion.tipoContrato
         }));
-        
+
         // Crear hoja de trabajo y libro
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
         const workbook = XLSX.utils.book_new();
@@ -155,7 +165,7 @@ export const DecretoPage = () => {
         XLSX.writeFile(workbook, "decretos.xlsx");
     };
 
-    
+
 
 
 
@@ -163,6 +173,7 @@ export const DecretoPage = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredAprobaciones.slice(indexOfFirstItem, indexOfLastItem);
+    console.log(currentItems)
 
     return (
         <Container>
@@ -192,7 +203,7 @@ export const DecretoPage = () => {
                 setIsCheckedAll={setIsCheckedAll}
                 addVerify={addVerify}
                 formatRut={formatRut}
-                
+
                 handleSelectItem={(id, checked) => {
                     if (checked) {
                         setSelectedItems([...selectedItems, id]);
