@@ -1,13 +1,14 @@
 /* eslint-disable react/prop-types */
 import { Row, Table } from "react-bootstrap";
 
-export const  DiasAdmView = ({ diasAdm })=> {
-
+export const DiasAdmView = ({ diasAdm }) => {
     const {
-        maximo,
-        usados,
-        saldo
-    } = diasAdm;
+        maximo = 0,
+        usados = 0,
+        saldo = 0
+    } = diasAdm || {}; // Desestructuración con valores predeterminados
+
+    const isEmpty = !diasAdm || (Array.isArray(diasAdm) && diasAdm.length === 0); // Validar si es nulo o un array vacío
 
     return (
         <>
@@ -28,7 +29,7 @@ export const  DiasAdmView = ({ diasAdm })=> {
                         <td>{usados}</td>
                         <td>{saldo}</td>
                     </tr>
-                    {diasAdm.length === 0 && (
+                    {isEmpty && (
                         <tr>
                             <td colSpan="3">No hay días administrativos registrados.</td>
                         </tr>
@@ -40,4 +41,3 @@ export const  DiasAdmView = ({ diasAdm })=> {
 }
 
 export default DiasAdmView;
-
