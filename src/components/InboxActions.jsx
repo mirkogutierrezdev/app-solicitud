@@ -63,10 +63,6 @@ export const InboxActions = ({
     }, [dataSol]);
 
  
-const handlerReImprimir = (id)=>{
-    console.log(id);
-
-}
 
     
     return (
@@ -157,14 +153,7 @@ const handlerReImprimir = (id)=>{
                 )
             }
             <td>
-                <Button
-                    data-toggle="tooltip" data-placement="top" title="Ver Detalles"
-                    variant="light"
-                    onClick={() => handlerReImprimir(dataSol?.solicitud?.id)}
-                    className="me-2"
-                >
-                    Re-Imprimir
-                </Button>
+                
             </td>
             
 

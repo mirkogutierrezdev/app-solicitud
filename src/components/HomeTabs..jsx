@@ -2,11 +2,11 @@
 import { Navbar, Nav, Button, Col, Row, Dropdown, Container } from 'react-bootstrap';
 import '../css/HomeTab.css'; // Importa el archivo CSS creado
 import { useContext, useEffect, useState } from 'react';
-import { esJefe, getPermisosUsuario,  getSubroganciasByFecha } from '../services/services';
+import { esJefe, getPermisosUsuario, getSubroganciasByFecha } from '../services/services';
 import DataContext from '../context/DataContext';
 import UnreadContext from '../context/UnreadContext';
 
-export const  HomeTabs=()=> {
+export const HomeTabs = () => {
     const { data, setRut } = useContext(DataContext);
     const { unreadCount, setDepto } = useContext(UnreadContext);
     const depto = data ? data.departamento.depto : 0;
@@ -15,15 +15,15 @@ export const  HomeTabs=()=> {
     const [expanded, setExpanded] = useState(false); // Estado para manejar el colapso del menú
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // Estado para detectar vista móvil
     const [permisoUsuario, setPermisoUsuario] = useState([]);
-    const [subrogancias,setSubrogancias] = useState([]);
-    const [fechaActual,setFechaActual]  = useState(null);
+    const [subrogancias, setSubrogancias] = useState([]);
+    const [fechaActual, setFechaActual] = useState(null);
 
     function getCurrentDate() {
         const today = new Date();
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
         const day = String(today.getDate()).padStart(2, '0');
-        setFechaActual( `${year}-${month}-${day}`);
+        setFechaActual(`${year}-${month}-${day}`);
     }
 
     const getIsJefe = async () => {
@@ -34,22 +34,22 @@ export const  HomeTabs=()=> {
             console.error('Error fetching esJefe:', error);
         }
     };
-    
-       const fetchSubrogancias = async () => {
-          
-                try {
-    
-                    const response = await getSubroganciasByFecha(rut,fechaActual);
-                    if(response){
-                        setSubrogancias(response);
-                    }
-    
-                } catch (error) {
-                    console.log(error);
-    
-                }
-            
+
+    const fetchSubrogancias = async () => {
+
+        try {
+
+            const response = await getSubroganciasByFecha(rut, fechaActual);
+            if (response) {
+                setSubrogancias(response);
+            }
+
+        } catch (error) {
+            console.log(error);
+
         }
+
+    }
 
     const fetchPermisos = async () => {
         try {
@@ -68,29 +68,29 @@ export const  HomeTabs=()=> {
             fetchSubrogancias();
             getCurrentDate();
         }
-       
+
     }, [depto, rut, setDepto]);
 
     useEffect(() => {
-       
-           
-            getCurrentDate();
-       
-       
+
+
+        getCurrentDate();
+
+
     }, []);
 
 
     useEffect(() => {
-        if(subrogancias.length>0){
+        if (subrogancias.length > 0) {
             setIsJefe(true);
         }
-       
-       
+
+
     }, [subrogancias]);
 
 
 
-    
+
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -100,14 +100,14 @@ export const  HomeTabs=()=> {
 
     const handleLogout = () => {
         sessionStorage.clear();
-        setRut(null); 
+        setRut(null);
         window.location.href = 'https://appx.laflorida.cl/login/cerrar-sesion.php';
     };
 
     const handleBack = () => {
         window.location.href = 'https://appx.laflorida.cl/login/menu.php';
 
-        
+
     };
 
     const hasPermission = (permission) => {
@@ -168,16 +168,17 @@ export const  HomeTabs=()=> {
                                         Solicitudes
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        
-                                            <Dropdown.Item href="/sol/solicitudes">
-                                                Solicitar
-                                            </Dropdown.Item>
-                                        
-                                      
-                                            <Dropdown.Item href="/sol/missolicitudes">
-                                                Mis solicitudes
-                                            </Dropdown.Item>
-                                      
+
+                                        <Dropdown.Item href="/sol/solicitudes">
+                                            Solicitar
+                                        </Dropdown.Item>
+
+
+                                        <Dropdown.Item href="/sol/missolicitudes">
+                                            Mis solicitudes
+                                        </Dropdown.Item>
+
+
                                         {hasPermission("GESTIONAR_USUARIOS") && (
                                             <Dropdown.Item href="/sol/usuarios">Usuarios</Dropdown.Item>
                                         )}
@@ -189,6 +190,10 @@ export const  HomeTabs=()=> {
                                                 Generación de Decretos
                                             </Dropdown.Item>
                                         )}
+                                        <Dropdown.Item href="/sol/decretosview">
+                                            Listado de Decretos
+                                        </Dropdown.Item>
+
                                     </Dropdown.Menu>
                                 </Dropdown>
 

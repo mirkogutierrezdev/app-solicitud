@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
-import { saveAprobacion, saveDerivacion, saveEntrada, saveRechazo } from "../services/services";
+import { getEsSub, saveAprobacion, saveDerivacion, saveEntrada, saveRechazo } from "../services/services";
 import DataContext from "../context/DataContext";
 import Swal from 'sweetalert2';
 import '../css/InboxSolicitudes.css';
@@ -13,8 +15,16 @@ export const InboxRowSub = ({
     handleToggle,
     handleSelect,
     isChecked,
-    esDireccion
+    esDireccion,
+    dataSubrogancias
+    
 }) => {
+
+
+    const deptoValue = dataSubrogancias?.[0]?.depto || "Sin departamento";
+
+
+   
 
 
 
@@ -81,12 +91,20 @@ export const InboxRowSub = ({
     };
 
     useEffect(() => {
-        if (esDireccion) {
+            const fetchData = async () => {
+                try {
+                    if (dataDepartamento.depto) {
+                        const dataSol = await getEsSub(deptoValue);
+                        setEsSubdir(dataSol);
+                    }
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            };
+            fetchData();
+        }, [dataDepartamento.depto]);
 
-            setEsSubdir(true)
-        }
-    }, [dataDepartamento.depto]);
-
+   
     useEffect(() => {
         if (infoFun?.data) {
             setDataFunc(infoFun);
@@ -94,11 +112,7 @@ export const InboxRowSub = ({
         }
     }, [infoFun]);
 
-    useEffect(() => {
-        if (esSubdir) {
-            setIsAprobarDisabled(false);
-        }
-    }, [esSubdir]);
+  
 
     const obtenerFechaActual = () => {
         const fechaActual = new Date();

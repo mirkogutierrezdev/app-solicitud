@@ -120,6 +120,7 @@ export const InboxSol = () => {
         }
     }
 
+
     const fetchSolicitudesSub = async (depto) => {
         try {
             const dataSol = await getSolicitudesInbox(depto);
@@ -755,6 +756,7 @@ export const InboxSol = () => {
                                                     handleSelect={handleSelect}
                                                     isCheckedAll={isCheckedAll}
                                                     isChecked={isChecked}
+                                                    dataSubrogancias={dataSubrogancias}
                                                 />
                                             ))
                                         ) : (

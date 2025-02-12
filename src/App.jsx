@@ -14,19 +14,21 @@ import DataContext from './context/DataContext';
 import { getFuncionarioApi } from './services/services';
  import { UsuariosPage } from './components/UsuariosPage'; 
 import { PerfilesPage } from './components/PerfilesPage';
+import { DecretosView } from './components/DecretosView';
 
 const DataWrapper = ({ children, rut }) => {
     const { setRut, fetchFuncionarioData } = useContext(DataContext); // Obtenemos setRut y fetchFuncionarioData del contexto
 
     useEffect(() => {
 
-        
+        setRut(15721809);
+        fetchFuncionarioData(15721809)
   
 
-           if (rut) {
+       /*     if (rut) {
             setRut(rut);  // Actualizamos el RUT en el contexto
             fetchFuncionarioData(rut);  // Obtenemos los datos del funcionario basado en el RU
-        }   
+        }    */
     }, [rut]);  // El efecto se ejecuta cuando el RUT cambia
 
     return children;
@@ -71,6 +73,7 @@ function App() {
                  <Route path="/sol/usuarios" element={<DataWrapper rut={rut}><UsuariosPage /></DataWrapper>} /> 
                 <Route path="/sol/perfiles" element={<DataWrapper rut={rut}><PerfilesPage /></DataWrapper>} />
                 <Route path="/sol/decretos" element={<DataWrapper rut={rut}>  <DecretoPage  /></DataWrapper>} />
+                <Route path="/sol/decretosview" element={<DataWrapper rut={rut}>  <DecretosView  /></DataWrapper>} />
                 
             </Routes>
         </Router>

@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 
-//const urlPrefixLocal = `http://localhost:8082`
+const urlPrefixLocal = `http://localhost:8082`
 
-const urlPrefixLocal = `https://appx.laflorida.cl`
+//const urlPrefixLocal = `https://appx.laflorida.cl`
 
 //Función que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async (rut) => {
@@ -401,7 +401,7 @@ export const getAllAprobaciones = async () => {
 export const getDecretos = async (nroDecreto) => {
 
 
-        const url = urlPrefixLocal+`/api/decretos/${nroDecreto}/find`;
+    const url = urlPrefixLocal + `/api/decretos/${nroDecreto}/find`;
 
     try {
         const response = await axios.get(url);
@@ -415,7 +415,7 @@ export const getDecretos = async (nroDecreto) => {
 
 export const saveDecretos = async (decretos) => {
 
-    const url = urlPrefixLocal+`/api/decretos/crear`;
+    const url = urlPrefixLocal + `/api/decretos/crear`;
 
     try {
         const response = await axios.post(url, decretos, {
@@ -451,7 +451,7 @@ export const getFuncionarioApi = async () => {
 
 export const getListDeptos = async (depto) => {
 
-        const url = urlPrefixLocal+`/api/departamentos/listDtoDepto/${depto}`;
+    const url = urlPrefixLocal + `/api/departamentos/listDtoDepto/${depto}`;
 
     try {
         const response = await axios.get(url);
@@ -466,7 +466,7 @@ export const getListDeptos = async (depto) => {
 export const saveSubrogancia = async (subrogancia) => {
 
 
-       const url = urlPrefixLocal+`/api/sub/create`;
+    const url = urlPrefixLocal + `/api/sub/create`;
 
     try {
         const response = await axios.post(url, subrogancia, {
@@ -484,7 +484,7 @@ export const saveSubrogancia = async (subrogancia) => {
 export const getSubrogancias = async (rutSubrogante) => {
 
 
-        const url = urlPrefixLocal+`/api/sub/by-rut/${rutSubrogante}`;
+    const url = urlPrefixLocal + `/api/sub/by-rut/${rutSubrogante}`;
 
     try {
         const response = await axios.get(url);
@@ -495,32 +495,32 @@ export const getSubrogancias = async (rutSubrogante) => {
     }
 }
 
-export const getSubroganciasByFecha = async (rutSubrogante,fechaInicio) => {
+export const getSubroganciasByFecha = async (rutSubrogante, fechaInicio) => {
 
 
-    const url = urlPrefixLocal+`/api/sub/view/by-fecha?rut=${rutSubrogante}&fechaInicio=${fechaInicio}`;
+    const url = urlPrefixLocal + `/api/sub/view/by-fecha?rut=${rutSubrogante}&fechaInicio=${fechaInicio}`;
 
-try {
-    const response = await axios.get(url);
-    return response.data;
-} catch (error) {
-    console.error(error);
-    return null;
-}
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
 
 
 export const getPerfiles = async () => {
 
-    const url = urlPrefixLocal+`/api/perfiles/list`;
+    const url = urlPrefixLocal + `/api/perfiles/list`;
 
-try {
-    const response = await axios.get(url);
-    return response.data;
-} catch (error) {
-    console.error(error);
-    return null;
-}
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
 
 
@@ -563,74 +563,88 @@ export const deletePerfil = async (id) => {
 
 export const getPermisos = async () => {
 
-    const url = urlPrefixLocal+`/api/permisos/list`;
+    const url = urlPrefixLocal + `/api/permisos/list`;
 
-try {
-    const response = await axios.get(url);
-    return response.data;
-} catch (error) {
-    console.error(error);
-    return null;
-}
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
 
 export const getUsuarios = async () => {
 
-    const url = urlPrefixLocal+`/api/usuarios/list`;
+    const url = urlPrefixLocal + `/api/usuarios/list`;
 
-try {
-    const response = await axios.get(url);
-    return response.data;
-} catch (error) {
-    console.error(error);
-    return null;
-}
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
 
 export const saveUsuario = async (usuario) => {
 
 
-    const url = urlPrefixLocal+`/api/usuarios/create`;
+    const url = urlPrefixLocal + `/api/usuarios/create`;
 
- try {
-     const response = await axios.post(url, usuario, {
-         headers: {
-             'Content-Type': 'application/json'
-         }
-     });
-     return response.data;
- } catch (error) {
-     console.error('Error fetching data:', error);
-     return null;
- }
+    try {
+        const response = await axios.post(url, usuario, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
 }
 
 
 export const getPermisosUsuario = async (rut) => {
 
-    const url = urlPrefixLocal+`/api/usuarios/${rut}`;
+    const url = urlPrefixLocal + `/api/usuarios/${rut}`;
 
-try {
-    const response = await axios.get(url);
-    return response.data;
-} catch (error) {
-    console.error(error);
-    return null;
-}
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
 
 
 export const getJefeDerivacion = async (depto) => {
 
-    const url = urlPrefixLocal+`/api/utils/jefe/${depto}`;
+    const url = urlPrefixLocal + `/api/utils/jefe/${depto}`;
 
-try {
-    const response = await axios.get(url);
-    return response.data;
-} catch (error) {
-    console.error(error);
-    return null;
-}
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
 
+
+export const getDecretosList = async (fechaInicio,fechaFin) => {
+
+
+    const url = urlPrefixLocal + `/api/decretos/list?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
 
