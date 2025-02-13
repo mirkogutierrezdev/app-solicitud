@@ -1,49 +1,90 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Button, Form, Table, Pagination } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Table, Pagination, InputGroup } from "react-bootstrap";
 import { getDecretosList } from "../services/services";
+import Swal from "sweetalert2";
+import { FaSearch, FaTimes } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa6";
 
 export const DecretosView = () => {
     const [dataDecretos, setDataDecretos] = useState([]);
+    const [filteredDecretos, setFilteredDecretos] = useState([]);
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
+    const [searchIdSolicitud, setSearchIdSolicitud] = useState("");
+    const [searchNombre, setSearchNombre] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
+
 
     const formatFecha = (fecha) => {
         if (!fecha) return "";
         return new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(fecha));
     };
 
+
     const fetchDecretos = async () => {
         if (!fechaInicio || !fechaFin) {
-            alert("Seleccione un rango de fechas antes de cargar los datos.");
+            Swal.fire({
+                title: "Advertencia",
+                text: "Debe ingresar un rango de fechas",
+                icon: "warning",
+            });
+            return;
+        }
+
+        if (new Date(fechaInicio) > new Date(fechaFin)) {
+            Swal.fire({
+                title: "Error",
+                text: "La fecha de inicio no puede ser mayor que la fecha de fin",
+                icon: "error",
+            });
             return;
         }
 
         try {
             const response = await getDecretosList(fechaInicio, fechaFin);
             setDataDecretos(response);
+            setFilteredDecretos(response);
             setCurrentPage(1);
         } catch (error) {
             console.error("Error al obtener decretos:", error);
+            Swal.fire({
+                title: "Error",
+                text: "Hubo un problema al cargar los decretos. Intente nuevamente.",
+                icon: "error",
+            });
         }
     };
 
     useEffect(() => {
-        console.log(dataDecretos);
-    }, [dataDecretos]);
+        let filtered = [...dataDecretos]; // Clonar la lista original para no modificarla
+
+        if (searchIdSolicitud.trim() !== "") {
+            filtered = filtered.filter(decreto =>
+                decreto.idSolicitud.toString().includes(searchIdSolicitud.trim())
+            );
+        }
+
+        if (searchNombre.trim() !== "") {
+            filtered = filtered.filter(decreto =>
+                decreto.nombre.toLowerCase().includes(searchNombre.toLowerCase().trim())
+            );
+        }
+
+        setFilteredDecretos(filtered);
+        setCurrentPage(1);
+    }, [searchIdSolicitud, searchNombre, dataDecretos]);
 
     // Lógica de paginación
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = dataDecretos.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = filteredDecretos.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
         <Container>
             <h2 className="my-4 text-center">Listado de Solicitudes Decretadas</h2>
 
-            {/* Filtros */}
+            {/* Filtros por fecha */}
             <Row className="mb-3">
                 <Col md={4}>
                     <Form.Group>
@@ -64,10 +105,45 @@ export const DecretosView = () => {
                 </Col>
             </Row>
 
-            {/* Tabla */}
-            <div className="table-responsive">
-                <Table striped bordered hover className="small-table">
-                    <thead>
+            {/* Filtros de búsqueda */}
+            <Row className="mb-4">
+                <Col md={6}>
+                    <InputGroup>
+                        <InputGroup.Text><FaSearch /></InputGroup.Text>
+                        <Form.Control
+                            type="text"
+                            placeholder="Buscar por ID de solicitud"
+                            value={searchIdSolicitud}
+                            onChange={(e) => setSearchIdSolicitud(e.target.value)}
+                        />
+                        {searchIdSolicitud && (
+                            <Button variant="light" onClick={() => setSearchIdSolicitud("")}>
+                                <FaTimes/>
+                            </Button>
+                        )}
+                    </InputGroup>
+                </Col>
+                <Col md={6}>
+                    <InputGroup>
+                        <InputGroup.Text><FaSearch /></InputGroup.Text>
+                        <Form.Control
+                            type="text"
+                            placeholder="Buscar por nombre de funcionario"
+                            value={searchNombre}
+                            onChange={(e) => setSearchNombre(e.target.value)}
+                        />
+                        {searchNombre && (
+                            <Button variant="light" onClick={() => setSearchNombre("")}>
+                                <FaTimes />
+                            </Button>
+                        )}
+                    </InputGroup>
+                </Col>
+            </Row>
+
+            {/* Tabla de resultados */}
+            <Table striped bordered hover responsive>
+            <thead>
                         <tr>
                             <th>ID</th>
                             <th>Fecha Creación</th>
@@ -120,30 +196,16 @@ export const DecretosView = () => {
                             </tr>
                         )}
                     </tbody>
-                </Table>
-            </div>
+            </Table>
 
             {/* Paginación */}
-            {dataDecretos.length > itemsPerPage && (
-                <Pagination className="justify-content-center">
-                    <Pagination.Prev onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1} />
-                    <Pagination.Item>{currentPage}</Pagination.Item>
-                    <Pagination.Next
-                        onClick={() => setCurrentPage((prev) => (indexOfLastItem < dataDecretos.length ? prev + 1 : prev))}
-                        disabled={indexOfLastItem >= dataDecretos.length}
-                    />
-                </Pagination>
-            )}
-
-            {/* Estilos */}
-            <style>{`
-                .small-table {
-                    font-size: 14px;
-                }
-                .table-responsive {
-                    overflow-x: auto;
-                }
-            `}</style>
+            <Pagination className="justify-content-center">
+                {[...Array(Math.ceil(filteredDecretos.length / itemsPerPage)).keys()].map(num => (
+                    <Pagination.Item key={num + 1} active={num + 1 === currentPage} onClick={() => setCurrentPage(num + 1)}>
+                        {num + 1}
+                    </Pagination.Item>
+                ))}
+            </Pagination>
         </Container>
     );
 };
