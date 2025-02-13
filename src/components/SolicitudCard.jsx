@@ -50,6 +50,7 @@ const SolicitudCard = ({
                                 id={id}
                                 rechazos={rechazos}
                                 aprobaciones={aprobaciones}
+                               
                             />
                         </div>
                     </Collapse>

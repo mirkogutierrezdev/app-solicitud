@@ -150,7 +150,7 @@ export const InboxSol = () => {
                 fetchSolicitudesSub(sub.depto);
             });
         }
-    }, [dataSubrogancias]);
+    }, [dataSubrogancias,solicitudesSub]);
 
 
          useEffect(() => {

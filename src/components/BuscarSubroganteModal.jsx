@@ -1,6 +1,7 @@
 import { Modal, Form, Table, Button } from "react-bootstrap";
 import PaginationComponent from "./PaginationComponent";
 import PropTypes from "prop-types";
+import { addVerify } from "../services/validation";
 
 export const BuscarSubroganteModal = ({
     show,
@@ -36,7 +37,7 @@ export const BuscarSubroganteModal = ({
                     <tbody>
                         {currentResults.map((depto, index) => (
                             <tr key={index}>
-                                <td>{depto.rut}</td>
+                                <td>{depto.rut}-{addVerify(depto.rut)}</td>
                                 <td>{depto.nombre}</td>
                                 <td>{depto.nombreDepartamento}</td>
                                 <td>

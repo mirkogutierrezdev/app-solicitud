@@ -4,6 +4,7 @@ import { getDecretosList } from "../services/services";
 import Swal from "sweetalert2";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa6";
+import { addVerify } from "../services/validation";
 
 export const DecretosView = () => {
     const [dataDecretos, setDataDecretos] = useState([]);
@@ -167,7 +168,7 @@ export const DecretosView = () => {
                                     <td>{decreto.id}</td>
                                     <td>{formatFecha(decreto.fechaCreacion)}</td>
                                     <td>{decreto.idSolicitud}</td>
-                                    <td>{decreto.rut}</td>
+                                    <td>{decreto.rut}-{addVerify(decreto.rut)}</td>
                                     <td>{decreto.nombre}</td>
                                     <td>{decreto.tipoSolicitud}</td>
                                     <td>{formatFecha(decreto.fechaSolicitud)}</td>

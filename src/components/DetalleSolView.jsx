@@ -8,6 +8,7 @@ import DetalleSolicitud from "./DetalleSolicitud";
 import SubroganteModal from "./SubroganteModal";
 import BuscarSubroganteModal from "./BuscarSubroganteModal";
 import PropTypes from "prop-types";
+import { validarRut } from "../services/validation";
 
 export const DetalleSolView = ({
     option,
@@ -69,14 +70,32 @@ export const DetalleSolView = ({
             getDeptos();
         }
     }, [isJefe]);
-
     const handleRutBlur = () => {
-        if (!subroganteRut.trim()) {
+        const rutLimpio = subroganteRut.trim();
+    
+        // Si el campo está vacío, limpiar el nombre y salir
+        if (!rutLimpio) {
             setSubroganteNombre("");
             return;
         }
-
-        const subroganteData = deptos.find(d => String(d.rut).trim() === subroganteRut.trim());
+    
+        // Validar RUT antes de buscar
+        if (!validarRut(rutLimpio)) {
+            setSubroganteNombre("");
+            Swal.fire({
+                icon: "error",
+                title: "RUT inválido",
+                text: "El RUT ingresado no es válido.",
+            });
+            return;
+        }
+    
+        // Obtener solo la parte numérica del RUT (sin guion ni DV)
+        const rutNumerico = rutLimpio.split("-")[0];
+    
+        // Buscar en deptos comparando solo la parte numérica
+        const subroganteData = deptos.find(d => String(d.rut).split("-")[0].trim() === rutNumerico);
+    
         if (subroganteData) {
             setSubroganteNombre(subroganteData.nombre);
         } else {
@@ -87,7 +106,9 @@ export const DetalleSolView = ({
             });
         }
     };
+    
 
+    
     const handleSelectSubrogante = (selectedRut) => {
         const subroganteData = deptos.find(d => d.rut === selectedRut);
         if (subroganteData) {

@@ -30,3 +30,25 @@ export const formatRut = (rut) => {
     // Retornar el RUT formateado
     return `${formattedRutBody}-${verifier}`;
 };
+
+
+export const validarRut = (rut) => {
+    const rutRegex = /^(\d{7,8})-([\dkK])$/;
+    const match = rut.match(rutRegex);
+    if (!match) return false;
+
+    const cuerpo = match[1];
+    let dv = match[2].toUpperCase();
+
+    let suma = 0, multiplo = 2;
+
+    for (let i = cuerpo.length - 1; i >= 0; i--) {
+        suma += parseInt(cuerpo[i]) * multiplo;
+        multiplo = multiplo < 7 ? multiplo + 1 : 2;
+    }
+
+    let dvCalculado = 11 - (suma % 11);
+    dvCalculado = dvCalculado === 11 ? "0" : dvCalculado === 10 ? "K" : dvCalculado.toString();
+
+    return dv === dvCalculado;
+};

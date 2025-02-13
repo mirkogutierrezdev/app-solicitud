@@ -648,3 +648,19 @@ export const getDecretosList = async (fechaInicio,fechaFin) => {
     }
 }
 
+
+export const getSolicitudId = async (id) => {
+
+
+    const url = urlPrefixLocal + `/api/solicitud/${id}`;
+
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+

@@ -190,9 +190,11 @@ export const HomeTabs = () => {
                                                 Generación de Decretos
                                             </Dropdown.Item>
                                         )}
+                                        {hasPermission("LISTAR_DECRETOS") && (
                                         <Dropdown.Item href="/sol/decretosview">
                                             Listado de Decretos
                                         </Dropdown.Item>
+                                        )}
 
                                     </Dropdown.Menu>
                                 </Dropdown>
