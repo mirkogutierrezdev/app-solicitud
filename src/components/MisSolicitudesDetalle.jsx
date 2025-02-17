@@ -2,20 +2,20 @@ import { useEffect, useState } from "react";
 import { Card, ListGroup, Spinner, Table } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { getVderivaciones } from "../services/services"; // Asegúrate de importar correctamente la función
-
 function formatDate(dateString) {
-    if (!dateString) return ""; // Si es null, undefined o vacío, retorna "N/A"
+    if (!dateString) return ""; 
     
     const date = new Date(dateString);
     
-    if (isNaN(date.getTime())) return "Fecha inválida"; // Si la fecha no es válida
+    if (isNaN(date.getTime())) return "Fecha inválida";
 
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear();
 
     return `${day}-${month}-${year}`;
 }
+
 
 
 export const MisSolicitudesDetalle = ({ id, rechazos, aprobaciones,fechaInicio,
@@ -44,9 +44,7 @@ export const MisSolicitudesDetalle = ({ id, rechazos, aprobaciones,fechaInicio,
         }
     }, [id]);
 
-    useEffect(() => {
-        console.log(solicitud)
-    }, [solicitud])
+
 
     if (loading) {
         return <Spinner animation="border" className="d-block mx-auto my-4" />;

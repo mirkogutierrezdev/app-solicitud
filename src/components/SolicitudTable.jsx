@@ -11,7 +11,19 @@ const SolicitudTable = ({
     open,
     handleToggle
 }) => {
+    function formatDate(dateString) {
+        if (!dateString) return "";
 
+        const date = new Date(dateString);
+
+        if (isNaN(date.getTime())) return "Fecha inválida";
+
+        const day = date.getUTCDate().toString().padStart(2, '0');
+        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+        const year = date.getUTCFullYear();
+
+        return `${day}-${month}-${year}`;
+    }
     return (
         <Table bordered hover responsive>
             <thead>
@@ -26,13 +38,13 @@ const SolicitudTable = ({
             </thead>
             <tbody>
                 {solicitudes.length > 0 ? (
-                    solicitudes.map(({ id, fechaSolicitud, tipoSolicitud, estado,fechaInicio,fechaFin,duracion }) => (
+                    solicitudes.map(({ id, fechaSolicitud, tipoSolicitud, estado, fechaInicio, fechaFin, duracion }) => (
                         <React.Fragment key={id}>
                             <tr>
                                 <td>{id}</td>
                                 <td>{tipoSolicitud.nombre}</td>
                                 <td>{estado.nombre}</td>
-                                <td>{fechaSolicitud}</td>
+                                <td>{formatDate(fechaSolicitud)}</td>
                                 <td>
                                     <Button
                                         onClick={() => handleToggle(id)}

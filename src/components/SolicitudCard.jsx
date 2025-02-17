@@ -12,6 +12,20 @@ const SolicitudCard = ({
     handleToggle
 }) => {
 
+    function formatDate(dateString) {
+        if (!dateString) return "";
+
+        const date = new Date(dateString);
+
+        if (isNaN(date.getTime())) return "Fecha inválida";
+
+        const day = date.getUTCDate().toString().padStart(2, '0');
+        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+        const year = date.getUTCFullYear();
+
+        return `${day}-${month}-${year}`;
+    }
+
     
     return solicitudes.length > 0 ? (
         solicitudes.map(({ id, fechaSolicitud, tipoSolicitud, estado }) => (
@@ -21,7 +35,7 @@ const SolicitudCard = ({
                     <ListGroup variant="flush">
                         <ListGroup.Item><strong>Tipo de Solicitud:</strong> {tipoSolicitud.nombre}</ListGroup.Item>
                         <ListGroup.Item><strong>Estado:</strong> {estado.nombre}</ListGroup.Item>
-                        <ListGroup.Item><strong>Fecha de Solicitud:</strong> {fechaSolicitud}</ListGroup.Item>
+                        <ListGroup.Item><strong>Fecha de Solicitud:</strong> {formatDate(fechaSolicitud)}</ListGroup.Item>
                         <ListGroup.Item>
                             <Button
                                 onClick={() => handleToggle(id)}
