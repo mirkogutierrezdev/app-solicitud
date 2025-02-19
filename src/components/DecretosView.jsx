@@ -3,10 +3,12 @@ import { Container, Row, Col, Button, Form, Table, Pagination, InputGroup } from
 import { getDecretosList } from "../services/services";
 import Swal from "sweetalert2";
 import { FaSearch, FaTimes } from "react-icons/fa";
-import { FaFilePdf } from "react-icons/fa6";
+import { FaFileExcel, FaFilePdf } from "react-icons/fa6";
 import { addVerify } from "../services/validation";
+import * as XLSX from "xlsx"; // Importar la biblioteca xlsx
 
 export const DecretosView = () => {
+
     const [dataDecretos, setDataDecretos] = useState([]);
     const [filteredDecretos, setFilteredDecretos] = useState([]);
     const [fechaInicio, setFechaInicio] = useState("");
@@ -15,7 +17,6 @@ export const DecretosView = () => {
     const [searchNombre, setSearchNombre] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
-
 
     const formatFecha = (fecha) => {
         if (!fecha) return "";
@@ -58,7 +59,7 @@ export const DecretosView = () => {
     };
 
     useEffect(() => {
-        let filtered = [...dataDecretos]; // Clonar la lista original para no modificarla
+        let filtered = [...dataDecretos];
 
         if (searchIdSolicitud.trim() !== "") {
             filtered = filtered.filter(decreto =>
@@ -76,10 +77,32 @@ export const DecretosView = () => {
         setCurrentPage(1);
     }, [searchIdSolicitud, searchNombre, dataDecretos]);
 
-    // Lógica de paginación
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredDecretos.slice(indexOfFirstItem, indexOfLastItem);
+
+    const exportToExcel = () => {
+
+        if(filteredDecretos==0){
+            Swal.fire({
+                title:"Error",
+                text:"No hay datos a exportar",
+                icon:"error"
+            })
+            return;
+        }
+
+        const ws = XLSX.utils.json_to_sheet(filteredDecretos.map(decreto => ({
+            "ID Solicitud": decreto.idSolicitud,
+            "Nombre": decreto.nombre,
+            "Fecha Decreto": formatFecha(decreto.fechaDecreto),
+        })));
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Decretos");
+
+        XLSX.writeFile(wb, `Decretos_${fechaInicio}_a_${fechaFin}.xlsx`);
+    };
 
     return (
         <Container>
@@ -119,7 +142,7 @@ export const DecretosView = () => {
                         />
                         {searchIdSolicitud && (
                             <Button variant="light" onClick={() => setSearchIdSolicitud("")}>
-                                <FaTimes/>
+                                <FaTimes />
                             </Button>
                         )}
                     </InputGroup>
@@ -142,61 +165,71 @@ export const DecretosView = () => {
                 </Col>
             </Row>
 
+            <Row className="mb-4">
+                <Col className="text-end">
+                    <Button variant="success" onClick={exportToExcel}>
+                        <FaFileExcel /> Exportar a Excel
+                    </Button>
+                </Col>
+            </Row>
+
             {/* Tabla de resultados */}
             <Table striped bordered hover responsive>
-            <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Fecha Creación</th>
-                            <th>ID Solicitud</th>
-                            <th>Rut</th>
-                            <th>Nombre</th>
-                            <th>Tipo Solicitud</th>
-                            <th>Fecha Solicitud</th>
-                            <th>Fecha Inicio</th>
-                            <th>Fecha Fin</th>
-                            <th>Duración</th>
-                            <th>Departamento</th>
-                            <th>Aprobado por</th>
-                            <th>Pdf</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentItems.length > 0 ? (
-                            currentItems.map((decreto, index) => (
-                                <tr key={index}>
-                                    <td>{decreto.id}</td>
-                                    <td>{formatFecha(decreto.fechaCreacion)}</td>
-                                    <td>{decreto.idSolicitud}</td>
-                                    <td>{decreto.rut}-{addVerify(decreto.rut)}</td>
-                                    <td>{decreto.nombre}</td>
-                                    <td>{decreto.tipoSolicitud}</td>
-                                    <td>{formatFecha(decreto.fechaSolicitud)}</td>
-                                    <td>{formatFecha(decreto.fechaInicio)}</td>
-                                    <td>{formatFecha(decreto.fechaFin)}</td>
-                                    <td>{decreto.duracion} días</td>
-                                    <td>{decreto.depto}</td>
-                                    <td>{decreto.aprobadoPor}</td>
-                                    <td><Button
-                                        variant="light"
-                                        onClick={() => window.open(decreto.urlPdf, '_blank')}
-                                        data-toggle="tooltip"
-                                        data-placement="top"
-                                        title="Abrir PDF"
-                                        className="me-2"
-                                    >
-                                        <FaFilePdf /> {/* Ícono para abrir en nueva pestaña */}
-                                    </Button></td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="12" className="text-center">
-                                    No hay datos disponibles.
-                                </td>
+                <thead>
+                    <tr>
+                        
+                        <th>ID</th>
+                        <th>Fecha Creación</th>
+                        <th>ID Solicitud</th>
+                        <th>Rut</th>
+                        <th>Nombre</th>
+                        <th>Tipo Solicitud</th>
+                        <th>Fecha Solicitud</th>
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Fin</th>
+                        <th>Duración</th>
+                        <th>Departamento</th>
+                        <th>Aprobado por</th>
+                        <th>Pdf</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {currentItems.length > 0 ? (
+                        currentItems.map((decreto, index) => (
+                            <tr key={index}>
+                                
+                                <td>{decreto.id}</td>
+                                <td>{formatFecha(decreto.fechaCreacion)}</td>
+                                <td>{decreto.idSolicitud}</td>
+                                <td>{decreto.rut}-{addVerify(decreto.rut)}</td>
+                                <td>{decreto.nombre}</td>
+                                <td>{decreto.tipoSolicitud}</td>
+                                <td>{formatFecha(decreto.fechaSolicitud)}</td>
+                                <td>{formatFecha(decreto.fechaInicio)}</td>
+                                <td>{formatFecha(decreto.fechaFin)}</td>
+                                <td>{decreto.duracion} días</td>
+                                <td>{decreto.depto}</td>
+                                <td>{decreto.aprobadoPor}</td>
+                                <td><Button
+                                    variant="light"
+                                    onClick={() => window.open(decreto.urlPdf, '_blank')}
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Abrir PDF"
+                                    className="me-2"
+                                >
+                                    <FaFilePdf /> {/* Ícono para abrir en nueva pestaña */}
+                                </Button></td>
                             </tr>
-                        )}
-                    </tbody>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="12" className="text-center">
+                                No hay datos disponibles.
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
             </Table>
 
             {/* Paginación */}

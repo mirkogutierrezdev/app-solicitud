@@ -134,31 +134,31 @@ export const DetalleSolView = ({
     const handleSaveSolicitud = async () => {
         let modifiedStartDate = startDate;
         let modifiedEndDate = endDate;
-
+    
         if (option === "Administrativo") {
             if (optionAdmIni === "mañana") {
                 modifiedStartDate = startDate + "T12:00:00";
             } else if (optionAdmIni === "tarde") {
                 modifiedStartDate = startDate + "T17:30:00";
             }
-
+    
             if (optionAdmFin === "mañana") {
                 modifiedEndDate = endDate + "T12:00:00";
             } else if (optionAdmFin === "tarde") {
                 modifiedEndDate = endDate + "T17:30:00";
             }
-
+    
             if (optionAdmIni === "mañana" && optionAdmFin === "tarde") {
                 modifiedStartDate = startDate + "T00:00:00";
                 modifiedEndDate = endDate + "T00:00:00";
             }
         }
-
+    
         if (option === "Feriado Legal") {
             modifiedStartDate = startDate + "T00:00:00";
             modifiedEndDate = endDate + "T00:00:00";
         }
-
+    
         const solicitud = {
             fechaInicio: modifiedStartDate,
             fechaFin: modifiedEndDate,
@@ -170,50 +170,45 @@ export const DetalleSolView = ({
             fechaDer: currentDateString,
             duracion: workDays
         };
-
+    
         try {
             const response = await saveSolicitud(solicitud);
-
+            if (!response.id) throw new Error("No se pudo obtener el ID de la solicitud");
+    
             if (isJefe && subroganteRut) {
-                if (!response.id) throw new Error("No se pudo obtener el ID de la solicitud");
-
                 const subrogancia = {
                     rutSubrogante: subroganteRut,
                     rutJefe: rut,
                     fechaInicio: startDate,
                     fechaFin: endDate,
                     idSolicitud: response.id,
-                    depto:depto
+                    depto: depto
                 };
-
-                try {
-                    await saveSubrogancia(subrogancia);
-                  console.log(subrogancia)
-                } catch (subError) {
-                    console.error("Error al guardar la subrogancia:", subError);
-                    Swal.fire({
-                        text: "La solicitud fue creada, pero hubo un error al guardar la subrogancia.",
-                        icon: "error"
-                    });
-                }
+    
+                // Ejecutamos ambas operaciones al mismo tiempo y si alguna falla, ninguna se guarda
+                await Promise.all([saveSubrogancia(subrogancia)]);
             }
-
-            resetAllValues();
-
+    
             Swal.fire({
                 text: "Solicitud creada correctamente.",
                 icon: "success"
             });
-
+    
+            resetAllValues();
+    
         } catch (error) {
-            console.error("Error al guardar la solicitud:", error);
+            console.error("Error al guardar la solicitud o la subrogancia:", error);
+    
+            // Muestra el error de manera clara con SweetAlert
             Swal.fire({
-                text: "Hubo un error al guardar la solicitud.",
+                title: "Error",
+                text: "Hubo un error al guardar la solicitud o la subrogancia. No se guardó ningún dato.",
                 icon: "error"
             });
         }
     };
-
+    
+    
     const handleSubmitModal = async () => {
         setShowModal(false);
     };

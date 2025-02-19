@@ -21,9 +21,10 @@ const DataWrapper = ({ children, rut }) => {
 
     useEffect(() => {
 
-        setRut(13028488);
-        fetchFuncionarioData(13028488)
-  
+        setRut(15721809 );
+        fetchFuncionarioData(15721809)
+        /*12246023*/
+        /*9678614 */
 
        /*     if (rut) {
             setRut(rut);  // Actualizamos el RUT en el contexto
