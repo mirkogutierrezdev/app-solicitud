@@ -234,8 +234,7 @@ export const InboxRow = ({
             rut: data.rut,
             estado: "APROBADA"
         };
-
-
+    
         Swal.fire({
             title: '¿Está seguro de aprobar la solicitud?',
             showDenyButton: true,
@@ -246,50 +245,58 @@ export const InboxRow = ({
             if (result.isConfirmed) {
                 try {
                     setIsAprobarDisabled(true);
-
-                    // Mostrar el modal de espera mientras se procesa la aprobación
-                    const waitModal = Swal.fire({
+    
+                    // Mostrar el modal de espera
+                    Swal.fire({
                         title: 'Estamos firmando digitalmente su documento...',
                         text: 'Por favor espere mientras procesamos la solicitud.',
                         icon: 'info',
                         showConfirmButton: false,
-                        allowOutsideClick: false, // Impide cerrar el modal haciendo clic fuera
-                        allowEscapeKey: false, // Desactiva la tecla ESC para cerrar el modal
-                        willOpen: () => {
-                            // Puedes agregar alguna animación o lógica adicional aquí si lo deseas
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
                         }
                     });
-
-                    // Simula la espera de la firma digital (llama a tu función para guardar la aprobación)
+    
+                    // Llamada a la API
                     await saveAprobacion(solicitudDto);
-
-                    // Cierra el modal de espera
-                    waitModal.close();
-
-                    // Muestra el mensaje de éxito
+    
+                    // Mostrar mensaje de éxito
                     Swal.fire({
                         text: "Solicitud aprobada con éxito",
                         icon: "success"
                     });
-
+    
                 } catch (error) {
-                    // Cierra el modal de espera si hubo un error
-                    Swal.close();
-                    console.log(error)
-
+    
+                    let errorMessage = "Ocurrió un error inesperado.";
+    
+                    if (error.response) {
+                        // El backend respondió con un error
+                        errorMessage = error.response.data || "Error en el servidor.";
+                    } else if (error.request) {
+                        // No hubo respuesta del servidor
+                        errorMessage = "No se recibió respuesta del servidor.";
+                    } else {
+                        // Otro error (posible fallo en la configuración)
+                        errorMessage = error.message;
+                    }
+    
+                    // Mostrar el mensaje de error
                     Swal.fire({
                         title: "Error al aprobar la solicitud",
                         icon: "error",
-                        text:error
-
+                        text: errorMessage
                     });
-
+    
                 } finally {
                     setIsAprobarDisabled(false);
                 }
             }
         });
     };
+    
 
 
 

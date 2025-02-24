@@ -15,16 +15,27 @@ export const DecretosView = () => {
     const [fechaFin, setFechaFin] = useState("");
     const [searchIdSolicitud, setSearchIdSolicitud] = useState("");
     const [searchNombre, setSearchNombre] = useState("");
+    const [searchRut, setSearchRut] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedDecretos, setSelectedDecretos] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
-    const [selectContrato, setSelectContrato] = useState('');
+    const [selectTipo, setSelectTipo] = useState('ALL');
+    const [tipoSolicitud, setTipoSolicitud] = useState([]);
     const itemsPerPage = 5;
 
     const formatFecha = (fecha) => {
         if (!fecha) return "";
         return new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(fecha));
     };
+
+    useEffect(() => {
+
+        setTipoSolicitud([... new Set(dataDecretos.map(decreto => decreto.tipoSolicitud))]);
+
+    }, [filteredDecretos])
+
+
+
 
     const toggleSelectAll = () => {
         if (selectAll) {
@@ -46,11 +57,6 @@ export const DecretosView = () => {
 
     const filteredByContrato = () => {
 
-        if(selectContrato ==""){
-            setFilteredDecretos(dataDecretos);
-        }
-
-
         if (filteredDecretos.length == 0) {
             Swal.fire({
                 title: "Sistema de Solicitudes",
@@ -59,11 +65,15 @@ export const DecretosView = () => {
             })
         }
 
-        let filter = [...filteredDecretos.filter(decretos => decretos.tipoContrato.includes(selectContrato))]
 
-        setFilteredDecretos(filter);
-
-
+        if (selectTipo === "ALL") {
+            setFilteredDecretos(dataDecretos.toSorted((a, b) => a.paterno.localeCompare(b.paterno)));
+        } else {
+            let filter = [...dataDecretos.filter(decretos => decretos.tipoSolicitud === selectTipo)
+                .sort((a, b) => a.paterno.localeCompare(b.paterno))
+            ]
+            setFilteredDecretos(filter);
+        }
     }
 
 
@@ -88,7 +98,6 @@ export const DecretosView = () => {
 
         try {
             const response = await getDecretosList(fechaInicio, fechaFin);
-            console.log(response);
             setDataDecretos(response);
             setFilteredDecretos(response);
             setSelectedDecretos([]);
@@ -105,23 +114,31 @@ export const DecretosView = () => {
     };
 
     useEffect(() => {
-        let filtered = [...dataDecretos];
+        let filtered = [...dataDecretos.toSorted((a, b) => a.paterno.localeCompare(b.paterno))];
 
         if (searchIdSolicitud.trim() !== "") {
             filtered = filtered.filter(decreto =>
                 decreto.idSolicitud.toString().includes(searchIdSolicitud.trim())
             );
         }
-
         if (searchNombre.trim() !== "") {
+            filtered = filtered.filter(decreto => {
+                const nombreCompleto = `${decreto.nombres} ${decreto.paterno} ${decreto.materno}`.toLowerCase();
+                return nombreCompleto.includes(searchNombre.toLowerCase().trim());
+            });
+        }
+        
+
+        if (searchRut.trim() !== "") {
             filtered = filtered.filter(decreto =>
-                decreto.nombre.toLowerCase().includes(searchNombre.toLowerCase().trim())
+                String(decreto.rut).includes(searchRut.trim())
             );
         }
+        
 
         setFilteredDecretos(filtered);
         setCurrentPage(1);
-    }, [searchIdSolicitud, searchNombre, dataDecretos]);
+    }, [searchIdSolicitud, searchNombre, dataDecretos,searchRut]);
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -139,8 +156,8 @@ export const DecretosView = () => {
             "Fecha Creacion": formatFecha(decreto.fechaCreacion),
             "ID Solicitud": decreto.idSolicitud,
             "RUT": decreto.rut + "-" + addVerify(decreto.rut),
-            "Nombre": decreto.nombre,
-            "Tipo Solicitus": decreto.tipoSolicitud,
+            "Nombre": decreto.paterno + " " + decreto.materno + " " + decreto.nombres,
+            "Tipo Solicitud": decreto.tipoSolicitud,
             "Fecha Solicitud": formatFecha(decreto.fechaSolicitud),
             "Fecha Inicio": formatFecha(decreto.fechaInicio),
             "Fecha Fin": formatFecha(decreto.fechaFin),
@@ -155,7 +172,6 @@ export const DecretosView = () => {
         XLSX.utils.book_append_sheet(wb, ws, "Decretos");
         XLSX.writeFile(wb, "Decretos_Export.xlsx");
     };
-
 
 
     return (
@@ -185,7 +201,7 @@ export const DecretosView = () => {
 
             {/* Filtros de búsqueda */}
             <Row className="mb-4">
-                <Col md={6}>
+                <Col md={4}>
                     <InputGroup>
                         <InputGroup.Text><FaSearch /></InputGroup.Text>
                         <Form.Control
@@ -201,7 +217,7 @@ export const DecretosView = () => {
                         )}
                     </InputGroup>
                 </Col>
-                <Col md={6}>
+                <Col md={4}>
                     <InputGroup>
                         <InputGroup.Text><FaSearch /></InputGroup.Text>
                         <Form.Control
@@ -217,15 +233,38 @@ export const DecretosView = () => {
                         )}
                     </InputGroup>
                 </Col>
+
+                <Col md={4}>
+                <InputGroup>
+                        <InputGroup.Text><FaSearch /></InputGroup.Text>
+                        <Form.Control
+                            type="text"
+                            placeholder="Buscar por Rut de funcionario"
+                            value={searchRut}
+                            onChange={(e) => setSearchRut(e.target.value)}
+                        />
+                        {searchRut && (
+                            <Button variant="light" onClick={() => setSearchRut("")}>
+                                <FaTimes />
+                            </Button>
+                        )}
+                    </InputGroup>
+
+                </Col>
             </Row>
 
             <Row className="mb-4">
                 <Col className="text-end">
                     <Form.Select aria-label="Selector tipo contrato"
-                        onClick={(e) => setSelectContrato(e.target.value)} >
-                        <option value="" >Tipo Contrato</option>
-                        <option value="PLANTA">Planta</option>
-                        <option value="CONTRATA">Contrata</option>
+                        onClick={(e) => setSelectTipo(e.target.value)} >
+                        <option value="ALL" >Tipo Solicitud</option>
+                        {
+                            tipoSolicitud.map((tipo, index) => (
+                                <option value={tipo} key={index}>{tipo}</option>
+                            ))
+                        }
+
+
                     </Form.Select>
 
                 </Col>
@@ -283,7 +322,7 @@ export const DecretosView = () => {
                                 <td>{formatFecha(decreto.fechaCreacion)}</td>
                                 <td>{decreto.idSolicitud}</td>
                                 <td>{decreto.rut}-{addVerify(decreto.rut)}</td>
-                                <td>{decreto.nombre}</td>
+                                <td>{decreto.paterno} {decreto.materno} {decreto.nombres}</td>
                                 <td>{decreto.tipoSolicitud}</td>
                                 <td>{formatFecha(decreto.fechaSolicitud)}</td>
                                 <td>{formatFecha(decreto.fechaInicio)}</td>

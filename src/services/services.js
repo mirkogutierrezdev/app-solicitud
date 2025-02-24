@@ -186,15 +186,10 @@ export const saveAprobacion = async (solicitud) => {
         });
         return response.data;
     } catch (error) {
-
-        // Si el error tiene una respuesta del backend, obtenemos el mensaje
-        if (error.response) {
-            const mensajeError = error.response.data?.error || 'Error desconocido en la aprobación';
-            throw new Error(mensajeError);
-        }
-
-        // Si no hay respuesta del backend (problema de red, servidor caído, etc.)
-        throw new Error('No se pudo conectar con el servidor. Inténtelo más tarde.');
+        console.error('Error en la solicitud POST:', error);
+       throw error;
+        
+        
     }
 };
 
