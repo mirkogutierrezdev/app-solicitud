@@ -234,7 +234,8 @@ export const InboxRow = ({
             rut: data.rut,
             estado: "APROBADA"
         };
-    
+
+
         Swal.fire({
             title: '¿Está seguro de aprobar la solicitud?',
             showDenyButton: true,
@@ -245,7 +246,7 @@ export const InboxRow = ({
             if (result.isConfirmed) {
                 try {
                     setIsAprobarDisabled(true);
-    
+
                     // Mostrar el modal de espera mientras se procesa la aprobación
                     const waitModal = Swal.fire({
                         title: 'Estamos firmando digitalmente su documento...',
@@ -258,37 +259,39 @@ export const InboxRow = ({
                             // Puedes agregar alguna animación o lógica adicional aquí si lo deseas
                         }
                     });
-    
+
                     // Simula la espera de la firma digital (llama a tu función para guardar la aprobación)
                     await saveAprobacion(solicitudDto);
-    
+
                     // Cierra el modal de espera
                     waitModal.close();
-    
+
                     // Muestra el mensaje de éxito
                     Swal.fire({
                         text: "Solicitud aprobada con éxito",
                         icon: "success"
                     });
-    
+
                 } catch (error) {
                     // Cierra el modal de espera si hubo un error
                     Swal.close();
-    
+                    console.log(error)
+
                     Swal.fire({
-                        text: "Error al aprobar la solicitud",
-                        icon: "error"
+                        title: "Error al aprobar la solicitud",
+                        icon: "error",
+                        text:error
+
                     });
-    
-                    console.log(error);
+
                 } finally {
                     setIsAprobarDisabled(false);
                 }
             }
         });
     };
-    
-    
+
+
 
     useEffect(() => {
         verificarEstadoBotones();
@@ -305,7 +308,6 @@ export const InboxRow = ({
     }
 
     const hasDerivation = solicitud?.salidas?.derivaciones?.some(derivacion => derivacion.id === solicitud.salidas.derivaciones.id);
-
     return (
         <>
             <tr className={isLeida ? "unread-row" : "read-row"}>
@@ -314,8 +316,8 @@ export const InboxRow = ({
                     esSubdir={esSubdir} handleGuardarYDerivar={handleGuardarYDerivar}
                     isDerivarDisabled={isDerivarDisabled} handleRechazar={handleRechazar}
                     isRechazarDisable={isRechazarDisabled} handlerAprobar={handlerAprobar}
-                    isAprobarDisable={isAprobarDisabled} 
-                    handleToggle={handleToggle} 
+                    isAprobarDisable={isAprobarDisabled}
+                    handleToggle={handleToggle}
                     openId={openId}
                     estadoClass={estadoClass}
                     handleSelect={handleSelect}

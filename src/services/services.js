@@ -176,8 +176,6 @@ export const esJefe = async (depto, rut) => {
 
 //Graba aprobación en la base de datos
 export const saveAprobacion = async (solicitud) => {
-
-
     const url = urlPrefixLocal + `/api/aprobaciones/create`;
 
     try {
@@ -188,10 +186,18 @@ export const saveAprobacion = async (solicitud) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching data:', error);
-        return null;
+
+        // Si el error tiene una respuesta del backend, obtenemos el mensaje
+        if (error.response) {
+            const mensajeError = error.response.data?.error || 'Error desconocido en la aprobación';
+            throw new Error(mensajeError);
+        }
+
+        // Si no hay respuesta del backend (problema de red, servidor caído, etc.)
+        throw new Error('No se pudo conectar con el servidor. Inténtelo más tarde.');
     }
-}
+};
+
 
 //Graba rechazo en la base de datos
 export const saveRechazo = async (solicitud) => {

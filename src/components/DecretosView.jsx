@@ -16,12 +16,55 @@ export const DecretosView = () => {
     const [searchIdSolicitud, setSearchIdSolicitud] = useState("");
     const [searchNombre, setSearchNombre] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedDecretos, setSelectedDecretos] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
+    const [selectContrato, setSelectContrato] = useState('');
     const itemsPerPage = 5;
 
     const formatFecha = (fecha) => {
         if (!fecha) return "";
         return new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(fecha));
     };
+
+    const toggleSelectAll = () => {
+        if (selectAll) {
+            setSelectedDecretos([]);
+        } else {
+            setSelectedDecretos(filteredDecretos.map(decreto => decreto.idSolicitud));
+        }
+        setSelectAll(!selectAll);
+    };
+
+    const toggleSelect = (id) => {
+        setSelectedDecretos(prevSelected =>
+            prevSelected.includes(id)
+                ? prevSelected.filter(item => item !== id)
+                : [...prevSelected, id]
+        );
+    };
+
+
+    const filteredByContrato = () => {
+
+        if(selectContrato ==""){
+            setFilteredDecretos(dataDecretos);
+        }
+
+
+        if (filteredDecretos.length == 0) {
+            Swal.fire({
+                title: "Sistema de Solicitudes",
+                text: "Primero debe cargar la información",
+                icon: "info"
+            })
+        }
+
+        let filter = [...filteredDecretos.filter(decretos => decretos.tipoContrato.includes(selectContrato))]
+
+        setFilteredDecretos(filter);
+
+
+    }
 
 
     const fetchDecretos = async () => {
@@ -45,8 +88,11 @@ export const DecretosView = () => {
 
         try {
             const response = await getDecretosList(fechaInicio, fechaFin);
+            console.log(response);
             setDataDecretos(response);
             setFilteredDecretos(response);
+            setSelectedDecretos([]);
+            setSelectAll(false);
             setCurrentPage(1);
         } catch (error) {
             console.error("Error al obtener decretos:", error);
@@ -80,29 +126,37 @@ export const DecretosView = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredDecretos.slice(indexOfFirstItem, indexOfLastItem);
-
     const exportToExcel = () => {
-
-        if(filteredDecretos==0){
-            Swal.fire({
-                title:"Error",
-                text:"No hay datos a exportar",
-                icon:"error"
-            })
+        if (selectedDecretos.length === 0) {
+            Swal.fire({ title: "Error", text: "No hay datos seleccionados para exportar", icon: "error" });
             return;
         }
 
-        const ws = XLSX.utils.json_to_sheet(filteredDecretos.map(decreto => ({
+        const dataToExport = filteredDecretos.filter(decreto => selectedDecretos.includes(decreto.idSolicitud));
+
+        const ws = XLSX.utils.json_to_sheet(dataToExport.map(decreto => ({
+            "ID": decreto.id,
+            "Fecha Creacion": formatFecha(decreto.fechaCreacion),
             "ID Solicitud": decreto.idSolicitud,
+            "RUT": decreto.rut + "-" + addVerify(decreto.rut),
             "Nombre": decreto.nombre,
-            "Fecha Decreto": formatFecha(decreto.fechaDecreto),
+            "Tipo Solicitus": decreto.tipoSolicitud,
+            "Fecha Solicitud": formatFecha(decreto.fechaSolicitud),
+            "Fecha Inicio": formatFecha(decreto.fechaInicio),
+            "Fecha Fin": formatFecha(decreto.fechaFin),
+            "Duracion": decreto.duracion,
+            "Departamento": decreto.depto,
+            "Tipo Contrato": decreto.tipoContrato,
+            "Aprobado Por": decreto.aprobadoPor
+
         })));
 
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Decretos");
-
-        XLSX.writeFile(wb, `Decretos_${fechaInicio}_a_${fechaFin}.xlsx`);
+        XLSX.writeFile(wb, "Decretos_Export.xlsx");
     };
+
+
 
     return (
         <Container>
@@ -167,6 +221,23 @@ export const DecretosView = () => {
 
             <Row className="mb-4">
                 <Col className="text-end">
+                    <Form.Select aria-label="Selector tipo contrato"
+                        onClick={(e) => setSelectContrato(e.target.value)} >
+                        <option value="" >Tipo Contrato</option>
+                        <option value="PLANTA">Planta</option>
+                        <option value="CONTRATA">Contrata</option>
+                    </Form.Select>
+
+                </Col>
+                <Col>
+                    <Button
+                        variant="primary"
+                        onClick={filteredByContrato}>
+                        Filtrar
+                    </Button>
+                </Col>
+
+                <Col>
                     <Button variant="success" onClick={exportToExcel}>
                         <FaFileExcel /> Exportar a Excel
                     </Button>
@@ -177,7 +248,10 @@ export const DecretosView = () => {
             <Table striped bordered hover responsive>
                 <thead>
                     <tr>
-                        
+                        <th>
+                            <Form.Check type="checkbox" checked={selectAll} onChange={toggleSelectAll} />
+                        </th>
+
                         <th>ID</th>
                         <th>Fecha Creación</th>
                         <th>ID Solicitud</th>
@@ -197,7 +271,14 @@ export const DecretosView = () => {
                     {currentItems.length > 0 ? (
                         currentItems.map((decreto, index) => (
                             <tr key={index}>
-                                
+                                <td>
+                                    <Form.Check
+                                        type="checkbox"
+                                        checked={selectedDecretos.includes(decreto.idSolicitud)}
+                                        onChange={() => toggleSelect(decreto.idSolicitud)}
+                                    />
+                                </td>
+
                                 <td>{decreto.id}</td>
                                 <td>{formatFecha(decreto.fechaCreacion)}</td>
                                 <td>{decreto.idSolicitud}</td>
