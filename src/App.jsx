@@ -15,14 +15,15 @@ import { getFuncionarioApi } from './services/services';
  import { UsuariosPage } from './components/UsuariosPage'; 
 import { PerfilesPage } from './components/PerfilesPage';
 import { DecretosView } from './components/DecretosView';
+import { SubroganciasPage } from './components/SubroganciasPage';
 
 const DataWrapper = ({ children, rut }) => {
     const { setRut, fetchFuncionarioData } = useContext(DataContext); // Obtenemos setRut y fetchFuncionarioData del contexto
 
     useEffect(() => {
 
-        setRut(15774881);
-        fetchFuncionarioData(15774881)
+        setRut(15700766);
+        fetchFuncionarioData(15700766)
         /*12246023*/
         /*9678614 */
 
@@ -75,6 +76,7 @@ function App() {
                 <Route path="/sol/perfiles" element={<DataWrapper rut={rut}><PerfilesPage /></DataWrapper>} />
                 <Route path="/sol/decretos" element={<DataWrapper rut={rut}>  <DecretoPage  /></DataWrapper>} />
                 <Route path="/sol/decretosview" element={<DataWrapper rut={rut}>  <DecretosView  /></DataWrapper>} />
+                <Route path="/sol/subrogancias" element={<DataWrapper rut={rut}>  <SubroganciasPage  /></DataWrapper>} />
                 
             </Routes>
         </Router>

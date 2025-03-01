@@ -195,6 +195,9 @@ export const HomeTabs = () => {
                                             Listado de Decretos
                                         </Dropdown.Item>
                                         )}
+                                         <Dropdown.Item href="/sol/subrogancias">
+                                            Subrogancias
+                                        </Dropdown.Item>
 
                                     </Dropdown.Menu>
                                 </Dropdown>

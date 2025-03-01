@@ -181,8 +181,7 @@ export const DetalleSolView = ({
                     rutJefe: rut,
                     fechaInicio: startDate,
                     fechaFin: endDate,
-                    idSolicitud: response.id,
-                    depto: depto
+                      depto: depto
                 };
     
                 // Ejecutamos ambas operaciones al mismo tiempo y si alguna falla, ninguna se guarda

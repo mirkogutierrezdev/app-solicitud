@@ -124,8 +124,7 @@ export const InboxSol = () => {
     const fetchSolicitudesSub = async (depto) => {
         try {
             const dataSol = await getSolicitudesInbox(depto);
-            // Puedes procesar o combinar los datos según sea necesario
-            //setSolicitudes((prevSolicitudes) => [...prevSolicitudes, ...dataSol]);
+       
             setSolicitudesSub(dataSol);
             applyFilterSub(dataSol, selectedYear);
         } catch (error) {
