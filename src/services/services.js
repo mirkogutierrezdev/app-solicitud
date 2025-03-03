@@ -665,3 +665,52 @@ export const getSolicitudId = async (id) => {
 }
 
 
+export const getSubroganciasEntreFechas = async (fechaInicio,fechaFin) => {
+
+
+    const url = urlPrefixLocal + `/api/sub/view/fechas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+
+
+export const getPersona = async (rut) => {
+
+
+    const url = urlPrefixLocal + `/api/smc/byRut/person/${rut}`;
+
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+
+export const getDeptoByNombre = async (depto) => {
+
+
+    const url = urlPrefixLocal + `/api/departamentos/find/${depto}`;
+
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+
+
+
+
