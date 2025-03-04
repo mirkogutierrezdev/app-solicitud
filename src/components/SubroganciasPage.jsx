@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Table, Modal, Form, Alert } from "react-bootstrap";
 import { CgAdd } from "react-icons/cg";
-import { getDeptoByNombre, getPersona, getSubroganciasEntreFechas } from "../services/services";
+import { getFuncionario, getSubroganciasEntreFechas, saveSubrogancia } from "../services/services";
 import { validarRut } from "../services/validation";
 import Swal from "sweetalert2";
-import _ from "lodash"; // Importa Lodash para usar debounce
 
 export const SubroganciasPage = () => {
     const [showModal, setShowModal] = useState(false);
@@ -12,11 +11,9 @@ export const SubroganciasPage = () => {
     const [filtroInicio, setFiltroInicio] = useState("");
     const [filtroFin, setFiltroFin] = useState("");
     const [errorFecha, setErrorFecha] = useState("");
-    const [formData, setFormData] = useState({ jefeRut: "", subroganteRut: "", jefeNombre: "", subroganteNombre: "", departamento: "", fechaInicio: "", fechaFin: "" });
+    const [formData, setFormData] = useState({ rutJefe: "", rutSubrogante: "", depto: "", fechaInicio: "", fechaFin: "" });
     const [personaJefe, setPersonaJefe] = useState({})
     const [personaSubrogante, setPersonaSubrogante] = useState({})
-    const [departamentosData, setDepartamentosData] = useState([]);
-    const [searchDepto, setSearchDepto] = useState("");
 
 
     const getFechaHoy = () => new Date().toISOString().split('T')[0];
@@ -28,55 +25,36 @@ export const SubroganciasPage = () => {
 
     const searchPersona = async (rut) => {
 
-        const response = await getPersona(rut);
+        const response = await getFuncionario(rut);
         return response;
-
 
     }
 
-
-
-    const fetchDeptos = async (depto) => {
-        if (depto.trim() === "") {
-            setDepartamentosData([]);
-            return;
-        }
-
-        const response = await getDeptoByNombre(depto);
-        setDepartamentosData(response);
-    };
-
-    const debouncedFetchDeptos = _.debounce(fetchDeptos, 500);
-
     useEffect(() => {
-        debouncedFetchDeptos(searchDepto);
+        formData.depto = personaJefe?.departamento?.depto
 
-        // Cleanup para cancelar llamadas pendientes si el componente se desmonta
-        return () => debouncedFetchDeptos.cancel();
-    }, [searchDepto]);
+    }, [personaJefe])
 
 
     const onBlurRutJefe = async () => {
 
 
-        // Eliminar cualquier espacio extra
-        formData.jefeRut = formData.jefeRut.trim();
+        formData.rutJefe = formData.rutJefe.trim();
 
-        if (formData.jefeRut == "") {
+        if (formData.rutJefe == "") {
             return;
         }
 
-
         // Verificar si el RUT ya tiene el guion
-        if (!formData.jefeRut.includes("-")) {
+        if (!formData.rutJefe.includes("-")) {
             // Si no tiene guion, agregarlo antes del dígito verificador
-            const cuerpo = formData.jefeRut.slice(0, -1); // Los primeros n-1 caracteres son el cuerpo
-            const dv = formData.jefeRut.slice(-1); // El último carácter es el DV
-            formData.jefeRut = `${cuerpo}-${dv}`;
+            const cuerpo = formData.rutJefe.slice(0, -1); // Los primeros n-1 caracteres son el cuerpo
+            const dv = formData.rutJefe.slice(-1); // El último carácter es el DV
+            formData.rutJefe = `${cuerpo}-${dv}`;
         }
 
         // Validar el RUT
-        if (!validarRut(formData.jefeRut)) {
+        if (!validarRut(formData.rutJefe)) {
             Swal.fire({
                 icon: "error",
                 title: "RUT inválido",
@@ -85,39 +63,37 @@ export const SubroganciasPage = () => {
             return;
         }
 
-        const rutNumerico = formData.jefeRut.split("-")[0];
+        const rutNumerico = formData.rutJefe.split("-")[0];
 
         // Obtener la persona
         setPersonaJefe(await searchPersona(rutNumerico));
+
+
     };
 
-    const onChangeDepto = (e) => {
-
-        setSearchDepto(e.target.value);
-
-    }
 
     const onBlurRutSubrogante = async () => {
 
 
-        // Eliminar cualquier espacio extra
-        formData.subroganteRut = formData.subroganteRut.trim();
-
-        if (formData.subroganteRut == "") {
+        if (formData.rutSubrogante === formData.rutJefe) {
+            Swal.fire({
+                text: "El ru del jefe no puede ser el mismo que el subrogante",
+                icon: "error"
+            })
             return;
+
         }
 
-
         // Verificar si el RUT ya tiene el guion
-        if (!formData.subroganteRut.includes("-")) {
+        if (!formData.rutSubrogante.includes("-")) {
             // Si no tiene guion, agregarlo antes del dígito verificador
-            const cuerpo = formData.subroganteRut.slice(0, -1); // Los primeros n-1 caracteres son el cuerpo
-            const dv = formData.subroganteRut.slice(-1); // El último carácter es el DV
-            formData.subroganteRut = `${cuerpo}-${dv}`;
+            const cuerpo = formData.rutSubrogante.slice(0, -1); // Los primeros n-1 caracteres son el cuerpo
+            const dv = formData.rutSubrogante.slice(-1); // El último carácter es el DV
+            formData.rutSubrogante = `${cuerpo}-${dv}`;
         }
 
         // Validar el RUT
-        if (!validarRut(formData.subroganteRut)) {
+        if (!validarRut(formData.rutSubrogante)) {
             Swal.fire({
                 icon: "error",
                 title: "RUT inválido",
@@ -126,12 +102,12 @@ export const SubroganciasPage = () => {
             return;
         }
 
-        const rutNumerico = formData.subroganteRut.split("-")[0];
+        const rutNumerico = formData.rutSubrogante.split("-")[0];
+
 
         // Obtener la persona
         setPersonaSubrogante(await searchPersona(rutNumerico));
     };
-
 
 
     useEffect(() => {
@@ -154,25 +130,6 @@ export const SubroganciasPage = () => {
     };
 
 
-    
-    let inputDepto = null; // Variable para la referencia del input
-
-    const handleSelection = (e) => {
-        const selectedValue = e.target.value;
-    
-        const selectedDepto = departamentosData.find(
-            (depto) => depto.nombreDepartamento === selectedValue
-        );
-    
-        if (selectedDepto) {
-            setSearchDepto(selectedDepto.nombreDepartamento);
-            setFormData({ ...formData, departamento: selectedDepto.depto });
-    
-            if (inputDepto) inputDepto.blur(); // Cierra la lista forzando pérdida de foco
-        }
-    };
-    
-
     const handleFilter = () => {
         fetchData();
     };
@@ -180,8 +137,7 @@ export const SubroganciasPage = () => {
     const handleShow = () => setShowModal(true);
     const handleClose = () => {
 
-        setFormData({ jefeRut: "", subroganteRut: "", jefeNombre: "", subroganteNombre: "", departamento: "", fechaInicio: "", fechaFin: "" });
-        setSearchDepto("");
+        setFormData({ rutJefe: "", rutSubrogante: "", depto: "", fechaInicio: "", fechaFin: "" });
         setPersonaJefe("");
         setPersonaSubrogante("");
         setShowModal(false);
@@ -193,12 +149,81 @@ export const SubroganciasPage = () => {
     };
 
     const handleSubmit = () => {
-        setFormData({ jefeRut: "", subroganteRut: "", jefeNombre: "", subroganteNombre: "", departamento: "", fechaInicio: "", fechaFin: "" });
-        console.log(formData);
-        handleClose();
+        const rutRegex = /^[0-9kK-]+$/; // Permite solo números, 'k' o 'K' y el guion '-'
+
+        if (!rutRegex.test(formData.rutJefe) || !rutRegex.test(formData.rutSubrogante)) {
+            Swal.fire({
+                text: "El RUT solo puede contener números y la letra 'K'",
+                icon: "error"
+            });
+            return;
+        }
+
+        if (formData.fechaInicio === "" || formData.fechaFin === "") {
+            Swal.fire({
+                text: "Debe ingresar fechas válidas",
+                icon: "error"
+            });
+            return;
+        }
+
+        if (formData.rutJefe === formData.rutSubrogante) {
+            Swal.fire({
+                text: "La información de subrogante y jefe no puede ser la misma",
+                icon: "error"
+            });
+            return;
+        }
+
+        if (formData.fechaInicio > formData.fechaFin) {
+            Swal.fire({
+                text: "La fecha de inicio no puede ser mayor a la fecha de fin",
+                icon: "error"
+            });
+            return;
+        }
+
+        // Crear una copia de formData con los valores actualizados
+        const updatedFormData = {
+            ...formData,
+            rutJefe: formData.rutJefe.slice(0, -2), // Eliminar los últimos 2 caracteres
+            rutSubrogante: formData.rutSubrogante.slice(0, -2),
+            depto: personaJefe?.departamento?.depto || "",
+        };
+
+        Swal.fire({
+            title: '¿Está seguro que desea guardar la subrogancia?',
+            showDenyButton: true,
+            confirmButtonText: `Sí, estoy seguro`,
+            denyButtonText: `No`,
+            icon: 'question'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                     await saveSubrogancia(updatedFormData); // Usamos la copia actualizada
+
+                    Swal.fire({
+                        text: "Subrogancia guardada con éxito",
+                        icon: "success"
+                    });
+
+                    handleClose();
+                } catch (error) {
+                    Swal.fire({
+                        text: "Error al derivar la solicitud " + error,
+                        icon: "error"
+                    });
+                    console.log(error);
+                }
+            }
+        });
     };
 
-    
+
+
+
+
+
     return (
         <Container>
             <Row className="mb-3">
@@ -260,29 +285,18 @@ export const SubroganciasPage = () => {
                     <Form>
                         <Form.Group className="mb-3">
                             <Form.Label>RUT Jefe</Form.Label>
-                            <Form.Control className="mb-3" type="text" name="jefeRut" value={formData.jefeRut} onChange={handleChange} onBlur={onBlurRutJefe} />
+                            <Form.Control className="mb-3" type="text" name="rutJefe" value={formData.rutJefe} onChange={handleChange} onBlur={onBlurRutJefe} />
                         </Form.Group>
                         <Form.Text>Nombre: {personaJefe.nombres} {personaJefe.apellidopaterno} {personaJefe.apellidomaterno}</Form.Text>
                         <Form.Group className="my-3">
                             <Form.Label>RUT Subrogante</Form.Label>
-                            <Form.Control type="text" name="subroganteRut" value={formData.subroganteRut} onChange={handleChange} onBlur={onBlurRutSubrogante} />
+                            <Form.Control type="text" name="rutSubrogante" value={formData.rutSubrogante} onChange={handleChange} onBlur={onBlurRutSubrogante} />
                         </Form.Group>
                         <Form.Text>Nombre: {personaSubrogante.nombres} {personaSubrogante.apellidopaterno} {personaSubrogante.apellidomaterno}</Form.Text>
                         <Form.Group className="my-3">
-                            <Form.Label>Departamento</Form.Label>
-                            <Form.Control
-                                list="departamentos-list"
-                                onChange={onChangeDepto}
-                                value={searchDepto}
-                                placeholder="Escribe para buscar..."
-                                onBlur={(e) => handleSelection(e)}
-                                ref={(input) => (inputDepto = input)}
-                            />
-                            <datalist id="departamentos-list">
-                                {departamentosData.map((depto, index) => (
-                                    <option key={depto.id || index} value={depto.nombreDepartamento} />
-                                ))}
-                            </datalist>
+                            <Form.Label>Departamento a Subrogar</Form.Label>
+                            <Form.Control readOnly={true} type="text" value={personaJefe?.departamento?.nombreDepartamento} />
+
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Fecha Inicio</Form.Label>

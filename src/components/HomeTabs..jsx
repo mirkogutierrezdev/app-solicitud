@@ -191,13 +191,19 @@ export const HomeTabs = () => {
                                             </Dropdown.Item>
                                         )}
                                         {hasPermission("LISTAR_DECRETOS") && (
-                                        <Dropdown.Item href="/sol/decretosview">
-                                            Listado de Decretos
-                                        </Dropdown.Item>
+                                            <Dropdown.Item href="/sol/decretosview">
+                                                Listado de Decretos
+                                            </Dropdown.Item>
                                         )}
-                                         <Dropdown.Item href="/sol/subrogancias">
-                                            Subrogancias
-                                        </Dropdown.Item>
+                                        {hasPermission("CREAR_SUBROGANCIAS") && (
+                                            <Dropdown.Item href="/sol/subrogancias">
+                                                Subrogancias
+                                            </Dropdown.Item>
+
+
+                                        )
+
+                                        }
 
                                     </Dropdown.Menu>
                                 </Dropdown>
