@@ -21,13 +21,8 @@ export const InboxRowSub = ({
 }) => {
 
 
+
     const deptoValue = dataSubrogancias?.[0]?.depto || "Sin departamento";
-
-
-   
-
-
-
 
 
     const infoFun = useContext(DataContext);
@@ -61,6 +56,8 @@ export const InboxRowSub = ({
         // const esUltimaDerivacionDeptoActual = ultimaDerivacion && ultimaDerivacion.departamento.deptoSmc == dataDepartamento.depto;
         const entradaExistente = solicitud.entradas.some(entrada => entrada.derivacion.id === ultimaDerivacion.id);
 
+        console.log(data);
+
         // Condición para recibir
         if (!entradaExistente) {
             setIsRecibirDisabled(false);
@@ -69,14 +66,14 @@ export const InboxRowSub = ({
         }
 
         // Condición para derivar
-        if (entradaExistente) {
+        if (entradaExistente && ultimaDerivacion.departamento.depto == dataDepartamento.depto ) {
             setIsDerivarDisabled(false);
         } else {
             setIsDerivarDisabled(true);
         }
 
         // Condición para rechazar
-        if (entradaExistente) {
+        if (entradaExistente && ultimaDerivacion.departamento.depto == dataDepartamento.depto) {
             setIsRechazarDisabled(false);
         } else {
             setIsRechazarDisabled(true);

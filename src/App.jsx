@@ -12,7 +12,7 @@ import { DecretoPage } from './components/DecretoPage';
 import { useContext, useEffect, useState } from 'react';
 import DataContext from './context/DataContext';
 import { getFuncionarioApi } from './services/services';
- import { UsuariosPage } from './components/UsuariosPage'; 
+import { UsuariosPage } from './components/UsuariosPage';
 import { PerfilesPage } from './components/PerfilesPage';
 import { DecretosView } from './components/DecretosView';
 import { SubroganciasPage } from './components/SubroganciasPage';
@@ -22,13 +22,17 @@ const DataWrapper = ({ children, rut }) => {
 
     useEffect(() => {
 
+        setRut(8235500)
+        fetchFuncionarioData(8235500)
+
+
         /*12246023*/
         /*9678614 */
 
-            if (rut) {
+       /*  if (rut) {
             setRut(rut);  // Actualizamos el RUT en el contexto
             fetchFuncionarioData(rut);  // Obtenemos los datos del funcionario basado en el RU
-        }    
+        } */
     }, [rut]);  // El efecto se ejecuta cuando el RUT cambia
 
     return children;
@@ -70,12 +74,12 @@ function App() {
                 <Route path="/sol/licencias" element={<DataWrapper rut={rut}><LicenciasPage rut={rut} /></DataWrapper>} />
                 <Route path="/sol/feriados" element={<DataWrapper rut={rut}><FeriadosPage rut={rut} /></DataWrapper>} />
                 <Route path="/sol/solicitudes" element={<DataWrapper rut={rut}><SolicitudesPage rut={rut} /></DataWrapper>} />
-                 <Route path="/sol/usuarios" element={<DataWrapper rut={rut}><UsuariosPage /></DataWrapper>} /> 
+                <Route path="/sol/usuarios" element={<DataWrapper rut={rut}><UsuariosPage /></DataWrapper>} />
                 <Route path="/sol/perfiles" element={<DataWrapper rut={rut}><PerfilesPage /></DataWrapper>} />
-                <Route path="/sol/decretos" element={<DataWrapper rut={rut}>  <DecretoPage  /></DataWrapper>} />
-                <Route path="/sol/decretosview" element={<DataWrapper rut={rut}>  <DecretosView  /></DataWrapper>} />
-                <Route path="/sol/subrogancias" element={<DataWrapper rut={rut}>  <SubroganciasPage  /></DataWrapper>} />
-                
+                <Route path="/sol/decretos" element={<DataWrapper rut={rut}>  <DecretoPage /></DataWrapper>} />
+                <Route path="/sol/decretosview" element={<DataWrapper rut={rut}>  <DecretosView /></DataWrapper>} />
+                <Route path="/sol/subrogancias" element={<DataWrapper rut={rut}>  <SubroganciasPage /></DataWrapper>} />
+
             </Routes>
         </Router>
     );

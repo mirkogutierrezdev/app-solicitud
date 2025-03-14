@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 
-//const urlPrefixLocal = `http://localhost:8082`
+const urlPrefixLocal = `http://localhost:8082`
 
-const urlPrefixLocal = `https://appx.laflorida.cl`
+//const urlPrefixLocal = `https://appx.laflorida.cl`
 
 //Función que extrae todas las solicitudes de la base de datos de Smc
 export const getFuncionario = async (rut) => {
