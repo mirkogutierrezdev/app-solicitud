@@ -12,6 +12,11 @@ import AprobacionesTable from "./AprobacionesTable";
 import ComponentPagination from "./ComponentPagination";
 import DecretoButton from "./DecretoButton";
 
+import Docxtemplater from "docxtemplater";
+import PizZip from "pizzip";
+import { saveAs } from "file-saver";
+
+
 export const DecretoPage = () => {
     const [dataAprobaciones, setDataAprobaciones] = useState([]);
     const [filteredAprobaciones, setFilteredAprobaciones] = useState([]);
@@ -89,12 +94,31 @@ export const DecretoPage = () => {
         });
 
 
-        console.log(selectedDepto)
 
 
         setFilteredAprobaciones(filtered);
         setCurrentPage(1);
     };
+
+    const generateDocx = async (templateFile, data) => {
+        const response = await fetch(templateFile);
+        const templateArrayBuffer = await response.arrayBuffer();
+        const zip = new PizZip(templateArrayBuffer);
+        const doc = new Docxtemplater(zip);
+
+        // Asegúrate de pasar un arreglo con los objetos, como { funcionarios: [ {nombres: 'PATRICIA', depto: 'Subdirección de Ornato y Operaciones'} ] }
+        doc.render({
+            funcionarios: data, // Asegúrate de que `data` sea un arreglo de objetos
+        });
+
+        const outputBlob = new Blob([doc.getZip().generate({ type: "arraybuffer" })], {
+            type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+
+        saveAs(outputBlob, "documento-generado.docx");
+    };
+
+
 
     const handleGenerateDecreto = async () => {
         const decretoData = {
@@ -113,14 +137,33 @@ export const DecretoPage = () => {
 
             if (result.isConfirmed) {
                 // Guardar decreto en el backend
-                await saveDecretos(decretoData);
+                /*      await saveDecretos(decretoData); */
                 Swal.fire({
                     text: "Decreto generado con éxito",
                     icon: "success"
                 });
 
+                const selectedData = dataAprobaciones.filter(item =>
+                    selectedItems.includes(item.id)
+                );
+
+
+                const data = selectedData.map(sel => {
+                    return {
+                        nombres: `${sel.paterno} ${sel.materno} ${sel.nombres}`,
+                        rut: formatRut(`${sel.rut}-${addVerify(sel.rut)}`),
+                        desde:adjustDateForExport(sel.fechaInicio),
+                        hasta:adjustDateForExport(sel.fechaTermino),
+                        dias:sel.duracion+' '+'dias'
+                    };
+                });
+
+                console.log(selectedData);
+
+                generateDocx("plantilla2.docx", data)
+
                 // Exportar a Excel
-                exportSelectedItemsToExcel();
+                /* exportSelectedItemsToExcel(); */
 
                 setSelectedItems([]); // Limpiar selección después de generar decreto
                 await fetchAprobaciones(); // Refrescar aprobaciones
@@ -173,7 +216,6 @@ export const DecretoPage = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredAprobaciones.slice(indexOfFirstItem, indexOfLastItem);
-    console.log(currentItems)
 
     return (
         <Container>
