@@ -22,17 +22,16 @@ const DataWrapper = ({ children, rut }) => {
 
     useEffect(() => {
 
-        setRut(8235500)
-        fetchFuncionarioData(8235500)
+      
 
 
         /*12246023*/
         /*9678614 */
 
-       /*  if (rut) {
+         if (rut) {
             setRut(rut);  // Actualizamos el RUT en el contexto
             fetchFuncionarioData(rut);  // Obtenemos los datos del funcionario basado en el RU
-        } */
+        } 
     }, [rut]);  // El efecto se ejecuta cuando el RUT cambia
 
     return children;
